@@ -92,8 +92,16 @@ function init(app: Application, signal: AbortSignal) {
   })
 }
 
+const SCALE = 1e-6
+
 function step() {
+  const now = self.performance.now()
   for (const cell of CELLS.values()) {
-    cell.g.tint = Math.random() * 0xffffff
+    const n = noise(
+      cell.p.x * SCALE,
+      cell.p.y * SCALE,
+      now / 1000,
+    )
+    cell.g.tint = Math.abs(n) * 0xffffff
   }
 }
