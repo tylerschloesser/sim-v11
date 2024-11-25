@@ -80,16 +80,20 @@ const noise = createNoise3D()
 function init(app: Application, signal: AbortSignal) {
   for (const cell of CELLS.values()) {
     cell.g.fill('white')
-    cell.g.tint = Math.random() * 0xffffff
     app.stage.addChild(cell.g)
   }
+  step()
 
   const interval = self.setInterval(() => {
-    for (const cell of CELLS.values()) {
-      cell.g.tint = Math.random() * 0xffffff
-    }
+    step()
   }, 1000)
   signal.addEventListener('abort', () => {
     self.clearInterval(interval)
   })
+}
+
+function step() {
+  for (const cell of CELLS.values()) {
+    cell.g.tint = Math.random() * 0xffffff
+  }
 }
