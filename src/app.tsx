@@ -51,12 +51,13 @@ interface Cell {
   p: Vec2
 }
 
-const CELLS: Cell[] = (() => {
-  const value: Cell[] = []
+const CELLS: Map<string, Cell> = (() => {
+  const value = new Map<string, Cell>()
   for (let x = 0; x < 10; x++) {
     for (let y = 0; y < 10; y++) {
-      value.push({
-        id: `${x}.${y}`,
+      const id = `${x}.${y}`
+      value.set(id, {
+        id,
         p: new Vec2(x, y),
       })
     }
@@ -65,11 +66,11 @@ const CELLS: Cell[] = (() => {
 })()
 
 function init(app: Application) {
-  CELLS.map((cell) => {
+  for (const cell of CELLS.values()) {
     const size = 32
     const g = new Graphics()
     g.rect(cell.p.x * size, cell.p.y * size, size, size)
     g.fill(`hsl(${Math.random() * 360}, 50%, 50%)`)
     app.stage.addChild(g)
-  })
+  }
 }
