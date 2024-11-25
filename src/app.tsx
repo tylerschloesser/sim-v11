@@ -46,9 +46,22 @@ export function App() {
   )
 }
 
+const CELLS: Vec2[] = (() => {
+  const value: Vec2[] = []
+  for (let x = 0; x < 10; x++) {
+    for (let y = 0; y < 10; y++) {
+      value.push(new Vec2(x, y))
+    }
+  }
+  return value
+})()
+
 function init(app: Application) {
-  const g = new Graphics()
-  g.rect(0, 0, 100, 100)
-  g.fill('blue')
-  app.stage.addChild(g)
+  CELLS.map((cell) => {
+    const size = 32
+    const g = new Graphics()
+    g.rect(cell.x * size, cell.y * size, size, size)
+    g.fill('blue')
+    app.stage.addChild(g)
+  })
 }
