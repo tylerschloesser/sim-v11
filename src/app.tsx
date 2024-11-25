@@ -1,5 +1,6 @@
 import { Application, Graphics } from 'pixi.js'
 import { useEffect, useRef } from 'react'
+import { createNoise3D } from 'simplex-noise'
 import invariant from 'tiny-invariant'
 import { Vec2 } from './vec2'
 
@@ -74,9 +75,12 @@ const CELLS: Map<string, Cell> = (() => {
   return value
 })()
 
+const noise = createNoise3D()
+
 function init(app: Application, signal: AbortSignal) {
   for (const cell of CELLS.values()) {
-    cell.g.fill(`hsl(${Math.random() * 360}, 50%, 50%)`)
+    cell.g.fill('white')
+    cell.g.tint = Math.random() * 0xffffff
     app.stage.addChild(cell.g)
   }
 
