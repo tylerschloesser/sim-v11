@@ -8,6 +8,7 @@ export function App() {
 
   useEffect(() => {
     invariant(container.current)
+    const controller = new AbortController()
 
     const canvas = document.createElement('canvas')
     canvas.style.width = '100%'
@@ -28,10 +29,11 @@ export function App() {
         height: viewport.y,
       })
       .then(() => {
-        init(app)
+        init(app, controller.signal)
       })
 
     return () => {
+      controller.abort()
       canvas.remove()
     }
   }, [])
@@ -72,9 +74,18 @@ const CELLS: Map<string, Cell> = (() => {
   return value
 })()
 
-function init(app: Application) {
+function init(app: Application, signal: AbortSignal) {
   for (const cell of CELLS.values()) {
     cell.g.fill(`hsl(${Math.random() * 360}, 50%, 50%)`)
     app.stage.addChild(cell.g)
   }
+
+  const interval = self.setInterval(() => {
+    for (const cell of CELLS.values()) {
+      cell.g.tint = Math.random() * 0xffffff
+    }
+  }, 1000)
+  signal.addEventListener('abort', () => {
+    self.clearInterval(interval)
+  })
 }
