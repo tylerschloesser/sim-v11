@@ -59,8 +59,8 @@ const SIZE = 32
 const CELLS: Map<string, Cell> = (() => {
   const value = new Map<string, Cell>()
 
-  for (let x = 0; x < 10; x++) {
-    for (let y = 0; y < 10; y++) {
+  for (let x = 0; x < 16; x++) {
+    for (let y = 0; y < 16; y++) {
       const id = `${x}.${y}`
 
       const g = new Graphics()
@@ -86,21 +86,22 @@ function init(app: Application, signal: AbortSignal) {
 
   const interval = self.setInterval(() => {
     step()
-  }, 1000)
+  }, 100)
   signal.addEventListener('abort', () => {
     self.clearInterval(interval)
   })
 }
 
-const SCALE = 1e-6
+const SCALE_XY = 1e-6
+const SCALE_Z = 1e-2
 
 function step() {
   const now = self.performance.now()
   for (const cell of CELLS.values()) {
     const n = noise(
-      cell.p.x * SCALE,
-      cell.p.y * SCALE,
-      now / 1000,
+      cell.p.x * SCALE_XY,
+      cell.p.y * SCALE_XY,
+      (now / 1000) * SCALE_Z,
     )
     cell.g.tint = Math.abs(n) * 0xffffff
   }
