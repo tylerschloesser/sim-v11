@@ -61,7 +61,7 @@ function init(app: Application) {
     const size = 32
     const g = new Graphics()
     g.rect(cell.x * size, cell.y * size, size, size)
-    g.fill('blue')
+    g.fill(`hsl(${Math.random() * 360}, 50%, 50%)`)
     app.stage.addChild(g)
   })
 }
