@@ -49,16 +49,23 @@ export function App() {
 interface Cell {
   id: string
   p: Vec2
+  g: Graphics
 }
 
+const SIZE = 32
 const CELLS: Map<string, Cell> = (() => {
   const value = new Map<string, Cell>()
+
   for (let x = 0; x < 10; x++) {
     for (let y = 0; y < 10; y++) {
       const id = `${x}.${y}`
+
+      const g = new Graphics()
+      g.rect(x * SIZE, y * SIZE, SIZE, SIZE)
       value.set(id, {
         id,
         p: new Vec2(x, y),
+        g,
       })
     }
   }
@@ -67,10 +74,7 @@ const CELLS: Map<string, Cell> = (() => {
 
 function init(app: Application) {
   for (const cell of CELLS.values()) {
-    const size = 32
-    const g = new Graphics()
-    g.rect(cell.p.x * size, cell.p.y * size, size, size)
-    g.fill(`hsl(${Math.random() * 360}, 50%, 50%)`)
-    app.stage.addChild(g)
+    cell.g.fill(`hsl(${Math.random() * 360}, 50%, 50%)`)
+    app.stage.addChild(cell.g)
   }
 }
