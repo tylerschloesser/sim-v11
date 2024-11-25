@@ -26,7 +26,6 @@ export function App() {
         canvas,
         width: viewport.x,
         height: viewport.y,
-        sharedTicker: true,
       })
       .then(() => {
         console.log('after init!')
