@@ -1,4 +1,4 @@
-import { Application } from 'pixi.js'
+import { Application, Graphics } from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Vec2 } from './vec2'
@@ -28,7 +28,7 @@ export function App() {
         height: viewport.y,
       })
       .then(() => {
-        console.log('after init!')
+        init(app)
       })
 
     return () => {
@@ -44,4 +44,11 @@ export function App() {
       ref={container}
     />
   )
+}
+
+function init(app: Application) {
+  const g = new Graphics()
+  g.rect(0, 0, 100, 100)
+  g.fill('blue')
+  app.stage.addChild(g)
 }
