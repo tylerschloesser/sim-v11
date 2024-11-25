@@ -6,7 +6,13 @@ export function App() {
 
   useEffect(() => {
     invariant(container.current)
-    console.log('hello!')
+
+    const canvas = document.createElement('canvas')
+    container.current.appendChild(canvas)
+
+    return () => {
+      canvas.remove()
+    }
   }, [])
   return <div ref={container} />
 }
