@@ -102,8 +102,8 @@ function init(app: Application, signal: AbortSignal) {
   })
 }
 
-const SCALE_XY = 1e-5
-const SCALE_Z = 1e-6
+const SCALE_XY = 1 * 0.125
+const SCALE_Z = 1e-3 * 0.5
 
 function step() {
   const now = self.performance.now()
@@ -114,6 +114,12 @@ function step() {
       now * SCALE_Z,
     )
 
-    cell.g.tint = Math.abs(n) * 0xffffff
+    let r = Math.floor(0xff * n) << 0
+    let g = r << 8
+    let b = r << 16
+
+    const tint = r | g | b
+
+    cell.g.tint = tint
   }
 }
