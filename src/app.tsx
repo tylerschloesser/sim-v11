@@ -32,6 +32,12 @@ export function App() {
         canvas,
         width: viewport.x,
         height: viewport.y,
+        eventFeatures: {
+          click: false,
+          globalMove: false,
+          move: false,
+          wheel: false,
+        },
       })
       .then(() => {
         init(app, controller.signal)
@@ -103,25 +109,25 @@ function init(app: Application, signal: AbortSignal) {
 }
 
 function octave1(cell: Cell, now: number) {
-  const SCALE_XY = 1 * 0.125
-  const SCALE_Z = 1e-3 * 0.5
+  const SCALE_XY = 1e-1 * 0.5
+  const SCALE_Z = 2e-4
   let n = noise(
     cell.p.x * SCALE_XY,
     cell.p.y * SCALE_XY,
     now * SCALE_Z,
   )
-  n = n ** 1
+  n = 1 - n ** 10
   return n
 }
 function octave2(cell: Cell, now: number) {
-  const SCALE_XY = 1 * 0.125
-  const SCALE_Z = 1e-3 * 0.5
+  const SCALE_XY = 1e-1
+  const SCALE_Z = 2e-4
   let n = noise(
     cell.p.x * SCALE_XY,
     cell.p.y * SCALE_XY,
     now * SCALE_Z,
   )
-  n = n ** 1
+  n = 1 - n ** 1
   return n
 }
 
