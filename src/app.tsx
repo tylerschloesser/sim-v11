@@ -59,12 +59,12 @@ interface Cell {
   g: Graphics
 }
 
-const SIZE = 32
+const SIZE = 16
 const CELLS: Map<string, Cell> = (() => {
   const value = new Map<string, Cell>()
 
-  for (let x = 0; x < 16; x++) {
-    for (let y = 0; y < 16; y++) {
+  for (let x = 0; x < 32; x++) {
+    for (let y = 0; y < 32; y++) {
       const id = `${x}.${y}`
 
       const g = new Graphics()
@@ -105,17 +105,21 @@ function init(app: Application, signal: AbortSignal) {
 const SCALE_XY = 1 * 0.125
 const SCALE_Z = 1e-3 * 0.5
 
-function tint(cell: Cell, now: number): number {
-  const n = noise(
+function octave1(cell: Cell, now: number) {
+  let n = noise(
     cell.p.x * SCALE_XY,
     cell.p.y * SCALE_XY,
     now * SCALE_Z,
   )
+  n = n ** 1
+  return n
+}
 
+function tint(cell: Cell, now: number): number {
+  let n = octave1(cell, now)
   let r = Math.floor(0xff * n) << 0
   let g = r << 8
   let b = r << 16
-
   return r | g | b
 }
 
