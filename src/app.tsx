@@ -125,9 +125,14 @@ function octave2(cell: Cell, now: number) {
   return n
 }
 
+const WEIGHTS = [0.5, 0.5]
+
+invariant(WEIGHTS.reduce((acc, v) => acc + v, 0) === 1)
+
 function tint(cell: Cell, now: number): number {
   let n =
-    octave1(cell, now) * 0.5 + octave2(cell, now) * 0.5
+    octave1(cell, now) * WEIGHTS[0] +
+    octave2(cell, now) * WEIGHTS[1]
   let r = Math.floor(0xff * n) << 0
   let g = r << 8
   let b = r << 16
