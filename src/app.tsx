@@ -65,12 +65,12 @@ interface Cell {
   g: Graphics
 }
 
-const SIZE = 16
+const SIZE = 8
 const CELLS: Map<string, Cell> = (() => {
   const value = new Map<string, Cell>()
 
-  for (let x = 0; x < 32; x++) {
-    for (let y = 0; y < 32; y++) {
+  for (let x = 0; x < 64; x++) {
+    for (let y = 0; y < 64; y++) {
       const id = `${x}.${y}`
 
       const g = new Graphics()
@@ -109,8 +109,8 @@ function init(app: Application, signal: AbortSignal) {
 }
 
 function octave(cell: Cell, now: number, channel: number) {
-  const SCALE_XY = 1e-1
-  const SCALE_Z = 2e-4
+  const SCALE_XY = 1e-1 * 0.5
+  const SCALE_Z = 2e-6
   const SCALE_W = 1
   let n = noise(
     cell.p.x * SCALE_XY,
@@ -118,15 +118,15 @@ function octave(cell: Cell, now: number, channel: number) {
     now * SCALE_Z,
     channel * SCALE_W,
   )
-  n = 1 - n ** 2
   return n
 }
 
+// prettier-ignore
 function tint(cell: Cell, now: number): number {
-  let r = octave(cell, now, 1) < 0.5 ? 0 : 0xff << 0
-  let g = octave(cell, now, 2) < 0.5 ? 0 : 0xff << 8
-  let b = octave(cell, now, 3) < 0.5 ? 0 : 0xff << 16
-  return r | g | b
+  let a = octave(cell, now, 1) > 0.5 ? 0 : 0xff << 0
+  let b = octave(cell, now, 2) > 0.25 ? 0 : 0xff << 8
+  let c = octave(cell, now, 3) > 0.125 ? 0 : 0xff << 16
+  return a | b | c
 }
 
 function step() {
