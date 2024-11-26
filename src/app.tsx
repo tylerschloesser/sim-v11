@@ -1,8 +1,8 @@
 import { Application, Graphics } from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import {
-  createNoise3D,
-  NoiseFunction3D,
+  createNoise4D,
+  NoiseFunction4D,
 } from 'simplex-noise'
 import invariant from 'tiny-invariant'
 import { Vec2 } from './vec2'
@@ -45,6 +45,7 @@ export function App() {
     return () => {
       controller.abort()
       canvas.remove()
+      app.destroy()
     }
   }, [])
   return (
@@ -84,10 +85,10 @@ const CELLS: Map<string, Cell> = (() => {
   return value
 })()
 
-const noise: NoiseFunction3D = (() => {
-  const inner = createNoise3D()
-  return (x, y, z) => {
-    const n = inner(x, y, z)
+const noise: NoiseFunction4D = (() => {
+  const inner = createNoise4D()
+  return (x, y, z, w) => {
+    const n = inner(x, y, z, w)
     return (n + 1) / 2
   }
 })()
@@ -107,47 +108,24 @@ function init(app: Application, signal: AbortSignal) {
   })
 }
 
-function octave1(cell: Cell, now: number) {
-  const SCALE_XY = 1e-1 * 0.5
-  const SCALE_Z = 2e-5
-  let n = noise(
-    cell.p.x * SCALE_XY,
-    cell.p.y * SCALE_XY,
-    now * SCALE_Z,
-  )
-  n = 1 - n ** 10
-  return n
-}
-function octave2(cell: Cell, now: number) {
+function octave(cell: Cell, now: number, channel: number) {
   const SCALE_XY = 1e-1
-  const SCALE_Z = 2e-5
+  const SCALE_Z = 2e-4
+  const SCALE_W = 1
   let n = noise(
     cell.p.x * SCALE_XY,
     cell.p.y * SCALE_XY,
     now * SCALE_Z,
+    channel * SCALE_W,
   )
-  n = 1 - n ** 1
+  n = 1 - n ** 2
   return n
 }
-
-const WEIGHTS = [0.5, 0.5]
-
-invariant(WEIGHTS.reduce((acc, v) => acc + v, 0) === 1)
 
 function tint(cell: Cell, now: number): number {
-  let n =
-    octave1(cell, now) * WEIGHTS[0] +
-    octave2(cell, now) * WEIGHTS[1]
-
-  if (n < 0.5) {
-    n = 0
-  } else {
-    n = 1
-  }
-
-  let r = Math.floor(0xff * n) << 0
-  let g = r << 8
-  let b = r << 16
+  let r = octave(cell, now, 1) < 0.5 ? 0 : 0xff << 0
+  let g = octave(cell, now, 2) < 0.5 ? 0 : 0xff << 8
+  let b = octave(cell, now, 3) < 0.5 ? 0 : 0xff << 16
   return r | g | b
 }
 
