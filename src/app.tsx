@@ -102,10 +102,20 @@ function init(app: Application, signal: AbortSignal) {
   })
 }
 
-const SCALE_XY = 1 * 0.125
-const SCALE_Z = 1e-3 * 0.5
-
 function octave1(cell: Cell, now: number) {
+  const SCALE_XY = 1 * 0.125
+  const SCALE_Z = 1e-3 * 0.5
+  let n = noise(
+    cell.p.x * SCALE_XY,
+    cell.p.y * SCALE_XY,
+    now * SCALE_Z,
+  )
+  n = n ** 1
+  return n
+}
+function octave2(cell: Cell, now: number) {
+  const SCALE_XY = 1 * 0.125
+  const SCALE_Z = 1e-3 * 0.5
   let n = noise(
     cell.p.x * SCALE_XY,
     cell.p.y * SCALE_XY,
@@ -116,7 +126,8 @@ function octave1(cell: Cell, now: number) {
 }
 
 function tint(cell: Cell, now: number): number {
-  let n = octave1(cell, now)
+  let n =
+    octave1(cell, now) * 0.5 + octave2(cell, now) * 0.5
   let r = Math.floor(0xff * n) << 0
   let g = r << 8
   let b = r << 16
