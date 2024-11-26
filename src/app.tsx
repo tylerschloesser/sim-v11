@@ -1,6 +1,10 @@
 import { Application, Graphics } from 'pixi.js'
 import { useEffect, useRef } from 'react'
-import { createNoise3D } from 'simplex-noise'
+import {
+  createNoise3D,
+  NoiseFunction2D,
+  NoiseFunction3D,
+} from 'simplex-noise'
 import invariant from 'tiny-invariant'
 import { Vec2 } from './vec2'
 
@@ -75,7 +79,13 @@ const CELLS: Map<string, Cell> = (() => {
   return value
 })()
 
-const noise = createNoise3D()
+const noise: NoiseFunction3D = (() => {
+  const inner = createNoise3D()
+  return (x, y, z) => {
+    const n = inner(x, y, z)
+    return (n + 1) / 2
+  }
+})()
 
 function init(app: Application, signal: AbortSignal) {
   for (const cell of CELLS.values()) {
@@ -92,8 +102,8 @@ function init(app: Application, signal: AbortSignal) {
   })
 }
 
-const SCALE_XY = 1e-6
-const SCALE_Z = 1e-2
+const SCALE_XY = 1e-5
+const SCALE_Z = 1e-6
 
 function step() {
   const now = self.performance.now()
@@ -101,8 +111,9 @@ function step() {
     const n = noise(
       cell.p.x * SCALE_XY,
       cell.p.y * SCALE_XY,
-      (now / 1000) * SCALE_Z,
+      now * SCALE_Z,
     )
+
     cell.g.tint = Math.abs(n) * 0xffffff
   }
 }
