@@ -80,6 +80,10 @@ function step(nodes: Map<string, Node>) {
 
     const outputs = node.outputs.map(refToNode)
     for (const output of outputs) {
+      if (path.has(output)) {
+        console.log('TODO loop detected')
+        continue
+      }
       if (seen.has(output)) {
         continue
       }
