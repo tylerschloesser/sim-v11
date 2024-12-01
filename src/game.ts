@@ -19,7 +19,7 @@ export const Node = z.strictObject({
 })
 export type Node = z.infer<typeof Node>
 
-const nodes = new Map<string, Node>()
+const NODES = new Map<string, Node>()
 
 ;(
   [
@@ -49,5 +49,5 @@ const nodes = new Map<string, Node>()
     },
   ] satisfies Node[]
 ).forEach((node) => {
-  nodes.set(node.id, node)
+  NODES.set(node.id, node)
 })
