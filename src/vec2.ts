@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export class Vec2 {
   x: number
   y: number
@@ -6,3 +8,9 @@ export class Vec2 {
     this.y = y
   }
 }
+
+export const ZVec2 = z.strictObject({
+  x: z.number(),
+  y: z.number(),
+})
+export type ZVec2 = z.infer<typeof ZVec2>
