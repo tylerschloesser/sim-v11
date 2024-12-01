@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useImmer } from 'use-immer'
 import { Vec2 } from './vec2'
 import { ViewportContainer } from './viewport-container'
 
@@ -9,7 +9,7 @@ interface Cell {
 function Canvas({ viewport }: { viewport: Vec2 }) {
   const size = Math.min(viewport.x, viewport.y) / 5
 
-  const [cells] = useState(
+  const [cells] = useImmer(
     () =>
       [
         {
