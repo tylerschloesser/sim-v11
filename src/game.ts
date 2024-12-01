@@ -1,10 +1,17 @@
-import { identity, shuffle } from 'lodash-es'
+import { identity } from 'lodash-es'
+import Prando from 'prando'
 // import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
+import { shuffle as _shuffle } from './util'
 import { ZVec2 } from './vec2'
 
 const SHUFFLE: boolean = true
+const rng = new Prando(0)
+
+const shuffle = SHUFFLE
+  ? _shuffle(rng.next.bind(rng))
+  : identity
 
 export const NodeRef = z.strictObject({
   id: z.string(),
@@ -122,9 +129,7 @@ export function step(nodes: Map<string, Node>) {
     }
 
     // randomize output order
-    const outputs = (SHUFFLE ? shuffle : identity<Node[]>)(
-      node.outputs.map(refToNode),
-    )
+    const outputs = shuffle(node.outputs.map(refToNode))
 
     for (const output of outputs) {
       if (path.has(output)) {
@@ -164,9 +169,7 @@ export function step(nodes: Map<string, Node>) {
     path.delete(node)
   }
 
-  for (const root of (SHUFFLE ? shuffle : identity<Node[]>)(
-    Array.from(nodes.values()),
-  )) {
+  for (const root of shuffle(Array.from(nodes.values()))) {
     if (!seen.has(root)) {
       visit(root)
       invariant(path.size === 0)
