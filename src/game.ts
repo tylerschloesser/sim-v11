@@ -71,25 +71,26 @@ function step(nodes: Map<string, Node>) {
   const seen = new Set<Node>()
 
   function visit(node: Node) {
-    if (seen.has(node)) {
-      invariant(false, 'TODO handle cycle')
-    }
+    invariant(!seen.has(node))
     seen.add(node)
 
     const outputs = node.outputs.map(refToNode)
-    outputs.forEach(visit)
+    for (const output of outputs) {
+      if (!seen.has(output)) {
+        visit(output)
+      }
+    }
 
     if (node.item) {
-      if (node.item.tick === 0) {
-        node.item.tick += 1
-      } else {
-        for (const output of outputs) {
-          if (output.item === null) {
-            output.item = node.item
-            output.item.tick = 0
-            node.item = null
-            break
-          }
+      node.item.tick += 1
+
+      // first output has priority
+      for (const output of outputs) {
+        if (output.item === null) {
+          output.item = node.item
+          output.item.tick = 0
+          node.item = null
+          break
         }
       }
     }
