@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { ZVec2 } from './vec2'
 
-const SHUFFLE: boolean = false
+const SHUFFLE: boolean = true
 
 export const NodeRef = z.strictObject({
   id: z.string(),
@@ -87,11 +87,7 @@ function step(nodes: Map<string, Node>) {
 
   const seen = new Set<Node>()
   const path = new Set<Node>()
-
-  let loop: {
-    root: Node
-    item: NodeItem | null
-  } | null = null
+  const loop = new Map<Node, NodeItem>()
 
   function visit(node: Node) {
     invariant(!seen.has(node))
@@ -111,11 +107,10 @@ function step(nodes: Map<string, Node>) {
 
     for (const output of outputs) {
       if (path.has(output)) {
-        loop = {
-          root: output,
-          item: node.item,
+        if (!loop.has(output) && node.item) {
+          loop.set(output, node.item)
+          node.item = null
         }
-        node.item = null
         continue
       }
       if (seen.has(output)) {
@@ -134,13 +129,12 @@ function step(nodes: Map<string, Node>) {
       }
     }
 
-    if (loop && loop.root === node) {
+    const item = loop.get(node)
+    if (item) {
       invariant(node.item === null)
-      node.item = loop.item
-      if (node.item) {
-        node.item.tick = 0
-      }
-      loop = null
+      node.item = item
+      node.item.tick = 0
+      loop.delete(node)
     }
 
     path.delete(node)
@@ -150,7 +144,7 @@ function step(nodes: Map<string, Node>) {
     if (!seen.has(root)) {
       visit(root)
       invariant(path.size === 0)
-      invariant(loop === null)
+      invariant(loop.size === 0)
     }
   }
 }
