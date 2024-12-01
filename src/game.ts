@@ -74,7 +74,24 @@ function step(nodes: Map<string, Node>) {
       invariant(false, 'TODO handle cycle')
     }
     seen.add(node)
-    node.outputs.map(refToNode).forEach(visit)
+
+    const outputs = node.outputs.map(refToNode)
+    outputs.forEach(visit)
+
+    if (node.item) {
+      if (node.item.tick === 0) {
+        node.item.tick += 1
+      } else {
+        for (const output of outputs) {
+          if (output.item === null) {
+            output.item = node.item
+            output.item.tick = 0
+            node.item = null
+            break
+          }
+        }
+      }
+    }
   }
 
   for (const root of nodes.values()) {
@@ -84,5 +101,6 @@ function step(nodes: Map<string, Node>) {
   }
 }
 
+step(NODES)
 step(NODES)
 console.log(NODES)
