@@ -1,5 +1,4 @@
 import { identity, shuffle } from 'lodash-es'
-import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { ZVec2 } from './vec2'
@@ -25,70 +24,74 @@ export const Node = z.strictObject({
 })
 export type Node = z.infer<typeof Node>
 
-const NODES = new Map<string, Node>()
+export function initNodes() {
+  const nodes = new Map<string, Node>()
 
-;(
-  [
-    {
-      id: '0',
-      p: { x: 0, y: 0 },
-      item: { tick: 0 },
-      inputs: [{ id: '3' }, { id: '5' }],
-      outputs: [{ id: '1' }, { id: '6' }],
-    },
-    {
-      id: '1',
-      p: { x: 1, y: 0 },
-      item: null,
-      inputs: [{ id: '0' }],
-      outputs: [{ id: '2' }],
-    },
-    {
-      id: '2',
-      p: { x: 1, y: 1 },
-      item: null,
-      inputs: [{ id: '1' }],
-      outputs: [{ id: '3' }],
-    },
-    {
-      id: '3',
-      p: { x: 0, y: 1 },
-      item: null,
-      inputs: [{ id: '2' }],
-      outputs: [{ id: '0' }, { id: '4' }],
-    },
-    {
-      id: '4',
-      p: { x: -1, y: 1 },
-      item: null,
-      inputs: [{ id: '3' }],
-      outputs: [{ id: '5' }],
-    },
-    {
-      id: '5',
-      p: { x: -1, y: 0 },
-      item: null,
-      inputs: [{ id: '4' }],
-      outputs: [{ id: '0' }],
-    },
-    {
-      id: '6',
-      p: { x: 0, y: -1 },
-      item: null,
-      inputs: [{ id: '0' }],
-      outputs: [{ id: '7' }],
-    },
-    {
-      id: '7',
-      p: { x: -1, y: -1 },
-      item: null,
-      inputs: [{ id: '6' }],
-      outputs: [{ id: '5' }],
-    },
-  ] satisfies Node[]
-).forEach((node) => {
-  NODES.set(node.id, node)
-})
+  ;(
+    [
+      {
+        id: '0',
+        p: { x: 0, y: 0 },
+        item: { tick: 0 },
+        inputs: [{ id: '3' }, { id: '5' }],
+        outputs: [{ id: '1' }, { id: '6' }],
+      },
+      {
+        id: '1',
+        p: { x: 1, y: 0 },
+        item: null,
+        inputs: [{ id: '0' }],
+        outputs: [{ id: '2' }],
+      },
+      {
+        id: '2',
+        p: { x: 1, y: 1 },
+        item: null,
+        inputs: [{ id: '1' }],
+        outputs: [{ id: '3' }],
+      },
+      {
+        id: '3',
+        p: { x: 0, y: 1 },
+        item: null,
+        inputs: [{ id: '2' }],
+        outputs: [{ id: '0' }, { id: '4' }],
+      },
+      {
+        id: '4',
+        p: { x: -1, y: 1 },
+        item: null,
+        inputs: [{ id: '3' }],
+        outputs: [{ id: '5' }],
+      },
+      {
+        id: '5',
+        p: { x: -1, y: 0 },
+        item: null,
+        inputs: [{ id: '4' }],
+        outputs: [{ id: '0' }],
+      },
+      {
+        id: '6',
+        p: { x: 0, y: -1 },
+        item: null,
+        inputs: [{ id: '0' }],
+        outputs: [{ id: '7' }],
+      },
+      {
+        id: '7',
+        p: { x: -1, y: -1 },
+        item: null,
+        inputs: [{ id: '6' }],
+        outputs: [{ id: '5' }],
+      },
+    ] satisfies Node[]
+  ).forEach((node) => {
+    nodes.set(node.id, node)
+  })
+
+  return nodes
+}
 
 function step(nodes: Map<string, Node>) {
   function refToNode({ id }: NodeRef) {
@@ -163,13 +166,14 @@ function step(nodes: Map<string, Node>) {
   }
 }
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-})
-
-console.log(NODES)
-rl.on('line', () => {
-  step(NODES)
-  console.log(NODES)
-})
+// const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout,
+// })
+//
+// const NODES = initNodes()
+// console.log(NODES)
+// rl.on('line', () => {
+//   step(NODES)
+//   console.log(NODES)
+// })
