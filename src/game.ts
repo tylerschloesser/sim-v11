@@ -71,6 +71,11 @@ function step(nodes: Map<string, Node>) {
   const seen = new Set<Node>()
   const path = new Set<Node>()
 
+  let loop: {
+    root: Node
+    item: NodeItem | null
+  } | null = null
+
   function visit(node: Node) {
     invariant(!seen.has(node))
     seen.add(node)
@@ -87,7 +92,11 @@ function step(nodes: Map<string, Node>) {
     // first output has priority
     for (const output of outputs) {
       if (path.has(output)) {
-        console.log('TODO loop detected')
+        loop = {
+          root: output,
+          item: node.item,
+        }
+        node.item = null
         continue
       }
       if (seen.has(output)) {
@@ -106,6 +115,15 @@ function step(nodes: Map<string, Node>) {
       }
     }
 
+    if (loop && loop.root === node) {
+      invariant(node.item === null)
+      node.item = loop.item
+      if (node.item) {
+        node.item.tick = 0
+      }
+      loop = null
+    }
+
     path.delete(node)
   }
 
@@ -113,6 +131,7 @@ function step(nodes: Map<string, Node>) {
     if (!seen.has(root)) {
       visit(root)
       invariant(path.size === 0)
+      invariant(loop === null)
     }
   }
 }
