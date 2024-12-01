@@ -60,14 +60,14 @@ export function initNodes() {
       {
         id: '4',
         p: { x: -1, y: 1 },
-        item: null,
+        item: { tick: 0 },
         inputs: [{ id: '3' }],
         outputs: [{ id: '5' }],
       },
       {
         id: '5',
         p: { x: -1, y: 0 },
-        item: null,
+        item: { tick: 0 },
         inputs: [{ id: '4' }],
         outputs: [{ id: '0' }],
       },
