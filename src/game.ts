@@ -7,7 +7,13 @@ import { shuffle as _shuffle } from './util'
 import { ZVec2 } from './vec2'
 
 const SHUFFLE: boolean = true
-const rng = new Prando(0)
+
+const SEED: number | undefined = undefined
+const seed = SEED ?? Math.floor(Math.random() * 1000)
+
+console.log(`seed: ${seed}`)
+
+const rng = new Prando(seed)
 
 const shuffle = SHUFFLE
   ? _shuffle(rng.next.bind(rng))
@@ -33,7 +39,13 @@ export const Node = z.strictObject({
 })
 export type Node = z.infer<typeof Node>
 
-export function initNodes() {
+export const State = z.strictObject({
+  tick: z.number(),
+  nodes: z.map(z.string(), Node),
+})
+export type State = z.infer<typeof State>
+
+export function initState(): State {
   const nodes = new Map<string, Node>()
 
   ;(
@@ -99,10 +111,16 @@ export function initNodes() {
     nodes.set(node.id, node)
   })
 
-  return nodes
+  return {
+    tick: 0,
+    nodes,
+  }
 }
 
-export function step(nodes: Map<string, Node>) {
+export function step(state: State) {
+  state.tick += 1
+  const { nodes } = state
+
   function refToNode({ id }: NodeRef) {
     const node = nodes.get(id)
     invariant(node)
@@ -132,7 +150,7 @@ export function step(nodes: Map<string, Node>) {
     const outputs = shuffle(node.outputs.map(refToNode))
 
     for (const output of outputs) {
-      if (path.has(output)) {
+      if (path.has(output) && output.item !== null) {
         // existing loops take precedence
         if (!loop && node.item) {
           loop = { root: output, item: node.item }

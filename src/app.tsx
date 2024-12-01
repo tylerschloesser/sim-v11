@@ -1,7 +1,7 @@
 import { enableMapSet } from 'immer'
 import { useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
-import { initNodes, Node, NodeItem, step } from './game'
+import { initState, Node, NodeItem, step } from './game'
 import { Vec2 } from './vec2'
 import { ViewportContainer } from './viewport-container'
 
@@ -20,7 +20,9 @@ interface ItemModel {
 function Canvas({ viewport }: { viewport: Vec2 }) {
   const size = Math.min(viewport.x, viewport.y) / 5
 
-  const [nodes, setNodes] = useImmer(initNodes)
+  const [state, setState] = useImmer(initState)
+
+  const { nodes } = state
 
   useEffect(() => {
     const controller = new AbortController()
@@ -30,14 +32,14 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
       'keyup',
       (ev) => {
         if (ev.key === 'Enter') {
-          setNodes(step)
+          setState(step)
         }
       },
       { signal },
     )
 
     const interval = self.setInterval(() => {
-      // setNodes(step)
+      setState(step)
     }, 100)
 
     return () => {
@@ -75,8 +77,6 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
       )
       .sort((a, b) => a.id.localeCompare(b.id))
   }, [nodes])
-
-  console.log('re-render')
 
   return (
     <>
