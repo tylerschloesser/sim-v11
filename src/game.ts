@@ -80,9 +80,10 @@ function step(nodes: Map<string, Node>) {
 
     const outputs = node.outputs.map(refToNode)
     for (const output of outputs) {
-      if (!seen.has(output)) {
-        visit(output)
+      if (seen.has(output)) {
+        continue
       }
+      visit(output)
     }
 
     if (node.item) {
