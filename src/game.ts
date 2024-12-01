@@ -78,6 +78,10 @@ function step(nodes: Map<string, Node>) {
     invariant(!path.has(node))
     path.add(node)
 
+    if (node.item) {
+      node.item.tick += 1
+    }
+
     const outputs = node.outputs.map(refToNode)
     for (const output of outputs) {
       if (path.has(output)) {
@@ -88,19 +92,15 @@ function step(nodes: Map<string, Node>) {
         continue
       }
       visit(output)
-    }
 
-    if (node.item) {
-      node.item.tick += 1
-
-      // first output has priority
-      for (const output of outputs) {
-        if (output.item === null) {
-          output.item = node.item
-          output.item.tick = 0
-          node.item = null
-          break
-        }
+      if (
+        node.item &&
+        node.item.tick > 0 &&
+        output.item === null
+      ) {
+        output.item = node.item
+        output.item.tick = 0
+        node.item = null
       }
     }
 
