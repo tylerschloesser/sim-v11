@@ -139,6 +139,10 @@ export function step(nodes: Map<string, Node>) {
         visit(output)
       }
 
+      if (node.item?.tick && output.item !== null) {
+        console.log(`stuck at ${node.id} -> ${output.id}`)
+      }
+
       if (
         node.item &&
         node.item.tick > 0 &&
