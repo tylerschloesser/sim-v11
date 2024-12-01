@@ -1,3 +1,4 @@
+import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { ZVec2 } from './vec2'
@@ -101,6 +102,13 @@ function step(nodes: Map<string, Node>) {
   }
 }
 
-step(NODES)
-step(NODES)
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+})
+
 console.log(NODES)
+rl.on('line', () => {
+  step(NODES)
+  console.log(NODES)
+})
