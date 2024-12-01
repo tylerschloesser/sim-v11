@@ -83,6 +83,8 @@ function step(nodes: Map<string, Node>) {
     }
 
     const outputs = node.outputs.map(refToNode)
+
+    // first output has priority
     for (const output of outputs) {
       if (path.has(output)) {
         console.log('TODO loop detected')
