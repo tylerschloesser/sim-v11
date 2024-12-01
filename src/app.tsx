@@ -1,6 +1,11 @@
+import { enableMapSet } from 'immer'
+import { useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
+import { initNodes, step } from './game'
 import { Vec2 } from './vec2'
 import { ViewportContainer } from './viewport-container'
+
+enableMapSet()
 
 interface Cell {
   p: Vec2
@@ -9,17 +14,44 @@ interface Cell {
 function Canvas({ viewport }: { viewport: Vec2 }) {
   const size = Math.min(viewport.x, viewport.y) / 5
 
-  const [cells] = useImmer(
-    () =>
-      [
-        {
-          p: new Vec2(0, 0),
-        },
-        {
-          p: new Vec2(1, 0),
-        },
-      ] satisfies Cell[],
-  )
+  const [nodes, setNodes] = useImmer(initNodes)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    const { signal } = controller
+
+    window.addEventListener(
+      'keyup',
+      (ev) => {
+        if (ev.key === 'Enter') {
+          setNodes(step)
+        }
+      },
+      { signal },
+    )
+
+    const interval = self.setInterval(() => {
+      setNodes(step)
+    }, 100)
+
+    return () => {
+      controller.abort()
+      self.clearInterval(interval)
+    }
+  }, [])
+
+  const cells = useMemo(() => {
+    return Array.from(nodes.values())
+      .filter((node) => node.item)
+      .map(
+        (node) =>
+          ({
+            p: new Vec2(node.p.x, node.p.y).add(
+              new Vec2(2, 2),
+            ),
+          }) satisfies Cell,
+      )
+  }, [nodes])
 
   return (
     <>
@@ -42,7 +74,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
 export function App() {
   return (
     <div className="p-4 w-dvw h-dvh flex">
-      <ViewportContainer className="flex-1 relative">
+      <ViewportContainer className="relative flex-1">
         {(viewport) =>
           viewport ? <Canvas viewport={viewport} /> : null
         }

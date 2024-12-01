@@ -7,6 +7,9 @@ export class Vec2 {
     this.x = x
     this.y = y
   }
+  add(v: Vec2) {
+    return new Vec2(this.x + v.x, this.y + v.y)
+  }
 }
 
 export const ZVec2 = z.strictObject({

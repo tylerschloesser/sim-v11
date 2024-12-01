@@ -93,7 +93,7 @@ export function initNodes() {
   return nodes
 }
 
-function step(nodes: Map<string, Node>) {
+export function step(nodes: Map<string, Node>) {
   function refToNode({ id }: NodeRef) {
     const node = nodes.get(id)
     invariant(node)
