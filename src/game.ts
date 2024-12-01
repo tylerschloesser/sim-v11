@@ -34,8 +34,7 @@ const NODES = new Map<string, Node>()
       p: { x: 0, y: 0 },
       item: { tick: 0 },
       inputs: [{ id: '3' }, { id: '5' }],
-      // inputs: [],
-      outputs: [{ id: '1' }],
+      outputs: [{ id: '1' }, { id: '6' }],
     },
     {
       id: '1',
@@ -50,7 +49,6 @@ const NODES = new Map<string, Node>()
       item: null,
       inputs: [{ id: '1' }],
       outputs: [{ id: '3' }],
-      // outputs: [],
     },
     {
       id: '3',
@@ -72,6 +70,20 @@ const NODES = new Map<string, Node>()
       item: null,
       inputs: [{ id: '4' }],
       outputs: [{ id: '0' }],
+    },
+    {
+      id: '6',
+      p: { x: 0, y: -1 },
+      item: null,
+      inputs: [{ id: '0' }],
+      outputs: [{ id: '7' }],
+    },
+    {
+      id: '7',
+      p: { x: -1, y: -1 },
+      item: null,
+      inputs: [{ id: '6' }],
+      outputs: [{ id: '5' }],
     },
   ] satisfies Node[]
 ).forEach((node) => {
