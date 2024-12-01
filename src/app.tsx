@@ -7,7 +7,12 @@ import { ViewportContainer } from './viewport-container'
 
 enableMapSet()
 
-interface Cell {
+interface NodeModel {
+  id: string
+  p: Vec2
+}
+
+interface ItemModel {
   id: string
   p: Vec2
 }
@@ -41,7 +46,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
     }
   }, [])
 
-  const cells = useMemo(() => {
+  const itemModels = useMemo(() => {
     return Array.from(nodes.values())
       .filter(
         (node): node is Node & { item: NodeItem } =>
@@ -54,7 +59,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
             p: new Vec2(node.p.x, node.p.y).add(
               new Vec2(2, 2),
             ),
-          }) satisfies Cell,
+          }) satisfies ItemModel,
       )
       .sort((a, b) => a.id.localeCompare(b.id))
   }, [nodes])
@@ -63,7 +68,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
 
   return (
     <>
-      {cells.map((cell) => (
+      {itemModels.map((cell) => (
         <div
           key={cell.id}
           className="absolute border-2 border-white transition-transform"
