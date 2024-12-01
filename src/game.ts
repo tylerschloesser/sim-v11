@@ -30,8 +30,8 @@ const NODES = new Map<string, Node>()
       id: '0',
       p: { x: 0, y: 0 },
       item: { tick: 0 },
-      // inputs: [{ id: '3' }],
-      inputs: [],
+      inputs: [{ id: '3' }],
+      // inputs: [],
       outputs: [{ id: '1' }],
     },
     {
@@ -46,16 +46,16 @@ const NODES = new Map<string, Node>()
       p: { x: 1, y: 1 },
       item: null,
       inputs: [{ id: '1' }],
-      // outputs: [{ id: '3' }],
-      outputs: [],
+      outputs: [{ id: '3' }],
+      // outputs: [],
     },
-    // {
-    //   id: '3',
-    //   p: { x: 0, y: 1 },
-    //   item: null,
-    //   inputs: [{ id: '2' }],
-    //   outputs: [{ id: '0' }],
-    // },
+    {
+      id: '3',
+      p: { x: 0, y: 1 },
+      item: null,
+      inputs: [{ id: '2' }],
+      outputs: [{ id: '0' }],
+    },
   ] satisfies Node[]
 ).forEach((node) => {
   NODES.set(node.id, node)
@@ -69,10 +69,14 @@ function step(nodes: Map<string, Node>) {
   }
 
   const seen = new Set<Node>()
+  const path = new Set<Node>()
 
   function visit(node: Node) {
     invariant(!seen.has(node))
     seen.add(node)
+
+    invariant(!path.has(node))
+    path.add(node)
 
     const outputs = node.outputs.map(refToNode)
     for (const output of outputs) {
@@ -94,11 +98,14 @@ function step(nodes: Map<string, Node>) {
         }
       }
     }
+
+    path.delete(node)
   }
 
   for (const root of nodes.values()) {
     if (!seen.has(root)) {
       visit(root)
+      invariant(path.size === 0)
     }
   }
 }
