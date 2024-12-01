@@ -1,13 +1,14 @@
 import { enableMapSet } from 'immer'
 import { useEffect, useMemo } from 'react'
 import { useImmer } from 'use-immer'
-import { initNodes, step } from './game'
+import { initNodes, Node, NodeItem, step } from './game'
 import { Vec2 } from './vec2'
 import { ViewportContainer } from './viewport-container'
 
 enableMapSet()
 
 interface Cell {
+  id: string
   p: Vec2
 }
 
@@ -31,7 +32,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
     )
 
     const interval = self.setInterval(() => {
-      setNodes(step)
+      // setNodes(step)
     }, 100)
 
     return () => {
@@ -42,30 +43,38 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
 
   const cells = useMemo(() => {
     return Array.from(nodes.values())
-      .filter((node) => node.item)
+      .filter(
+        (node): node is Node & { item: NodeItem } =>
+          node.item !== null,
+      )
       .map(
         (node) =>
           ({
+            id: node.item.id,
             p: new Vec2(node.p.x, node.p.y).add(
               new Vec2(2, 2),
             ),
           }) satisfies Cell,
       )
+      .sort((a, b) => a.id.localeCompare(b.id))
   }, [nodes])
+
+  console.log('re-render')
 
   return (
     <>
-      {cells.map((cell, i) => (
+      {cells.map((cell) => (
         <div
-          key={i}
-          className="absolute border-2 border-white"
+          key={cell.id}
+          className="absolute border-2 border-white transition-transform duration-500"
           style={{
             width: `${size}px`,
             height: `${size}px`,
-            left: `${cell.p.x * size}px`,
-            top: `${cell.p.y * size}px`,
+            transform: `translate(${cell.p.x * size}px, ${cell.p.y * size}px)`,
           }}
-        />
+        >
+          {cell.id}
+        </div>
       ))}
     </>
   )

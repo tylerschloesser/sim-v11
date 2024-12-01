@@ -1,4 +1,5 @@
 import { identity, shuffle } from 'lodash-es'
+// import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { ZVec2 } from './vec2'
@@ -11,6 +12,7 @@ export const NodeRef = z.strictObject({
 export type NodeRef = z.infer<typeof NodeRef>
 
 export const NodeItem = z.strictObject({
+  id: z.string(),
   tick: z.number(),
 })
 export type NodeItem = z.infer<typeof NodeItem>
@@ -32,7 +34,7 @@ export function initNodes() {
       {
         id: '0',
         p: { x: 0, y: 0 },
-        item: { tick: 0 },
+        item: { id: '0', tick: 0 },
         inputs: [{ id: '3' }, { id: '5' }],
         outputs: [{ id: '1' }, { id: '6' }],
       },
@@ -60,14 +62,14 @@ export function initNodes() {
       {
         id: '4',
         p: { x: -1, y: 1 },
-        item: { tick: 0 },
+        item: { id: '1', tick: 0 },
         inputs: [{ id: '3' }],
         outputs: [{ id: '5' }],
       },
       {
         id: '5',
         p: { x: -1, y: 0 },
-        item: { tick: 0 },
+        item: { id: '2', tick: 0 },
         inputs: [{ id: '4' }],
         outputs: [{ id: '0' }],
       },
