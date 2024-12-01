@@ -7,7 +7,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
   return (
     <>
       <div
-        className="absolute bg-gray-100"
+        className="absolute border-2 border-white"
         style={{
           width: `${size}px`,
           height: `${size}px`,
