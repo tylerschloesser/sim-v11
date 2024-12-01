@@ -140,7 +140,9 @@ function step(nodes: Map<string, Node>) {
     path.delete(node)
   }
 
-  for (const root of nodes.values()) {
+  for (const root of (SHUFFLE ? shuffle : identity<Node[]>)(
+    Array.from(nodes.values()),
+  )) {
     if (!seen.has(root)) {
       visit(root)
       invariant(path.size === 0)
