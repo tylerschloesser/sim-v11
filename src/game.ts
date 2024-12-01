@@ -102,7 +102,11 @@ export function step(nodes: Map<string, Node>) {
 
   const seen = new Set<Node>()
   const path = new Set<Node>()
-  const loop = new Map<Node, NodeItem>()
+
+  let loop: {
+    root: Node
+    item: NodeItem
+  } | null = null
 
   function visit(node: Node) {
     invariant(!seen.has(node))
@@ -122,8 +126,9 @@ export function step(nodes: Map<string, Node>) {
 
     for (const output of outputs) {
       if (path.has(output)) {
-        if (!loop.has(output) && node.item) {
-          loop.set(output, node.item)
+        // existing loops take precedence
+        if (!loop && node.item) {
+          loop = { root: node, item: node.item }
           node.item = null
         }
         continue
@@ -144,12 +149,11 @@ export function step(nodes: Map<string, Node>) {
       }
     }
 
-    const item = loop.get(node)
-    if (item) {
+    if (loop?.root === node) {
       invariant(node.item === null)
-      node.item = item
+      node.item = loop.item
       node.item.tick = 0
-      loop.delete(node)
+      loop = null
     }
 
     path.delete(node)
@@ -161,7 +165,7 @@ export function step(nodes: Map<string, Node>) {
     if (!seen.has(root)) {
       visit(root)
       invariant(path.size === 0)
-      invariant(loop.size === 0)
+      invariant(loop === null)
     }
   }
 }
