@@ -135,10 +135,9 @@ export function step(nodes: Map<string, Node>) {
         }
         continue
       }
-      if (seen.has(output)) {
-        continue
+      if (!seen.has(output)) {
+        visit(output)
       }
-      visit(output)
 
       if (
         node.item &&

@@ -66,7 +66,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
       {cells.map((cell) => (
         <div
           key={cell.id}
-          className="absolute border-2 border-white transition-transform duration-500"
+          className="absolute border-2 border-white transition-transform"
           style={{
             width: `${size}px`,
             height: `${size}px`,
