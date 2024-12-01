@@ -135,7 +135,7 @@ export function step(nodes: Map<string, Node>) {
       if (path.has(output)) {
         // existing loops take precedence
         if (!loop && node.item) {
-          loop = { root: node, item: node.item }
+          loop = { root: output, item: node.item }
           node.item = null
         }
         continue
