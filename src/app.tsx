@@ -46,6 +46,18 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
     }
   }, [])
 
+  const nodeModels = useMemo(() => {
+    return Array.from(nodes.values()).map(
+      (node) =>
+        ({
+          id: node.id,
+          p: new Vec2(node.p.x, node.p.y).add(
+            new Vec2(2, 2),
+          ),
+        }) satisfies NodeModel,
+    )
+  }, [nodes])
+
   const itemModels = useMemo(() => {
     return Array.from(nodes.values())
       .filter(
@@ -68,17 +80,32 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
 
   return (
     <>
-      {itemModels.map((cell) => (
+      {nodeModels.map((node) => (
         <div
-          key={cell.id}
-          className="absolute border-2 border-white transition-transform"
+          key={node.id}
+          className="absolute border-2 border-white"
           style={{
             width: `${size}px`,
             height: `${size}px`,
-            transform: `translate(${cell.p.x * size}px, ${cell.p.y * size}px)`,
+            transform: `translate(${node.p.x * size}px, ${node.p.y * size}px)`,
           }}
         >
-          {cell.id}
+          {node.id}
+        </div>
+      ))}
+      {itemModels.map((item) => (
+        <div
+          key={item.id}
+          className="absolute transition-transform p-4"
+          style={{
+            width: `${size}px`,
+            height: `${size}px`,
+            transform: `translate(${item.p.x * size}px, ${item.p.y * size}px)`,
+          }}
+        >
+          <div className="w-full h-full border-2 border-emerald-400">
+            {item.id}
+          </div>
         </div>
       ))}
     </>
