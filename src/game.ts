@@ -1,3 +1,4 @@
+import { shuffle } from 'lodash-es'
 import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
@@ -54,7 +55,14 @@ const NODES = new Map<string, Node>()
       p: { x: 0, y: 1 },
       item: null,
       inputs: [{ id: '2' }],
-      outputs: [{ id: '0' }],
+      outputs: [{ id: '0' }, { id: '4' }],
+    },
+    {
+      id: '4',
+      p: { x: 0, y: 2 },
+      item: null,
+      inputs: [{ id: '3' }],
+      outputs: [],
     },
   ] satisfies Node[]
 ).forEach((node) => {
@@ -87,9 +95,9 @@ function step(nodes: Map<string, Node>) {
       node.item.tick += 1
     }
 
-    const outputs = node.outputs.map(refToNode)
+    // randomize output order
+    const outputs = shuffle(node.outputs.map(refToNode))
 
-    // first output has priority
     for (const output of outputs) {
       if (path.has(output)) {
         loop = {
