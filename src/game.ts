@@ -1,8 +1,10 @@
-import { shuffle } from 'lodash-es'
+import { identity, shuffle } from 'lodash-es'
 import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import { ZVec2 } from './vec2'
+
+const SHUFFLE: boolean = false
 
 export const NodeRef = z.strictObject({
   id: z.string(),
@@ -31,7 +33,7 @@ const NODES = new Map<string, Node>()
       id: '0',
       p: { x: 0, y: 0 },
       item: { tick: 0 },
-      inputs: [{ id: '3' }],
+      inputs: [{ id: '3' }, { id: '5' }],
       // inputs: [],
       outputs: [{ id: '1' }],
     },
@@ -59,10 +61,17 @@ const NODES = new Map<string, Node>()
     },
     {
       id: '4',
-      p: { x: 0, y: 2 },
+      p: { x: -1, y: 1 },
       item: null,
       inputs: [{ id: '3' }],
-      outputs: [],
+      outputs: [{ id: '5' }],
+    },
+    {
+      id: '5',
+      p: { x: -1, y: 0 },
+      item: null,
+      inputs: [{ id: '4' }],
+      outputs: [{ id: '0' }],
     },
   ] satisfies Node[]
 ).forEach((node) => {
@@ -96,7 +105,9 @@ function step(nodes: Map<string, Node>) {
     }
 
     // randomize output order
-    const outputs = shuffle(node.outputs.map(refToNode))
+    const outputs = (SHUFFLE ? shuffle : identity<Node[]>)(
+      node.outputs.map(refToNode),
+    )
 
     for (const output of outputs) {
       if (path.has(output)) {
