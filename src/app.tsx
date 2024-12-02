@@ -39,8 +39,8 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
     )
 
     const interval = self.setInterval(() => {
-      setState(step)
-    }, 100)
+      // setState(step)
+    }, 10)
 
     return () => {
       controller.abort()

@@ -8,7 +8,7 @@ import { ZVec2 } from './vec2'
 
 const SHUFFLE: boolean = true
 
-const SEED: number | undefined = undefined
+const SEED: number | undefined = 928
 const seed = SEED ?? Math.floor(Math.random() * 1000)
 
 console.log(`seed: ${seed}`)
@@ -132,7 +132,7 @@ export function step(state: State) {
 
   let loop: {
     root: Node
-    item: NodeItem
+    item: NodeItem | null
   } | null = null
 
   function visit(node: Node) {
@@ -150,20 +150,15 @@ export function step(state: State) {
     const outputs = shuffle(node.outputs.map(refToNode))
 
     for (const output of outputs) {
-      if (path.has(output) && output.item !== null) {
-        // existing loops take precedence
-        if (!loop && node.item) {
-          loop = { root: output, item: node.item }
-          node.item = null
-        }
-        continue
-      }
-      if (!seen.has(output)) {
-        visit(output)
+      if (path.has(output)) {
+        invariant(loop === null)
+        loop = { root: output, item: node.item }
+        node.item = null
+        break
       }
 
-      if (node.item?.tick && output.item !== null) {
-        console.log(`stuck at ${node.id} -> ${output.id}`)
+      if (!seen.has(output)) {
+        visit(output)
       }
 
       if (
@@ -175,12 +170,17 @@ export function step(state: State) {
         output.item.tick = 0
         node.item = null
       }
+
+      if (loop) {
+        break
+      }
     }
 
     if (loop?.root === node) {
-      invariant(node.item === null)
-      node.item = loop.item
-      node.item.tick = 0
+      if (loop.item) {
+        node.item = loop.item
+        node.item.tick = 0
+      }
       loop = null
     }
 
