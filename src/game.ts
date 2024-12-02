@@ -60,7 +60,7 @@ export function initState(): State {
       {
         id: '1',
         p: { x: 1, y: 0 },
-        item: null,
+        item: { id: '4', tick: 0 },
         inputs: [{ id: '0' }],
         outputs: [{ id: '2' }],
       },
