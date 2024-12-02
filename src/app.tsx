@@ -17,7 +17,7 @@ interface ItemModel {
   p: Vec2
 }
 
-function Canvas({ viewport }: { viewport: Vec2 }) {
+function CanvasV1({ viewport }: { viewport: Vec2 }) {
   const size = Math.min(viewport.x, viewport.y) / 5
 
   const [state, setState] = useImmer(initState)
@@ -117,7 +117,7 @@ export function App() {
     <div className="p-4 w-dvw h-dvh flex">
       <ViewportContainer className="relative flex-1">
         {(viewport) =>
-          viewport ? <Canvas viewport={viewport} /> : null
+          viewport ? <CanvasV1 viewport={viewport} /> : null
         }
       </ViewportContainer>
     </div>
