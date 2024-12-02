@@ -47,42 +47,28 @@ export type State = z.infer<typeof State>
 export function initState(): State {
   const nodes = new Map<string, Node>()
 
-  ;(
-    [
-      {
-        id: '0',
-        p: { x: 0, y: 0 },
-        item: { id: '0', tick: 0 },
-        outputs: [{ id: '1' }],
-      },
-      {
-        id: '1',
-        p: { x: 0, y: 1 },
-        item: { id: '1', tick: 0 },
-        outputs: [{ id: '2' }],
-      },
-      {
-        id: '2',
-        p: { x: 1, y: 1 },
-        item: null,
-        outputs: [{ id: '3' }],
-      },
-      {
-        id: '3',
-        p: { x: 1, y: 0 },
-        item: null,
-        outputs: [{ id: '0' }, { id: '4' }],
-      },
-      {
-        id: '4',
-        p: { x: 2, y: 0 },
-        item: null,
-        outputs: [],
-      },
-    ] satisfies Node[]
-  ).forEach((node) => {
-    nodes.set(node.id, node)
-  })
+  let nextItemId = 0
+  function addNode(
+    id: string,
+    [px, py]: [number, number],
+    outputIds: string[],
+    item: boolean = false,
+  ) {
+    invariant(!nodes.has(id))
+    nodes.set(id, {
+      id,
+      p: { x: px, y: py },
+      item: item
+        ? { id: `${nextItemId++}`, tick: 0 }
+        : null,
+      outputs: outputIds.map((id) => ({ id })),
+    })
+  }
+
+  addNode('0', [0, 0], ['1'], true)
+  addNode('1', [0, 1], ['2'])
+  addNode('2', [1, 1], ['3'])
+  addNode('3', [1, 0], ['0'])
 
   return {
     tick: 0,
