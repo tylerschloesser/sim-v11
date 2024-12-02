@@ -30,8 +30,12 @@ export const NodeItem = z.strictObject({
 })
 export type NodeItem = z.infer<typeof NodeItem>
 
+export const NodeType = z.enum(['Normal', 'Consumer'])
+export type NodeType = z.infer<typeof NodeType>
+
 export const Node = z.strictObject({
   id: z.string(),
+  type: NodeType,
   p: ZVec2,
   item: NodeItem.nullable(),
   outputs: NodeRef.array(),
@@ -59,6 +63,7 @@ export function initState(): State {
     invariant(!nodes.has(id))
     nodes.set(id, {
       id,
+      type: NodeType.enum.Normal,
       p: { x: px, y: py },
       item: item
         ? { id: `${nextItemId++}`, tick: 0 }

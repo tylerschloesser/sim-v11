@@ -47,6 +47,8 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       if (ev.key === 'Enter') {
         setActive((draft) => {
           draft.value = ev.type === 'keydown'
+          draft.once =
+            ev.type === 'keydown' ? false : draft.once
         })
       } else if (ev.key === 'a' && ev.type === 'keyup') {
         setActive((draft) => {
