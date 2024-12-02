@@ -8,7 +8,7 @@ import { ZVec2 } from './vec2'
 
 const SHUFFLE: boolean = true
 
-const SEED: number | undefined = 928
+const SEED: number | undefined = undefined
 const seed = SEED ?? Math.floor(Math.random() * 1000)
 
 console.log(`seed: ${seed}`)
@@ -68,7 +68,20 @@ export function initState(): State {
   addNode('0', [0, 0], ['1'], true)
   addNode('1', [0, 1], ['2'])
   addNode('2', [1, 1], ['3'])
-  addNode('3', [1, 0], ['0'])
+  addNode('3', [1, 0], ['0', '4'])
+
+  addNode('4', [2, 0], ['5', '6'])
+  addNode('5', [2, 1], ['2'])
+
+  addNode('6', [3, 0], ['7'])
+  addNode('7', [4, 0], ['8'])
+  addNode('8', [4, 1], ['9'])
+  addNode('9', [4, 2], ['10'])
+  addNode('10', [4, 3], ['11'], true)
+  addNode('11', [3, 3], ['12'])
+  addNode('12', [2, 3], ['13'])
+  addNode('13', [1, 3], ['14'], true)
+  addNode('14', [1, 2], ['2'])
 
   return {
     tick: 0,
