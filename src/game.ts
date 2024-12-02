@@ -122,12 +122,19 @@ export function step(state: State) {
     invariant(!seen.has(node))
     seen.add(node)
 
-    invariant(!path.has(node))
-    path.add(node)
-
     if (node.item) {
       node.item.tick += 1
     }
+
+    if (node.type === NodeType.enum.Consumer) {
+      if (node.item && node.item.tick > 0) {
+        node.item = null
+      }
+      return
+    }
+
+    invariant(!path.has(node))
+    path.add(node)
 
     // randomize output order
     const outputs = shuffle(node.outputs.map(refToNode))
