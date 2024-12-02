@@ -1,7 +1,7 @@
-import { stat } from 'fs'
+import clsx from 'clsx'
 import { enableMapSet } from 'immer'
 import * as PIXI from 'pixi.js'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { initState, Node, NodeItem, step } from './game'
@@ -13,11 +13,16 @@ enableMapSet()
 interface NodeModel {
   id: string
   p: Vec2
+  arrows: (0 | 90 | 180 | 270)[]
 }
 
 interface ItemModel {
   id: string
   p: Vec2
+}
+
+function radiansToDegrees(radians: number) {
+  return (radians * 180) / Math.PI
 }
 
 function CanvasV1({ viewport }: { viewport: Vec2 }) {
@@ -52,11 +57,35 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
   }, [])
 
   const nodeModels = useMemo(() => {
+    function refToNode({ id }: { id: string }) {
+      const node = nodes.get(id)
+      invariant(node)
+      return node
+    }
     return Array.from(nodes.values()).map(
       (node) =>
         ({
           id: node.id,
           p: new Vec2(node.p.x, node.p.y),
+          arrows: node.outputs
+            .map(refToNode)
+            .map((output) => {
+              const dx = output.p.x - node.p.x
+              const dy = output.p.y - node.p.y
+              let angle = radiansToDegrees(
+                Math.atan2(dy, dx),
+              )
+              angle = (angle + 360) % 360
+              switch (angle) {
+                case 0:
+                case 90:
+                case 180:
+                case 270:
+                  return angle
+                default:
+                  invariant(false)
+              }
+            }),
         }) satisfies NodeModel,
     )
   }, [nodes])
@@ -82,14 +111,35 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       {nodeModels.map((node) => (
         <div
           key={node.id}
-          className="absolute inset-0 border-2 border-white"
+          className="absolute inset-0"
           style={{
             width: `${size}px`,
             height: `${size}px`,
             transform: `translate(${node.p.x * size}px, ${node.p.y * size}px)`,
           }}
         >
-          {node.id}
+          <div className="w-full h-full border-2 border-white">
+            {node.id}
+          </div>
+          <div
+            className={clsx(
+              'absolute inset-0 flex items-center justify-end',
+              ...node.arrows.map((rotate) => {
+                switch (rotate) {
+                  case 0:
+                    return 'rotate-0'
+                  case 90:
+                    return 'rotate-90'
+                  case 180:
+                    return 'rotate-180'
+                  case 270:
+                    return '-rotate-90'
+                }
+              }),
+            )}
+          >
+            &rarr;
+          </div>
         </div>
       ))}
       {itemModels.map((item) => (
