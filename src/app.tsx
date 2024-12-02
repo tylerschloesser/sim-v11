@@ -1,5 +1,8 @@
+import { stat } from 'fs'
 import { enableMapSet } from 'immer'
-import { useEffect, useMemo, useRef } from 'react'
+import * as PIXI from 'pixi.js'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { initState, Node, NodeItem, step } from './game'
 import { Vec2 } from './vec2'
@@ -113,8 +116,55 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
 }
 
 function CanvasV2({ viewport }: { viewport: Vec2 }) {
-  const ref = useRef<HTMLDivElement>(null)
-  return <div ref={ref} className="w-full h-full" />
+  const container = useRef<HTMLDivElement>(null)
+  const state = useRef<{
+    canvas: HTMLCanvasElement
+    app: PIXI.Application
+  } | null>(null)
+
+  useEffect(() => {
+    invariant(container.current)
+
+    const canvas = document.createElement('canvas')
+    canvas.style.width = '100%'
+    canvas.style.height = '100%'
+    canvas.width = viewport.x
+    canvas.height = viewport.y
+
+    container.current.appendChild(canvas)
+
+    const app = new PIXI.Application()
+    app.init({
+      canvas,
+      width: canvas.width,
+      height: canvas.height,
+    })
+
+    state.current = { canvas, app }
+
+    return () => {
+      canvas.remove()
+      state.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    if (
+      !state.current ||
+      (state.current.canvas.width === viewport.x &&
+        state.current.canvas.height === viewport.y)
+    ) {
+      return
+    }
+
+    state.current.canvas.width = viewport.x
+    state.current.canvas.height = viewport.y
+    if (typeof state.current.app.resize === 'function') {
+      state.current.app.resize()
+    }
+  }, [viewport])
+
+  return <div ref={container} className="w-full h-full" />
 }
 
 export function App() {
