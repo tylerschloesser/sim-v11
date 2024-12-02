@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { enableMapSet } from 'immer'
 import * as PIXI from 'pixi.js'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { initState, Node, NodeItem, step } from './game'
@@ -32,29 +32,31 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
 
   const { nodes } = state
 
+  const [active, setActive] = useState(false)
+
   useEffect(() => {
-    const controller = new AbortController()
-    const { signal } = controller
-
-    window.addEventListener(
-      'keyup',
-      (ev) => {
-        if (ev.key === 'Enter') {
-          setState(step)
-        }
-      },
-      { signal },
-    )
-
-    const interval = self.setInterval(() => {
-      // setState(step)
-    }, 10)
-
+    function listener(ev: KeyboardEvent) {
+      if (ev.key === 'Enter') {
+        setActive(ev.type === 'keydown')
+      }
+    }
+    window.addEventListener('keyup', listener)
+    window.addEventListener('keydown', listener)
     return () => {
-      controller.abort()
-      self.clearInterval(interval)
+      window.removeEventListener('keyup', listener)
+      window.removeEventListener('keydown', listener)
     }
   }, [])
+
+  useEffect(() => {
+    if (!active) return
+    const interval = self.setInterval(() => {
+      setState(step)
+    }, 100)
+    return () => {
+      self.clearInterval(interval)
+    }
+  }, [active])
 
   const nodeModels = useMemo(() => {
     function refToNode({ id }: { id: string }) {
