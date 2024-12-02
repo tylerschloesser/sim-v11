@@ -53,12 +53,12 @@ export function initState(): State {
         id: '0',
         p: { x: 0, y: 0 },
         item: { id: '0', tick: 0 },
-        outputs: [{ id: '1' }, { id: '6' }],
+        outputs: [{ id: '1' }],
       },
       {
         id: '1',
-        p: { x: 1, y: 0 },
-        item: { id: '4', tick: 0 },
+        p: { x: 0, y: 1 },
+        item: { id: '1', tick: 0 },
         outputs: [{ id: '2' }],
       },
       {
@@ -69,33 +69,9 @@ export function initState(): State {
       },
       {
         id: '3',
-        p: { x: 0, y: 1 },
+        p: { x: 1, y: 0 },
         item: null,
-        outputs: [{ id: '0' }, { id: '4' }],
-      },
-      {
-        id: '4',
-        p: { x: -1, y: 1 },
-        item: { id: '1', tick: 0 },
-        outputs: [{ id: '5' }],
-      },
-      {
-        id: '5',
-        p: { x: -1, y: 0 },
-        item: { id: '2', tick: 0 },
         outputs: [{ id: '0' }],
-      },
-      {
-        id: '6',
-        p: { x: 0, y: -1 },
-        item: null,
-        outputs: [{ id: '7' }],
-      },
-      {
-        id: '7',
-        p: { x: -1, y: -1 },
-        item: null,
-        outputs: [{ id: '5' }],
       },
     ] satisfies Node[]
   ).forEach((node) => {

@@ -56,9 +56,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       (node) =>
         ({
           id: node.id,
-          p: new Vec2(node.p.x, node.p.y).add(
-            new Vec2(2, 2),
-          ),
+          p: new Vec2(node.p.x, node.p.y),
         }) satisfies NodeModel,
     )
   }, [nodes])
@@ -73,9 +71,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
         (node) =>
           ({
             id: node.item.id,
-            p: new Vec2(node.p.x, node.p.y).add(
-              new Vec2(2, 2),
-            ),
+            p: new Vec2(node.p.x, node.p.y),
           }) satisfies ItemModel,
       )
       .sort((a, b) => a.id.localeCompare(b.id))
