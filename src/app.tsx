@@ -1,5 +1,5 @@
 import { enableMapSet } from 'immer'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useImmer } from 'use-immer'
 import { initState, Node, NodeItem, step } from './game'
 import { Vec2 } from './vec2'
@@ -83,7 +83,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       {nodeModels.map((node) => (
         <div
           key={node.id}
-          className="absolute border-2 border-white"
+          className="absolute inset-0 border-2 border-white"
           style={{
             width: `${size}px`,
             height: `${size}px`,
@@ -96,7 +96,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       {itemModels.map((item) => (
         <div
           key={item.id}
-          className="absolute transition-transform p-4"
+          className="absolute inset-0 transition-transform p-4"
           style={{
             width: `${size}px`,
             height: `${size}px`,
@@ -112,12 +112,22 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
   )
 }
 
+function CanvasV2({ viewport }: { viewport: Vec2 }) {
+  const ref = useRef<HTMLDivElement>(null)
+  return <div ref={ref} className="w-full h-full" />
+}
+
 export function App() {
   return (
     <div className="p-4 w-dvw h-dvh flex">
       <ViewportContainer className="relative flex-1">
         {(viewport) =>
-          viewport ? <CanvasV1 viewport={viewport} /> : null
+          viewport ? (
+            <>
+              <CanvasV2 viewport={viewport} />
+              <CanvasV1 viewport={viewport} />
+            </>
+          ) : null
         }
       </ViewportContainer>
     </div>
