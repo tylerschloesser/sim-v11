@@ -121,25 +121,20 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
           <div className="w-full h-full border-2 border-white">
             {node.id}
           </div>
-          <div
-            className={clsx(
-              'absolute inset-0 flex items-center justify-end',
-              ...node.arrows.map((rotate) => {
-                switch (rotate) {
-                  case 0:
-                    return 'rotate-0'
-                  case 90:
-                    return 'rotate-90'
-                  case 180:
-                    return 'rotate-180'
-                  case 270:
-                    return '-rotate-90'
-                }
-              }),
-            )}
-          >
-            &rarr;
-          </div>
+          {node.arrows.map((rotate) => (
+            <div
+              key={rotate}
+              className={clsx(
+                'absolute inset-0 flex items-center justify-end',
+                rotate === 0 && 'rotate-0',
+                rotate === 90 && 'rotate-90',
+                rotate === 180 && 'rotate-180',
+                rotate === 270 && '-rotate-90',
+              )}
+            >
+              &rarr;
+            </div>
+          ))}
         </div>
       ))}
       {itemModels.map((item) => (

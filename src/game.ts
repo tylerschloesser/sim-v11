@@ -71,7 +71,13 @@ export function initState(): State {
         id: '3',
         p: { x: 1, y: 0 },
         item: null,
-        outputs: [{ id: '0' }],
+        outputs: [{ id: '0' }, { id: '4' }],
+      },
+      {
+        id: '4',
+        p: { x: 2, y: 0 },
+        item: null,
+        outputs: [],
       },
     ] satisfies Node[]
   ).forEach((node) => {
