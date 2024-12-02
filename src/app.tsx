@@ -174,7 +174,9 @@ export function App() {
         {(viewport) =>
           viewport ? (
             <>
+              {/*
               <CanvasV2 viewport={viewport} />
+                */}
               <CanvasV1 viewport={viewport} />
             </>
           ) : null
