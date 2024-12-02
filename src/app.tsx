@@ -9,7 +9,13 @@ import {
 } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
-import { initState, Node, NodeItem, step } from './game'
+import {
+  initState,
+  Node,
+  NodeItem,
+  NodeType,
+  step,
+} from './game'
 import { Vec2 } from './vec2'
 import { ViewportContainer } from './viewport-container'
 
@@ -17,6 +23,7 @@ enableMapSet()
 
 interface NodeModel {
   id: string
+  type: NodeType
   p: Vec2
   arrows: (0 | 90 | 180 | 270)[]
 }
@@ -90,6 +97,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       (node) =>
         ({
           id: node.id,
+          type: node.type,
           p: new Vec2(node.p.x, node.p.y),
           arrows: node.outputs
             .map(refToNode)
@@ -156,7 +164,15 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
           }}
           onClick={() => onClickNode(node.id)}
         >
-          <div className="w-full h-full border-2 border-white">
+          <div
+            className={clsx(
+              'w-full h-full border-2',
+              node.type === NodeType.enum.Normal &&
+                'border-white',
+              node.type === NodeType.enum.Consumer &&
+                'border-red-400',
+            )}
+          >
             {node.id}
           </div>
           {node.arrows.map((rotate) => (

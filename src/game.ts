@@ -59,11 +59,12 @@ export function initState(): State {
     [px, py]: [number, number],
     outputIds: string[],
     item: boolean = false,
+    type: NodeType = NodeType.enum.Normal,
   ) {
     invariant(!nodes.has(id))
     nodes.set(id, {
       id,
-      type: NodeType.enum.Normal,
+      type,
       p: { x: px, y: py },
       item: item
         ? { id: `${nextItemId++}`, tick: 0 }
@@ -83,12 +84,14 @@ export function initState(): State {
   addNode('6', [3, 0], ['7'])
   addNode('7', [4, 0], ['8'])
   addNode('8', [4, 1], ['9'])
-  addNode('9', [4, 2], ['10'])
+  addNode('9', [4, 2], ['10', '15'])
   addNode('10', [4, 3], ['11'], true)
   addNode('11', [3, 3], ['12'])
   addNode('12', [2, 3], ['13'])
   addNode('13', [1, 3], ['14'], true)
   addNode('14', [1, 2], ['2'])
+
+  addNode('15', [5, 2], [], false, NodeType.enum.Consumer)
 
   return {
     tick: 0,
