@@ -41,6 +41,8 @@ export type Node = z.infer<typeof Node>
 export const State = z.strictObject({
   tick: z.number(),
   nodes: z.map(z.string(), Node),
+
+  nextItemId: z.number(),
 })
 export type State = z.infer<typeof State>
 
@@ -86,6 +88,7 @@ export function initState(): State {
   return {
     tick: 0,
     nodes,
+    nextItemId,
   }
 }
 

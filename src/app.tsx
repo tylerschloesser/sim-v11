@@ -1,7 +1,12 @@
 import clsx from 'clsx'
 import { enableMapSet } from 'immer'
 import * as PIXI from 'pixi.js'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { initState, Node, NodeItem, step } from './game'
@@ -32,12 +37,22 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
 
   const { nodes } = state
 
-  const [active, setActive] = useState(false)
+  const [active, setActive] = useImmer<{
+    value: boolean
+    once: boolean
+  }>({ value: false, once: false })
 
   useEffect(() => {
     function listener(ev: KeyboardEvent) {
       if (ev.key === 'Enter') {
-        setActive(ev.type === 'keydown')
+        setActive((draft) => {
+          draft.value = ev.type === 'keydown'
+        })
+      } else if (ev.key === 'a' && ev.type === 'keyup') {
+        setActive((draft) => {
+          draft.value = !draft.value
+          draft.once = true
+        })
       }
     }
     window.addEventListener('keyup', listener)
@@ -49,7 +64,12 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
   }, [])
 
   useEffect(() => {
-    if (!active) return
+    if (!active.value) {
+      if (!active.once) {
+        setState(step)
+      }
+      return
+    }
     const interval = self.setInterval(() => {
       setState(step)
     }, 100)
@@ -108,6 +128,19 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       .sort((a, b) => a.id.localeCompare(b.id))
   }, [nodes])
 
+  const onClickNode = useCallback((id: string) => {
+    setState((draft) => {
+      const node = draft.nodes.get(id)
+      invariant(node)
+      if (node.item === null) {
+        node.item = {
+          id: `${draft.nextItemId++}`,
+          tick: 0,
+        }
+      }
+    })
+  }, [])
+
   return (
     <>
       {nodeModels.map((node) => (
@@ -119,6 +152,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
             height: `${size}px`,
             transform: `translate(${node.p.x * size}px, ${node.p.y * size}px)`,
           }}
+          onClick={() => onClickNode(node.id)}
         >
           <div className="w-full h-full border-2 border-white">
             {node.id}
