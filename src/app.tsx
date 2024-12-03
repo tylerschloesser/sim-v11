@@ -12,6 +12,7 @@ import { useImmer } from 'use-immer'
 import {
   initState,
   Node,
+  NodeColor,
   NodeItem,
   NodeType,
   step,
@@ -149,6 +150,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
         node.item = {
           id: `${draft.nextItemId++}`,
           tick: 0,
+          color: NodeColor.enum.Green,
         }
       }
     })

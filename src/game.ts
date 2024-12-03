@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { shuffle as _shuffle } from './util'
 import { ZVec2 } from './vec2'
 
-const SHUFFLE: boolean = false
+const SHUFFLE: boolean = true
 
 const SEED: number | undefined = undefined
 const seed = SEED ?? Math.floor(Math.random() * 1000)
@@ -24,9 +24,12 @@ export const NodeRef = z.strictObject({
 })
 export type NodeRef = z.infer<typeof NodeRef>
 
+export const NodeColor = z.enum(['Green'])
+
 export const NodeItem = z.strictObject({
   id: z.string(),
   tick: z.number(),
+  color: NodeColor,
 })
 export type NodeItem = z.infer<typeof NodeItem>
 
@@ -71,7 +74,11 @@ export function initState(): State {
       type,
       p: { x: px, y: py },
       item: item
-        ? { id: `${nextItemId++}`, tick: 0 }
+        ? {
+            id: `${nextItemId++}`,
+            tick: 0,
+            color: NodeColor.enum.Green,
+          }
         : null,
       outputs: outputIds.map((id) => ({ id })),
     })
@@ -143,7 +150,11 @@ export function step(state: State) {
       invariant(node.outputs.length === 1)
       const output = refToNode(node.outputs.at(0)!)
       if (output.item === null && rng.next() < 0.1) {
-        node.item = { id: `${state.nextItemId++}`, tick: 0 }
+        node.item = {
+          id: `${state.nextItemId++}`,
+          tick: 0,
+          color: NodeColor.enum.Green,
+        }
       }
     }
 
