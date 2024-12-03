@@ -81,6 +81,9 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
     }
     const interval = self.setInterval(() => {
       setState(step)
+      setActive((draft) => {
+        draft.once = true
+      })
     }, 100)
     return () => {
       self.clearInterval(interval)
@@ -171,6 +174,8 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
                 'border-white',
               node.type === NodeType.enum.Consumer &&
                 'border-red-400',
+              node.type === NodeType.enum.Producer &&
+                'border-green-400',
             )}
           >
             {node.id}

@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { shuffle as _shuffle } from './util'
 import { ZVec2 } from './vec2'
 
-const SHUFFLE: boolean = true
+const SHUFFLE: boolean = false
 
 const SEED: number | undefined = undefined
 const seed = SEED ?? Math.floor(Math.random() * 1000)
@@ -30,7 +30,11 @@ export const NodeItem = z.strictObject({
 })
 export type NodeItem = z.infer<typeof NodeItem>
 
-export const NodeType = z.enum(['Normal', 'Consumer'])
+export const NodeType = z.enum([
+  'Normal',
+  'Consumer',
+  'Producer',
+])
 export type NodeType = z.infer<typeof NodeType>
 
 export const Node = z.strictObject({
@@ -92,6 +96,8 @@ export function initState(): State {
   addNode('14', [1, 2], ['2'])
 
   addNode('15', [5, 2], [], false, NodeType.enum.Consumer)
+  // prettier-ignore
+  addNode('16', [0, 3], ['13'], false, NodeType.enum.Producer)
 
   return {
     tick: 0,
@@ -131,6 +137,14 @@ export function step(state: State) {
         node.item = null
       }
       return
+    }
+
+    if (node.type === NodeType.enum.Producer) {
+      invariant(node.outputs.length === 1)
+      const output = refToNode(node.outputs.at(0)!)
+      if (output.item === null && rng.next() < 0.1) {
+        node.item = { id: `${state.nextItemId++}`, tick: 0 }
+      }
     }
 
     invariant(!path.has(node))
