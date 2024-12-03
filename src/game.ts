@@ -1,4 +1,4 @@
-import { identity } from 'lodash-es'
+import { identity, sample } from 'lodash-es'
 import Prando from 'prando'
 // import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
@@ -24,7 +24,8 @@ export const NodeRef = z.strictObject({
 })
 export type NodeRef = z.infer<typeof NodeRef>
 
-export const NodeColor = z.enum(['Green'])
+export const NodeColor = z.enum(['Green', 'Blue', 'Red'])
+export type NodeColor = z.infer<typeof NodeColor>
 
 export const NodeItem = z.strictObject({
   id: z.string(),
@@ -153,7 +154,7 @@ export function step(state: State) {
         node.item = {
           id: `${state.nextItemId++}`,
           tick: 0,
-          color: NodeColor.enum.Green,
+          color: sample(NodeColor.options),
         }
       }
     }

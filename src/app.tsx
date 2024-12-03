@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import { enableMapSet } from 'immer'
+import { sample } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import {
   useCallback,
@@ -32,6 +33,7 @@ interface NodeModel {
 interface ItemModel {
   id: string
   p: Vec2
+  color: NodeColor
 }
 
 function radiansToDegrees(radians: number) {
@@ -137,6 +139,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
           ({
             id: node.item.id,
             p: new Vec2(node.p.x, node.p.y),
+            color: node.item.color,
           }) satisfies ItemModel,
       )
       .sort((a, b) => a.id.localeCompare(b.id))
@@ -150,7 +153,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
         node.item = {
           id: `${draft.nextItemId++}`,
           tick: 0,
-          color: NodeColor.enum.Green,
+          color: sample(NodeColor.options),
         }
       }
     })
@@ -208,7 +211,17 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
             transform: `translate(${item.p.x * size}px, ${item.p.y * size}px)`,
           }}
         >
-          <div className="w-full h-full border-2 border-emerald-400">
+          <div
+            className={clsx(
+              'w-full h-full border-2',
+              item.color === NodeColor.enum.Green &&
+                'border-emerald-400',
+              item.color === NodeColor.enum.Blue &&
+                'border-blue-400',
+              item.color === NodeColor.enum.Red &&
+                'border-red-400',
+            )}
+          >
             {item.id}
           </div>
         </div>
