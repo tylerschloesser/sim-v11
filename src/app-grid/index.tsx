@@ -3,7 +3,11 @@ import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 
-function CanvasV2({ viewport }: { viewport: Vec2 }) {
+export function AppGrid() {
+  return <>TODO</>
+}
+
+export function Canvas({ viewport }: { viewport: Vec2 }) {
   const container = useRef<HTMLDivElement>(null)
   const state = useRef<{
     canvas: HTMLCanvasElement

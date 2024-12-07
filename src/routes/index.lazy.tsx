@@ -16,6 +16,9 @@ function Index() {
       <li>
         <Link to="/graph">Go to /graph</Link>
       </li>
+      <li>
+        <Link to="/grid">Go to /grid</Link>
+      </li>
     </ul>
   )
 }
