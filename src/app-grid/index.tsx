@@ -72,6 +72,22 @@ function initPixi(
         { signal },
       )
 
+      canvas.addEventListener(
+        'pointerdown',
+        (_ev) => {
+          console.log('todo')
+        },
+        { signal },
+      )
+
+      canvas.addEventListener(
+        'pointerup',
+        (_ev) => {
+          console.log('todo')
+        },
+        { signal },
+      )
+
       resolve({ id, canvas, app, ro, controller })
     },
   )
