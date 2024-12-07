@@ -1,4 +1,4 @@
-import { uniqueId } from 'lodash-es'
+import { debounce, uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
@@ -47,6 +47,11 @@ function initPixi(
         antialias: true,
       })
 
+      const reloadOnResize = debounce(
+        window.location.reload.bind(window.location),
+        500,
+      )
+
       const ro = new ResizeObserver(() => {
         const { width, height } =
           canvas.getBoundingClientRect()
@@ -56,9 +61,11 @@ function initPixi(
         ) {
           return
         }
-        canvas.width = width
-        canvas.height = height
-        app.resize()
+        // TODO dynamically update canvas size
+        reloadOnResize()
+        // canvas.width = width
+        // canvas.height = height
+        // app.resize()
       })
       ro.observe(canvas)
 
