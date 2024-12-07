@@ -23,6 +23,6 @@ invariant(container)
 
 createRoot(container).render(
   <StrictMode>
-    <RouterProvider router={router} />,
+    <RouterProvider router={router} />
   </StrictMode>,
 )
