@@ -129,8 +129,8 @@ function initGraphics(
 
   {
     const size = 100
-    const cols = Math.ceil(width / size)
-    const rows = Math.ceil(height / size)
+    const cols = Math.ceil(width / size) + 1
+    const rows = Math.ceil(height / size) + 1
     g.grid.setStrokeStyle({
       color: 'white',
       width: 1,
@@ -139,9 +139,9 @@ function initGraphics(
       for (let row = 0; row < rows; row++) {
         g.grid
           .moveTo(col * size, 0)
-          .lineTo(col * size, height)
+          .lineTo(col * size, rows * size)
           .moveTo(0, row * size)
-          .lineTo(width, row * size)
+          .lineTo(cols * size, row * size)
       }
     }
     g.grid.stroke()
