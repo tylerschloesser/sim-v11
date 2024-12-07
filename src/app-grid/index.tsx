@@ -73,11 +73,18 @@ function initPixi(
       let delta = Vec2.ZERO
 
       function updateCamera() {
-        const t = camera.add(delta).mul(-1)
-        g.grid.position.set(
-          mod(t.x, cellSize) - cellSize,
-          mod(t.y, cellSize) - cellSize,
-        )
+        {
+          const t = camera.add(delta).mul(-1)
+          g.grid.position.set(
+            mod(t.x, cellSize) - cellSize,
+            mod(t.y, cellSize) - cellSize,
+          )
+        }
+
+        {
+          const t = camera.add(delta).mul(-1)
+          g.world.position.set(t.x, t.y)
+        }
       }
 
       document.addEventListener(
