@@ -2,6 +2,7 @@ import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
+import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 
 export function AppGrid() {
@@ -73,7 +74,10 @@ function initPixi(
 
       function updateCamera() {
         const t = camera.add(delta).mul(-1)
-        g.grid.position.set(t.x, t.y)
+        g.grid.position.set(
+          mod(t.x, cellSize) - cellSize,
+          mod(t.y, cellSize) - cellSize,
+        )
       }
 
       document.addEventListener(
