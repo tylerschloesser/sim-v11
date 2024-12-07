@@ -64,7 +64,7 @@ function initPixi(
 
       const g = initGraphics(app, width, height)
 
-      canvas.addEventListener(
+      document.addEventListener(
         'pointermove',
         (ev) => {
           g.pointer.position.set(ev.offsetX, ev.offsetY)
@@ -72,7 +72,7 @@ function initPixi(
         { signal },
       )
 
-      canvas.addEventListener(
+      document.addEventListener(
         'pointerdown',
         (_ev) => {
           console.log('todo')
@@ -80,7 +80,7 @@ function initPixi(
         { signal },
       )
 
-      canvas.addEventListener(
+      document.addEventListener(
         'pointerup',
         (_ev) => {
           console.log('todo')
