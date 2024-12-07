@@ -161,20 +161,20 @@ function initGraphics(
   }
 
   {
-    g.pointer.circle(0, 0, 20)
-    g.pointer.stroke({
-      color: 'blue',
-      width: 2,
-    })
-    app.stage.addChild(g.pointer)
-  }
-
-  {
     g.world.rect(0, 0, cellSize, cellSize)
     g.world.fill('hsl(0, 50%, 50%)')
     g.world.rect(-cellSize, -cellSize, cellSize, cellSize)
     g.world.fill('hsl(120, 50%, 50%)')
     app.stage.addChild(g.world)
+  }
+
+  {
+    g.pointer.circle(0, 0, 20)
+    g.pointer.stroke({
+      color: 'hsl(240, 50%, 50%)',
+      width: 2,
+    })
+    app.stage.addChild(g.pointer)
   }
 
   return g
@@ -184,6 +184,7 @@ function destroyPixi(id: string) {
   const promise = cache.get(id)
   invariant(promise)
   promise.then((state) => {
+    state.controller.abort()
     state.canvas.style.display = 'none'
     state.ro.disconnect()
     state.app.destroy()
