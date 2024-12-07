@@ -59,11 +59,15 @@ function initPixi(
       })
       ro.observe(canvas)
 
-      const g = new PIXI.Graphics()
-      g.circle(0, 0, 50)
-      g.fill('red')
+      const g = {
+        pointer: new PIXI.Graphics(),
+      }
 
-      app.stage.addChild(g)
+      {
+        g.pointer.circle(0, 0, 50)
+        g.pointer.fill('red')
+        app.stage.addChild(g.pointer)
+      }
 
       const controller = new AbortController()
       const { signal } = controller
@@ -71,7 +75,7 @@ function initPixi(
       canvas.addEventListener(
         'pointermove',
         (ev) => {
-          g.position.set(ev.offsetX, ev.offsetY)
+          g.pointer.position.set(ev.offsetX, ev.offsetY)
         },
         { signal },
       )
