@@ -43,6 +43,7 @@ function initPixi(
         canvas,
         width: canvas.width,
         height: canvas.height,
+        antialias: true,
       })
 
       const ro = new ResizeObserver(() => {
@@ -65,7 +66,7 @@ function initPixi(
 
       const g = initGraphics(app, width, height)
 
-      const camera = Vec2.ZERO
+      let camera = Vec2.ZERO
       let pointerDown: Vec2 | null = null
       let delta = Vec2.ZERO
 
@@ -102,6 +103,7 @@ function initPixi(
         'pointerup',
         (_ev) => {
           pointerDown = null
+          camera = camera.add(delta)
           delta = Vec2.ZERO
           updateCamera()
         },
