@@ -132,7 +132,7 @@ function initGraphics(
     const cols = Math.ceil(width / size) + 1
     const rows = Math.ceil(height / size) + 1
     g.grid.setStrokeStyle({
-      color: 'white',
+      color: 'hsl(0, 0%, 30%)',
       width: 1,
     })
     for (let col = 0; col < cols; col++) {
