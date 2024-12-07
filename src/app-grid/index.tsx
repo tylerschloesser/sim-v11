@@ -72,10 +72,8 @@ function initPixi(
       let delta = Vec2.ZERO
 
       function updateCamera() {
-        g.grid.position.set(
-          camera.x + delta.x,
-          camera.y + delta.y,
-        )
+        const t = camera.add(delta).mul(-1)
+        g.grid.position.set(t.x, t.y)
       }
 
       document.addEventListener(
@@ -85,7 +83,7 @@ function initPixi(
 
           if (pointerDown !== null) {
             const p = new Vec2(ev.offsetX, ev.offsetY)
-            delta = p.sub(pointerDown)
+            delta = pointerDown.sub(p)
             updateCamera()
           }
         },
@@ -105,6 +103,7 @@ function initPixi(
         (_ev) => {
           pointerDown = null
           camera = camera.add(delta)
+          console.log('camera', camera)
           delta = Vec2.ZERO
           updateCamera()
         },
