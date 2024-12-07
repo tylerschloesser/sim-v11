@@ -64,7 +64,8 @@ function initPixi(
       const controller = new AbortController()
       const { signal } = controller
 
-      const g = initGraphics(app, width, height)
+      const cellSize = 100
+      const g = initGraphics(app, cellSize, width, height)
 
       let camera = Vec2.ZERO
       let pointerDown: Vec2 | null = null
@@ -119,6 +120,7 @@ function initPixi(
 
 function initGraphics(
   app: PIXI.Application,
+  cellSize: number,
   width: number,
   height: number,
 ) {
@@ -128,9 +130,8 @@ function initGraphics(
   }
 
   {
-    const size = 100
-    const cols = Math.ceil(width / size) + 1
-    const rows = Math.ceil(height / size) + 1
+    const cols = Math.ceil(width / cellSize) + 1
+    const rows = Math.ceil(height / cellSize) + 1
     g.grid.setStrokeStyle({
       color: 'hsl(0, 0%, 30%)',
       width: 1,
@@ -138,10 +139,10 @@ function initGraphics(
     for (let col = 0; col < cols; col++) {
       for (let row = 0; row < rows; row++) {
         g.grid
-          .moveTo(col * size, 0)
-          .lineTo(col * size, rows * size)
-          .moveTo(0, row * size)
-          .lineTo(cols * size, row * size)
+          .moveTo(col * cellSize, 0)
+          .lineTo(col * cellSize, rows * cellSize)
+          .moveTo(0, row * cellSize)
+          .lineTo(cols * cellSize, row * cellSize)
       }
     }
     g.grid.stroke()
