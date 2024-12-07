@@ -3,8 +3,8 @@ import Prando from 'prando'
 // import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
+import { ZVec2 } from '../common/vec2'
 import { shuffle as _shuffle } from './util'
-import { ZVec2 } from './vec2'
 
 const SHUFFLE: boolean = true
 

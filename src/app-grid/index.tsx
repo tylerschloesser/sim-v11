@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
-import { Vec2 } from './vec2'
+import { Vec2 } from '../common/vec2'
 
 function CanvasV2({ viewport }: { viewport: Vec2 }) {
   const container = useRef<HTMLDivElement>(null)

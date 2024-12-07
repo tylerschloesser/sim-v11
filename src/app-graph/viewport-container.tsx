@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
-import { Vec2 } from './vec2'
+import { Vec2 } from '../common/vec2'
 
 export function ViewportContainer({
   children,

@@ -3,6 +3,7 @@ import { sample } from 'lodash-es'
 import { useCallback, useEffect, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
+import { Vec2 } from '../common/vec2'
 import {
   initState,
   Node,
@@ -11,7 +12,6 @@ import {
   NodeType,
   step,
 } from './game'
-import { Vec2 } from './vec2'
 import { ViewportContainer } from './viewport-container'
 
 export function AppGraph() {

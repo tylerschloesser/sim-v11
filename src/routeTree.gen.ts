@@ -16,11 +16,18 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const GridLazyImport = createFileRoute('/grid')()
 const GraphLazyImport = createFileRoute('/graph')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const GridLazyRoute = GridLazyImport.update({
+  id: '/grid',
+  path: '/grid',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/grid.lazy').then((d) => d.Route))
 
 const GraphLazyRoute = GraphLazyImport.update({
   id: '/graph',
@@ -65,6 +72,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GraphLazyImport
       parentRoute: typeof rootRoute
     }
+    '/grid': {
+      id: '/grid'
+      path: '/grid'
+      fullPath: '/grid'
+      preLoaderRoute: typeof GridLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -74,12 +88,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/graph': typeof GraphLazyRoute
+  '/grid': typeof GridLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/graph': typeof GraphLazyRoute
+  '/grid': typeof GridLazyRoute
 }
 
 export interface FileRoutesById {
@@ -87,14 +103,15 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/graph': typeof GraphLazyRoute
+  '/grid': typeof GridLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/graph'
+  fullPaths: '/' | '/about' | '/graph' | '/grid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/graph'
-  id: '__root__' | '/' | '/about' | '/graph'
+  to: '/' | '/about' | '/graph' | '/grid'
+  id: '__root__' | '/' | '/about' | '/graph' | '/grid'
   fileRoutesById: FileRoutesById
 }
 
@@ -102,12 +119,14 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AboutLazyRoute: typeof AboutLazyRoute
   GraphLazyRoute: typeof GraphLazyRoute
+  GridLazyRoute: typeof GridLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AboutLazyRoute: AboutLazyRoute,
   GraphLazyRoute: GraphLazyRoute,
+  GridLazyRoute: GridLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -122,7 +141,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/graph"
+        "/graph",
+        "/grid"
       ]
     },
     "/": {
@@ -133,6 +153,9 @@ export const routeTree = rootRoute
     },
     "/graph": {
       "filePath": "graph.lazy.tsx"
+    },
+    "/grid": {
+      "filePath": "grid.lazy.tsx"
     }
   }
 }
