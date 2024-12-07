@@ -61,12 +61,28 @@ function initPixi(
 
       const g = {
         pointer: new PIXI.Graphics(),
+        grid: new PIXI.Graphics(),
       }
 
       {
-        g.pointer.circle(0, 0, 50)
-        g.pointer.fill('red')
-        app.stage.addChild(g.pointer)
+        const size = 50
+        const cols = Math.ceil(width / size)
+        const rows = Math.ceil(height / size)
+        g.grid.setStrokeStyle({
+          color: 'white',
+          width: 1,
+        })
+        for (let col = 0; col < cols; col++) {
+          for (let row = 0; row < rows; row++) {
+            g.grid
+              .moveTo(col * size, 0)
+              .lineTo(col * size, height)
+              .moveTo(0, row * size)
+              .lineTo(width, row * size)
+          }
+        }
+        g.grid.stroke()
+        app.stage.addChild(g.grid)
       }
 
       const controller = new AbortController()
