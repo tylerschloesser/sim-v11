@@ -16,6 +16,7 @@ interface PixiState {
   canvas: HTMLCanvasElement
   app: PIXI.Application
   ro: ResizeObserver
+  controller: AbortController
 }
 
 const cache = new Map<string, Promise<PixiState>>()
@@ -58,7 +59,24 @@ function initPixi(
       })
       ro.observe(canvas)
 
-      resolve({ id, canvas, app, ro })
+      const g = new PIXI.Graphics()
+      g.circle(0, 0, 50)
+      g.fill('red')
+
+      app.stage.addChild(g)
+
+      const controller = new AbortController()
+      const { signal } = controller
+
+      canvas.addEventListener(
+        'pointermove',
+        (ev) => {
+          g.position.set(ev.offsetX, ev.offsetY)
+        },
+        { signal },
+      )
+
+      resolve({ id, canvas, app, ro, controller })
     },
   )
   cache.set(id, promise)
