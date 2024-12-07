@@ -1,67 +1,98 @@
+import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
-import { Vec2 } from '../common/vec2'
-import { ViewportProvider } from '../common/viewport-provider'
 
 export function AppGrid() {
   return (
-    <ViewportProvider>
-      {(viewport) =>
-        viewport && <Canvas viewport={viewport} />
-      }
-    </ViewportProvider>
+    <div className="w-dvw h-dvh">
+      <Canvas />
+    </div>
   )
 }
 
-export function Canvas({ viewport }: { viewport: Vec2 }) {
+interface PixiState {
+  id: string
+  canvas: HTMLCanvasElement
+  app: PIXI.Application
+  ro: ResizeObserver
+}
+
+const cache = new Map<string, Promise<PixiState>>()
+
+function initPixi(
+  id: string,
+  container: HTMLDivElement,
+): Promise<PixiState> {
+  const promise: Promise<PixiState> = new Promise(
+    async (resolve) => {
+      const { width, height } =
+        container.getBoundingClientRect()
+
+      const canvas = document.createElement('canvas')
+      canvas.style.position = 'absolute'
+      canvas.style.width = '100%'
+      canvas.style.height = '100%'
+      canvas.width = width
+      canvas.height = height
+      container.appendChild(canvas)
+
+      const app = new PIXI.Application()
+      await app.init({
+        canvas,
+        width: canvas.width,
+        height: canvas.height,
+      })
+
+      const ro = new ResizeObserver(() => {
+        const { width, height } =
+          canvas.getBoundingClientRect()
+        if (
+          canvas.width === width &&
+          canvas.height === height
+        ) {
+          return
+        }
+        canvas.width = width
+        canvas.height = height
+        app.resize()
+      })
+      ro.observe(canvas)
+
+      resolve({ id, canvas, app, ro })
+    },
+  )
+  cache.set(id, promise)
+  return promise
+}
+
+function destroyPixi(id: string) {
+  const promise = cache.get(id)
+  invariant(promise)
+  promise.then((state) => {
+    state.ro.disconnect()
+    state.app.destroy()
+    state.canvas.remove()
+    cache.delete(id)
+  })
+}
+
+export function Canvas() {
   const container = useRef<HTMLDivElement>(null)
-  const state = useRef<{
-    canvas: HTMLCanvasElement
-    app: PIXI.Application
-  } | null>(null)
 
   useEffect(() => {
     invariant(container.current)
-
-    const canvas = document.createElement('canvas')
-    canvas.style.width = '100%'
-    canvas.style.height = '100%'
-    canvas.width = viewport.x
-    canvas.height = viewport.y
-
-    container.current.appendChild(canvas)
-
-    const app = new PIXI.Application()
-    app.init({
-      canvas,
-      width: canvas.width,
-      height: canvas.height,
-    })
-
-    state.current = { canvas, app }
-
+    const id = uniqueId()
+    initPixi(id, container.current)
     return () => {
-      canvas.remove()
-      state.current = null
+      destroyPixi(id)
     }
   }, [])
 
-  useEffect(() => {
-    if (
-      !state.current ||
-      (state.current.canvas.width === viewport.x &&
-        state.current.canvas.height === viewport.y)
-    ) {
-      return
-    }
-
-    state.current.canvas.width = viewport.x
-    state.current.canvas.height = viewport.y
-    if (typeof state.current.app.resize === 'function') {
-      state.current.app.resize()
-    }
-  }, [viewport])
-
-  return <div ref={container} className="w-full h-full" />
+  return (
+    <div
+      ref={container}
+      className="w-full h-full relative"
+    />
+  )
 }
