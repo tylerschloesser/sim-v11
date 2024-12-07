@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { Vec2 } from '../common/vec2'
+import { ViewportProvider } from '../common/viewport-provider'
 import {
   initState,
   Node,
@@ -12,16 +13,15 @@ import {
   NodeType,
   step,
 } from './game'
-import { ViewportContainer } from './viewport-container'
 
 export function AppGraph() {
   return (
     <div className="p-4 w-dvw h-dvh flex">
-      <ViewportContainer className="relative flex-1">
+      <ViewportProvider className="relative flex-1">
         {(viewport) =>
-          viewport ? <CanvasV1 viewport={viewport} /> : null
+          viewport && <Canvas viewport={viewport} />
         }
-      </ViewportContainer>
+      </ViewportProvider>
     </div>
   )
 }
@@ -43,7 +43,7 @@ function radiansToDegrees(radians: number) {
   return (radians * 180) / Math.PI
 }
 
-function CanvasV1({ viewport }: { viewport: Vec2 }) {
+function Canvas({ viewport }: { viewport: Vec2 }) {
   const size = Math.min(viewport.x, viewport.y) / 5
 
   const [state, setState] = useImmer(initState)

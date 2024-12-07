@@ -2,9 +2,16 @@ import * as PIXI from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
+import { ViewportProvider } from '../common/viewport-provider'
 
 export function AppGrid() {
-  return <>TODO</>
+  return (
+    <ViewportProvider>
+      {(viewport) =>
+        viewport && <Canvas viewport={viewport} />
+      }
+    </ViewportProvider>
+  )
 }
 
 export function Canvas({ viewport }: { viewport: Vec2 }) {

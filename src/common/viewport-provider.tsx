@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 
-export function ViewportContainer({
+export function ViewportProvider({
   children,
   className,
 }: {
