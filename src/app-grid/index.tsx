@@ -2,6 +2,7 @@ import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
+import { Vec2 } from '../common/vec2'
 
 export function AppGrid() {
   return (
@@ -64,18 +65,35 @@ function initPixi(
 
       const g = initGraphics(app, width, height)
 
+      const camera = Vec2.ZERO
+      let pointerDown: Vec2 | null = null
+      let delta = Vec2.ZERO
+
+      function updateCamera() {
+        g.grid.position.set(
+          camera.x + delta.x,
+          camera.y + delta.y,
+        )
+      }
+
       document.addEventListener(
         'pointermove',
         (ev) => {
           g.pointer.position.set(ev.offsetX, ev.offsetY)
+
+          if (pointerDown !== null) {
+            const p = new Vec2(ev.offsetX, ev.offsetY)
+            delta = p.sub(pointerDown)
+            updateCamera()
+          }
         },
         { signal },
       )
 
       document.addEventListener(
         'pointerdown',
-        (_ev) => {
-          console.log('todo')
+        (ev) => {
+          pointerDown = new Vec2(ev.offsetX, ev.offsetY)
         },
         { signal },
       )
@@ -83,7 +101,9 @@ function initPixi(
       document.addEventListener(
         'pointerup',
         (_ev) => {
-          console.log('todo')
+          pointerDown = null
+          delta = Vec2.ZERO
+          updateCamera()
         },
         { signal },
       )
@@ -127,8 +147,11 @@ function initGraphics(
   }
 
   {
-    g.pointer.circle(0, 0, 50)
-    g.pointer.fill('red')
+    g.pointer.circle(0, 0, 20)
+    g.pointer.stroke({
+      color: 'blue',
+      width: 2,
+    })
     app.stage.addChild(g.pointer)
   }
 
