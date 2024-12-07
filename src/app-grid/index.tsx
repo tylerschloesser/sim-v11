@@ -24,7 +24,6 @@ function initPixi(
   id: string,
   container: HTMLDivElement,
 ): Promise<PixiState> {
-  console.log('initPixi', id)
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
       const { width, height } =
