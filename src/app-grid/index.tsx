@@ -30,7 +30,6 @@ function initPixi(
         container.getBoundingClientRect()
 
       const canvas = document.createElement('canvas')
-      canvas.style.position = 'absolute'
       canvas.style.width = '100%'
       canvas.style.height = '100%'
       canvas.width = width
@@ -70,6 +69,7 @@ function destroyPixi(id: string) {
   const promise = cache.get(id)
   invariant(promise)
   promise.then((state) => {
+    state.canvas.style.display = 'none'
     state.ro.disconnect()
     state.app.destroy()
     state.canvas.remove()
@@ -89,10 +89,5 @@ export function Canvas() {
     }
   }, [])
 
-  return (
-    <div
-      ref={container}
-      className="w-full h-full relative"
-    />
-  )
+  return <div ref={container} className="w-full h-full" />
 }
