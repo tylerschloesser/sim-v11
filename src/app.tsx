@@ -87,7 +87,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       setActive((draft) => {
         draft.once = true
       })
-    }, 100)
+    }, 150)
     return () => {
       self.clearInterval(interval)
     }
@@ -204,7 +204,7 @@ function CanvasV1({ viewport }: { viewport: Vec2 }) {
       {itemModels.map((item) => (
         <div
           key={item.id}
-          className="absolute inset-0 transition-transform p-4"
+          className="absolute inset-0 transition-transform ease-linear p-4"
           style={{
             width: `${size}px`,
             height: `${size}px`,
