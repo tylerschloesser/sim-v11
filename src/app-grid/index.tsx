@@ -130,6 +130,7 @@ function initGraphics(
   const g = {
     pointer: new PIXI.Graphics(),
     grid: new PIXI.Graphics(),
+    world: new PIXI.Graphics(),
   }
 
   {
@@ -159,6 +160,14 @@ function initGraphics(
       width: 2,
     })
     app.stage.addChild(g.pointer)
+  }
+
+  {
+    g.world.rect(0, 0, cellSize, cellSize)
+    g.world.fill('hsl(0, 50%, 50%)')
+    g.world.rect(-cellSize, -cellSize, cellSize, cellSize)
+    g.world.fill('hsl(120, 50%, 50%)')
+    app.stage.addChild(g.world)
   }
 
   return g
