@@ -2,6 +2,7 @@ import {
   RouterProvider,
   createRouter,
 } from '@tanstack/react-router'
+import { enableMapSet } from 'immer'
 import { createRoot } from 'react-dom/client'
 import invariant from 'tiny-invariant'
 import './index.css'
@@ -13,6 +14,8 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
+
+enableMapSet()
 
 const container = document.getElementById('root')
 invariant(container)
