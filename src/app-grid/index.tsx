@@ -75,7 +75,10 @@ function initPixi(
 
       function updateCamera() {
         {
-          const t = camera.add(delta).mul(-1)
+          const t = camera
+            .add(delta)
+            .mul(-1)
+            .add(viewport.div(2))
           g.grid.position.set(
             mod(t.x, cellSize) - cellSize,
             mod(t.y, cellSize) - cellSize,
@@ -90,6 +93,7 @@ function initPixi(
           g.world.position.set(t.x, t.y)
         }
       }
+      updateCamera()
 
       document.addEventListener(
         'pointermove',
@@ -164,7 +168,6 @@ function initGraphics(
   }
 
   {
-    g.world.position.set(viewport.x / 2, viewport.y / 2)
     g.world.rect(0, 0, cellSize, cellSize)
     g.world.fill('hsl(0, 50%, 50%)')
     g.world.rect(-cellSize, -cellSize, cellSize, cellSize)
