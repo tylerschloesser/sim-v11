@@ -3,6 +3,7 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 import { enableMapSet } from 'immer'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import invariant from 'tiny-invariant'
 import './index.css'
@@ -21,5 +22,7 @@ const container = document.getElementById('root')
 invariant(container)
 
 createRoot(container).render(
-  <RouterProvider router={router} />,
+  <StrictMode>
+    <RouterProvider router={router} />,
+  </StrictMode>,
 )
