@@ -107,11 +107,19 @@ function initPixi(
       updateCamera()
 
       function screenToWorld(screen: Vec2): Vec2 {
-        return screen.div(cellSize)
+        return screen
+          .sub(viewport.div(2))
+          .add(delta)
+          .div(cellSize)
+          .add(camera)
       }
 
       function worldToScreen(world: Vec2): Vec2 {
-        return world.mul(cellSize)
+        return world
+          .sub(camera)
+          .mul(cellSize)
+          .add(viewport.div(2))
+          .sub(delta)
       }
 
       document.addEventListener(
@@ -130,18 +138,19 @@ function initPixi(
       document.addEventListener(
         'pointermove',
         (ev) => {
+          if (pointerDown !== null) {
+            const p = new Vec2(ev.offsetX, ev.offsetY)
+            // update delta before updating camera!
+            delta = pointerDown.sub(p)
+            updateCamera()
+          }
+
           pointer = new Vec2(ev.offsetX, ev.offsetY)
           const world = screenToWorld(pointer)
           const screen = worldToScreen(world.floor())
 
           g.pointer.visible = true
           g.pointer.position.set(screen.x, screen.y)
-
-          if (pointerDown !== null) {
-            const p = new Vec2(ev.offsetX, ev.offsetY)
-            delta = pointerDown.sub(p)
-            updateCamera()
-          }
         },
         { signal },
       )
