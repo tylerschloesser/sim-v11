@@ -49,26 +49,22 @@ function itemColor(item: NodeItem): string {
 
 // @ts-ignore
 function renderGame(game: Game, state: PixiState) {
-  if (state.g.nodes === null) {
-    state.g.nodes = new PIXI.Graphics()
-
-    for (const node of game.nodes.values()) {
-      state.g.nodes.rect(
+  for (const node of game.nodes.values()) {
+    if (!state.g.nodes.has(node.id)) {
+      const g = new PIXI.Graphics()
+      g.rect(
         node.p.x * CELL_SIZE,
         node.p.y * CELL_SIZE,
         CELL_SIZE,
         CELL_SIZE,
       )
+      g.fill({ color: nodeColor(node) })
 
-      state.g.nodes.fill({
-        color: nodeColor(node),
-      })
+      state.g.nodes.set(node.id, g)
+      // add to the beginning, so they're always behind items
+      state.g.world.addChildAt(g, 0)
     }
 
-    state.g.world.addChild(state.g.nodes)
-  }
-
-  for (const node of game.nodes.values()) {
     if (!node.item) {
       continue
     }
@@ -338,7 +334,7 @@ interface Graphics {
   pointer: PIXI.Graphics
   grid: PIXI.Graphics
   world: PIXI.Container
-  nodes: PIXI.Graphics | null
+  nodes: Map<string, PIXI.Graphics>
   items: Map<string, PIXI.Graphics>
 }
 
@@ -351,7 +347,7 @@ function initGraphics(
     pointer: new PIXI.Graphics(),
     grid: new PIXI.Graphics(),
     world: new PIXI.Container(),
-    nodes: null,
+    nodes: new Map(),
     items: new Map(),
   }
 
