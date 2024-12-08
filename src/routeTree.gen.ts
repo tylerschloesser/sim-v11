@@ -16,12 +16,19 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const TexturesLazyImport = createFileRoute('/textures')()
 const GridLazyImport = createFileRoute('/grid')()
 const GraphLazyImport = createFileRoute('/graph')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const TexturesLazyRoute = TexturesLazyImport.update({
+  id: '/textures',
+  path: '/textures',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/textures.lazy').then((d) => d.Route))
 
 const GridLazyRoute = GridLazyImport.update({
   id: '/grid',
@@ -79,6 +86,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GridLazyImport
       parentRoute: typeof rootRoute
     }
+    '/textures': {
+      id: '/textures'
+      path: '/textures'
+      fullPath: '/textures'
+      preLoaderRoute: typeof TexturesLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -89,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutLazyRoute
   '/graph': typeof GraphLazyRoute
   '/grid': typeof GridLazyRoute
+  '/textures': typeof TexturesLazyRoute
 }
 
 export interface FileRoutesByTo {
@@ -96,6 +111,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutLazyRoute
   '/graph': typeof GraphLazyRoute
   '/grid': typeof GridLazyRoute
+  '/textures': typeof TexturesLazyRoute
 }
 
 export interface FileRoutesById {
@@ -104,14 +120,15 @@ export interface FileRoutesById {
   '/about': typeof AboutLazyRoute
   '/graph': typeof GraphLazyRoute
   '/grid': typeof GridLazyRoute
+  '/textures': typeof TexturesLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/graph' | '/grid'
+  fullPaths: '/' | '/about' | '/graph' | '/grid' | '/textures'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/graph' | '/grid'
-  id: '__root__' | '/' | '/about' | '/graph' | '/grid'
+  to: '/' | '/about' | '/graph' | '/grid' | '/textures'
+  id: '__root__' | '/' | '/about' | '/graph' | '/grid' | '/textures'
   fileRoutesById: FileRoutesById
 }
 
@@ -120,6 +137,7 @@ export interface RootRouteChildren {
   AboutLazyRoute: typeof AboutLazyRoute
   GraphLazyRoute: typeof GraphLazyRoute
   GridLazyRoute: typeof GridLazyRoute
+  TexturesLazyRoute: typeof TexturesLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -127,6 +145,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutLazyRoute: AboutLazyRoute,
   GraphLazyRoute: GraphLazyRoute,
   GridLazyRoute: GridLazyRoute,
+  TexturesLazyRoute: TexturesLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -142,7 +161,8 @@ export const routeTree = rootRoute
         "/",
         "/about",
         "/graph",
-        "/grid"
+        "/grid",
+        "/textures"
       ]
     },
     "/": {
@@ -156,6 +176,9 @@ export const routeTree = rootRoute
     },
     "/grid": {
       "filePath": "grid.lazy.tsx"
+    },
+    "/textures": {
+      "filePath": "textures.lazy.tsx"
     }
   }
 }
