@@ -206,7 +206,7 @@ function initGraphics(
 
   {
     g.pointer.visible = false
-    g.pointer.circle(0, 0, 20)
+    g.pointer.rect(0, 0, cellSize, cellSize)
     g.pointer.stroke({
       color: 'hsl(240, 50%, 50%)',
       width: 2,
