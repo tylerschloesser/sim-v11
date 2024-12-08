@@ -73,7 +73,7 @@ function initPixi(
       const { signal } = controller
 
       const viewport = new Vec2(width, height)
-      const cellSize = 100
+      const cellSize = 32
       const g = initGraphics(app, cellSize, viewport)
 
       let camera = Vec2.ZERO
