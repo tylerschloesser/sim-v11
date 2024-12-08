@@ -1,7 +1,7 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
 import { forwardRef, useCallback, useRef } from 'react'
 import invariant from 'tiny-invariant'
-import { TextureId } from '../textures'
+import { renderSvgToImage, TextureId } from '../textures'
 
 export const Route = createLazyFileRoute('/textures')({
   component: RouteComponent,
@@ -72,37 +72,17 @@ interface TextureSectionProps {
 
 function TextureSection({ id }: TextureSectionProps) {
   const ref = useRef<SVGSVGElement>(null)
-  const renderToImage = useCallback(() => {
+  const renderToImage = useCallback(async () => {
     invariant(ref.current)
+    const image = await renderSvgToImage(ref.current)
 
-    const svgString = new XMLSerializer().serializeToString(
-      ref.current,
-    )
-    const svgBlob = new Blob([svgString], {
-      type: 'image/svg+xml;charset=utf-8',
-    })
-    const url = URL.createObjectURL(svgBlob)
+    const link = document.createElement('a')
+    link.href = image
+    link.download = `${id}.png`
 
-    const img = new Image()
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = 100
-      canvas.height = 100
-      const context = canvas.getContext('2d')
-      invariant(context)
-      context.drawImage(img, 0, 0)
-
-      const imgBlob = canvas.toDataURL('image/png')
-
-      const link = document.createElement('a')
-      link.href = imgBlob
-      link.download = `${id}.png`
-
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    }
-    img.src = url
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }, [])
   return (
     <>

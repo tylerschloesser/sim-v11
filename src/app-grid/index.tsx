@@ -134,6 +134,9 @@ interface PixiState {
 
 const cache = new Map<string, Promise<PixiState>>()
 
+// @ts-ignore
+async function initTextures() {}
+
 function initPixi(
   id: string,
   container: HTMLDivElement,
