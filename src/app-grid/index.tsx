@@ -14,6 +14,8 @@ import {
   NodeType,
   step,
 } from '../game'
+import { TextureId } from '../textures'
+import { Texture } from '../textures/texture'
 
 const CELL_SIZE = 32
 
@@ -135,7 +137,14 @@ interface PixiState {
 const cache = new Map<string, Promise<PixiState>>()
 
 // @ts-ignore
-async function initTextures() {}
+async function initTextures(container: HTMLDivElement) {
+  for (const id of TextureId.options) {
+    const svg = container.querySelector(
+      `svg[data-texture-id="${id}"]`,
+    )
+    invariant(svg)
+  }
+}
 
 function initPixi(
   id: string,
@@ -143,6 +152,8 @@ function initPixi(
 ): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
+      await initTextures(container)
+
       const { width, height } =
         container.getBoundingClientRect()
 
@@ -395,5 +406,13 @@ export function Canvas({ state }: CanvasProps) {
     }
   }, [])
 
-  return <div ref={container} className="w-full h-full" />
+  return (
+    <div ref={container} className="w-full h-full">
+      <div className="hidden">
+        {TextureId.options.map((id) => (
+          <Texture key={id} id={id} />
+        ))}
+      </div>
+    </div>
+  )
 }
