@@ -5,12 +5,47 @@ import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
-import { Game, initGame, step } from '../game'
+import {
+  Game,
+  initGame,
+  Node,
+  NodeType,
+  step,
+} from '../game'
+
+const CELL_SIZE = 32
+
+function nodeColor(node: Node): string {
+  const s = 40
+  const l = 30
+  const o = 1
+  switch (node.type) {
+    case NodeType.enum.Normal:
+      return `hsla(120, ${s}%, ${l}%, ${o.toFixed(2)})`
+    case NodeType.enum.Consumer:
+      return `hsla(0, ${s}%, ${l}%, ${o.toFixed(2)})`
+    case NodeType.enum.Producer:
+      return `hsla(240, ${s}%, ${l}%, ${o.toFixed(2)})`
+  }
+}
 
 // @ts-ignore
 function renderGame(game: Game, state: PixiState) {
   if (state.g.nodes === null) {
     state.g.nodes = new PIXI.Graphics()
+
+    for (const node of game.nodes.values()) {
+      state.g.nodes.rect(
+        node.p.x * CELL_SIZE,
+        node.p.y * CELL_SIZE,
+        CELL_SIZE,
+        CELL_SIZE,
+      )
+
+      state.g.nodes.fill({
+        color: nodeColor(node),
+      })
+    }
 
     state.g.world.addChild(state.g.nodes)
   }
@@ -103,7 +138,7 @@ function initPixi(
       const { signal } = controller
 
       const viewport = new Vec2(width, height)
-      const cellSize = 32
+      const cellSize = CELL_SIZE
       const g = initGraphics(app, cellSize, viewport)
 
       let camera = Vec2.ZERO
