@@ -77,6 +77,8 @@ function initPixi(
       const g = initGraphics(app, cellSize, viewport)
 
       let camera = Vec2.ZERO
+      // @ts-ignore
+      let pointer: Vec2 | null = null
       let pointerDown: Vec2 | null = null
       let delta = Vec2.ZERO
 
@@ -103,15 +105,35 @@ function initPixi(
       updateCamera()
 
       document.addEventListener(
+        'pointerenter',
+        (ev) => {
+          g.pointer.visible = true
+          g.pointer.position.set(ev.offsetX, ev.offsetY)
+          pointer = new Vec2(ev.offsetX, ev.offsetY)
+        },
+        { signal },
+      )
+
+      document.addEventListener(
         'pointermove',
         (ev) => {
           g.pointer.position.set(ev.offsetX, ev.offsetY)
+          pointer = new Vec2(ev.offsetX, ev.offsetY)
 
           if (pointerDown !== null) {
             const p = new Vec2(ev.offsetX, ev.offsetY)
             delta = pointerDown.sub(p)
             updateCamera()
           }
+        },
+        { signal },
+      )
+
+      document.addEventListener(
+        'pointerleave',
+        (_ev) => {
+          pointer = null
+          g.pointer.visible = false
         },
         { signal },
       )
@@ -183,6 +205,7 @@ function initGraphics(
   }
 
   {
+    g.pointer.visible = false
     g.pointer.circle(0, 0, 20)
     g.pointer.stroke({
       color: 'hsl(240, 50%, 50%)',
