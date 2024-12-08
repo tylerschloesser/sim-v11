@@ -21,6 +21,9 @@ export class Vec2 {
     invariant(s !== 0)
     return new Vec2(this.x / s, this.y / s)
   }
+  floor() {
+    return new Vec2(Math.floor(this.x), Math.floor(this.y))
+  }
   static ZERO = new Vec2(0, 0)
 }
 
