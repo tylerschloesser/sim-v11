@@ -9,6 +9,8 @@ import {
   Game,
   initGame,
   Node,
+  NodeColor,
+  NodeItem,
   NodeType,
   step,
 } from '../game'
@@ -25,6 +27,20 @@ function nodeColor(node: Node): string {
     case NodeType.enum.Consumer:
       return `hsla(0, ${s}%, ${l}%, ${o.toFixed(2)})`
     case NodeType.enum.Producer:
+      return `hsla(240, ${s}%, ${l}%, ${o.toFixed(2)})`
+  }
+}
+
+function itemColor(item: NodeItem): string {
+  const s = 40
+  const l = 50
+  const o = 1
+  switch (item.color) {
+    case NodeColor.enum.Green:
+      return `hsla(120, ${s}%, ${l}%, ${o.toFixed(2)})`
+    case NodeColor.enum.Red:
+      return `hsla(0, ${s}%, ${l}%, ${o.toFixed(2)})`
+    case NodeColor.enum.Blue:
       return `hsla(240, ${s}%, ${l}%, ${o.toFixed(2)})`
   }
 }
@@ -49,6 +65,27 @@ function renderGame(game: Game, state: PixiState) {
 
     state.g.world.addChild(state.g.nodes)
   }
+
+  for (const node of game.nodes.values()) {
+    if (!node.item) {
+      continue
+    }
+
+    let g = state.g.items.get(node.item.id)
+    if (!g) {
+      g = new PIXI.Graphics()
+      g.rect(0, 0, CELL_SIZE, CELL_SIZE)
+      g.fill({ color: itemColor(node.item) })
+
+      state.g.items.set(node.item.id, g)
+      state.g.world.addChild(g)
+    }
+
+    g.position.set(
+      node.p.x * CELL_SIZE,
+      node.p.y * CELL_SIZE,
+    )
+  }
 }
 
 export function AppGrid() {
@@ -57,14 +94,18 @@ export function AppGrid() {
   useEffect(() => {
     const interval = setInterval(() => {
       setGame(step)
-      if (state.current) {
-        renderGame(game, state.current)
-      }
     }, 150)
     return () => {
       clearInterval(interval)
     }
   }, [])
+
+  useEffect(() => {
+    if (state.current) {
+      renderGame(game, state.current)
+    }
+  }, [game])
+
   return (
     <div className="w-dvw h-dvh relative">
       <Canvas state={state} />
