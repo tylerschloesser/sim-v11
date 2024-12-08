@@ -261,6 +261,7 @@ interface Graphics {
   grid: PIXI.Graphics
   world: PIXI.Container
   nodes: PIXI.Graphics | null
+  items: Map<string, PIXI.Graphics>
 }
 
 function initGraphics(
@@ -273,6 +274,7 @@ function initGraphics(
     grid: new PIXI.Graphics(),
     world: new PIXI.Container(),
     nodes: null,
+    items: new Map(),
   }
 
   {
