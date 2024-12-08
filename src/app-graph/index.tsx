@@ -12,7 +12,7 @@ import {
   NodeItem,
   NodeType,
   step,
-} from './game'
+} from '../game'
 
 export function AppGraph() {
   return (
