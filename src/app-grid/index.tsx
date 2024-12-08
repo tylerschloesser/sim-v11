@@ -74,7 +74,12 @@ function renderGame(game: Game, state: PixiState) {
     let g = state.g.items.get(node.item.id)
     if (!g) {
       g = new PIXI.Graphics()
-      g.rect(0, 0, CELL_SIZE, CELL_SIZE)
+      g.rect(
+        CELL_SIZE * 0.2,
+        CELL_SIZE * 0.2,
+        CELL_SIZE * 0.6,
+        CELL_SIZE * 0.6,
+      )
       g.fill({ color: itemColor(node.item) })
 
       state.g.items.set(node.item.id, g)
