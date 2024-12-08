@@ -1,5 +1,4 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
-import { Fragment } from 'react'
 import { TextureId } from '../textures'
 
 export const Route = createLazyFileRoute('/textures')({
@@ -39,17 +38,32 @@ function Texture({ id }: TextureProps) {
   }
 }
 
+interface TextureSectionProps {
+  id: TextureId
+}
+
+function TextureSection({ id }: TextureSectionProps) {
+  return (
+    <>
+      <div className="flex gap-1">
+        <h2>{id}</h2>
+        <button className="text-blue-400 underline">
+          image
+        </button>
+      </div>
+      <div className="border-2 border-gray-400 flex">
+        <Texture id={id} />
+      </div>
+    </>
+  )
+}
+
 function RouteComponent() {
   return (
     <div className="flex flex-col items-start">
       {[
         TextureId.options.map((id) => (
-          <Fragment key={id}>
-            <h2>{id}</h2>
-            <div className="border-2 border-gray-400 flex">
-              <Texture id={id} />
-            </div>
-          </Fragment>
+          <TextureSection key={id} id={id} />
         )),
       ]}
     </div>
