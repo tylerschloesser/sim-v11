@@ -14,7 +14,7 @@ import {
   NodeType,
   step,
 } from '../game'
-import { TextureId } from '../textures'
+import { renderSvgToImage, TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 
 const CELL_SIZE = 32
@@ -132,18 +132,28 @@ interface PixiState {
   ro: ResizeObserver
   controller: AbortController
   g: Graphics
+  textures: Record<TextureId, PIXI.Texture>
 }
 
 const cache = new Map<string, Promise<PixiState>>()
 
 // @ts-ignore
-async function initTextures(container: HTMLDivElement) {
+async function initTextures(
+  container: HTMLDivElement,
+): Promise<Record<TextureId, PIXI.Texture>> {
+  const textures: Partial<Record<TextureId, PIXI.Texture>> =
+    {}
   for (const id of TextureId.options) {
     const svg = container.querySelector(
       `svg[data-texture-id="${id}"]`,
     )
-    invariant(svg)
+    invariant(svg instanceof SVGSVGElement)
+
+    textures[id] = PIXI.Texture.from(
+      await renderSvgToImage(svg),
+    )
   }
+  return textures as Record<TextureId, PIXI.Texture>
 }
 
 function initPixi(
@@ -152,7 +162,7 @@ function initPixi(
 ): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
-      await initTextures(container)
+      const textures = await initTextures(container)
 
       const { width, height } =
         container.getBoundingClientRect()
@@ -309,7 +319,15 @@ function initPixi(
         { signal },
       )
 
-      resolve({ id, canvas, app, ro, controller, g })
+      resolve({
+        id,
+        canvas,
+        app,
+        ro,
+        controller,
+        g,
+        textures,
+      })
     },
   )
   cache.set(id, promise)
