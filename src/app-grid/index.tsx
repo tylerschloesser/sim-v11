@@ -8,7 +8,13 @@ import { Vec2 } from '../common/vec2'
 import { Game, initGame, step } from '../game'
 
 // @ts-ignore
-function renderGame(game: Game, state: PixiState) {}
+function renderGame(game: Game, state: PixiState) {
+  if (state.g.nodes === null) {
+    state.g.nodes = new PIXI.Graphics()
+
+    state.g.world.addChild(state.g.nodes)
+  }
+}
 
 export function AppGrid() {
   const [game, setGame] = useImmer(initGame)
@@ -218,7 +224,7 @@ function initPixi(
 interface Graphics {
   pointer: PIXI.Graphics
   grid: PIXI.Graphics
-  world: PIXI.Graphics
+  world: PIXI.Container
   nodes: PIXI.Graphics | null
 }
 
@@ -227,10 +233,10 @@ function initGraphics(
   cellSize: number,
   viewport: Vec2,
 ): Graphics {
-  const g = {
+  const g: Graphics = {
     pointer: new PIXI.Graphics(),
     grid: new PIXI.Graphics(),
-    world: new PIXI.Graphics(),
+    world: new PIXI.Container(),
     nodes: null,
   }
 
@@ -255,10 +261,6 @@ function initGraphics(
   }
 
   {
-    g.world.rect(0, 0, cellSize, cellSize)
-    g.world.fill('hsl(0, 50%, 50%)')
-    g.world.rect(-cellSize, -cellSize, cellSize, cellSize)
-    g.world.fill('hsl(120, 50%, 50%)')
     app.stage.addChild(g.world)
   }
 
