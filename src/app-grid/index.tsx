@@ -5,10 +5,10 @@ import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
-import { initState, step } from '../game'
+import { initGame, step } from '../game'
 
 export function AppGrid() {
-  const [state, setState] = useImmer(initState)
+  const [state, setState] = useImmer(initGame)
   useEffect(() => {
     const interval = setInterval(() => {
       setState(step)

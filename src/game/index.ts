@@ -50,15 +50,15 @@ export const Node = z.strictObject({
 })
 export type Node = z.infer<typeof Node>
 
-export const State = z.strictObject({
+export const Game = z.strictObject({
   tick: z.number(),
   nodes: z.map(z.string(), Node),
 
   nextItemId: z.number(),
 })
-export type State = z.infer<typeof State>
+export type Game = z.infer<typeof Game>
 
-export function initState(): State {
+export function initGame(): Game {
   const nodes = new Map<string, Node>()
 
   let nextItemId = 0
@@ -114,9 +114,9 @@ export function initState(): State {
   }
 }
 
-export function step(state: State) {
-  state.tick += 1
-  const { nodes } = state
+export function step(game: Game) {
+  game.tick += 1
+  const { nodes } = game
 
   function refToNode({ id }: NodeRef) {
     const node = nodes.get(id)
@@ -152,7 +152,7 @@ export function step(state: State) {
       const output = refToNode(node.outputs.at(0)!)
       if (output.item === null && rng.next() < 0.1) {
         node.item = {
-          id: `${state.nextItemId++}`,
+          id: `${game.nextItemId++}`,
           tick: 0,
           color: sample(NodeColor.options),
         }

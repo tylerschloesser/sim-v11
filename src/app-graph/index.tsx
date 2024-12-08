@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer'
 import { Vec2 } from '../common/vec2'
 import { ViewportProvider } from '../common/viewport-provider'
 import {
-  initState,
+  initGame,
   Node,
   NodeColor,
   NodeItem,
@@ -46,9 +46,9 @@ function radiansToDegrees(radians: number) {
 function Canvas({ viewport }: { viewport: Vec2 }) {
   const size = Math.min(viewport.x, viewport.y) / 5
 
-  const [state, setState] = useImmer(initState)
+  const [game, setGame] = useImmer(initGame)
 
-  const { nodes } = state
+  const { nodes } = game
 
   const [active, setActive] = useImmer<{
     value: boolean
@@ -81,12 +81,12 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
   useEffect(() => {
     if (!active.value) {
       if (!active.once) {
-        setState(step)
+        setGame(step)
       }
       return
     }
     const interval = self.setInterval(() => {
-      setState(step)
+      setGame(step)
       setActive((draft) => {
         draft.once = true
       })
@@ -149,7 +149,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
   }, [nodes])
 
   const onClickNode = useCallback((id: string) => {
-    setState((draft) => {
+    setGame((draft) => {
       const node = draft.nodes.get(id)
       invariant(node)
       if (node.item === null) {
