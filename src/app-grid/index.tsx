@@ -47,7 +47,6 @@ function itemColor(item: NodeItem): string {
   }
 }
 
-// @ts-ignore
 function renderGame(game: Game, state: PixiState) {
   for (const node of game.nodes.values()) {
     if (!state.g.nodes.has(node.id)) {
@@ -133,7 +132,6 @@ interface PixiState {
 
 const cache = new Map<string, Promise<PixiState>>()
 
-// @ts-ignore
 async function initTextures(
   container: HTMLDivElement,
 ): Promise<Record<TextureId, PIXI.Texture>> {
@@ -208,7 +206,6 @@ function initPixi(
       const g = initGraphics(app, cellSize, viewport)
 
       let camera = Vec2.ZERO
-      // @ts-ignore
       let pointer: Vec2 | null = null
       let pointerDown: Vec2 | null = null
       let delta = Vec2.ZERO
