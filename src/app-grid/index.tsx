@@ -85,6 +85,7 @@ function initPixi(
       function updateCamera() {
         {
           const t = camera
+            .mul(cellSize)
             .add(delta)
             .mul(-1)
             .add(viewport.div(2))
@@ -96,6 +97,7 @@ function initPixi(
 
         {
           const t = camera
+            .mul(cellSize)
             .add(delta)
             .mul(-1)
             .add(viewport.div(2))
@@ -165,7 +167,7 @@ function initPixi(
         'pointerup',
         (_ev) => {
           pointerDown = null
-          camera = camera.add(delta)
+          camera = camera.add(delta.div(cellSize))
           console.log('camera', camera)
           delta = Vec2.ZERO
           updateCamera()
