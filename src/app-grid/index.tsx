@@ -8,10 +8,11 @@ import { Vec2 } from '../common/vec2'
 import { initGame, step } from '../game'
 
 export function AppGrid() {
-  const [state, setState] = useImmer(initGame)
+  const [game, setGame] = useImmer(initGame)
+  const state = useRef<PixiState | null>(null)
   useEffect(() => {
     const interval = setInterval(() => {
-      setState(step)
+      setGame(step)
     }, 150)
     return () => {
       clearInterval(interval)
@@ -19,10 +20,10 @@ export function AppGrid() {
   }, [])
   return (
     <div className="w-dvw h-dvh relative">
-      <Canvas />
+      <Canvas state={state} />
       <div className="absolute top-0 left-0 p-1 pointer-events-none">
         <span className="block text-gray-400 leading-none">
-          Tick: {state.tick}
+          Tick: {game.tick}
         </span>
       </div>
     </div>
@@ -272,14 +273,21 @@ function destroyPixi(id: string) {
   })
 }
 
-export function Canvas() {
+interface CanvasProps {
+  state: React.MutableRefObject<PixiState | null>
+}
+
+export function Canvas({ state }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     invariant(container.current)
     const id = uniqueId()
-    initPixi(id, container.current)
+    initPixi(id, container.current).then((_state) => {
+      state.current = _state
+    })
     return () => {
+      state.current = null
       destroyPixi(id)
     }
   }, [])
