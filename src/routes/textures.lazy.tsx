@@ -50,11 +50,11 @@ const Texture = forwardRef<SVGSVGElement, TextureProps>(
             viewBox="0 0 100 100"
           >
             <text
-              x="50"
+              x="90"
               y="50"
               fontFamily="system-ui"
               fontSize="30"
-              textAnchor="middle"
+              textAnchor="end"
               dominantBaseline="middle"
             >
               {'→'}
