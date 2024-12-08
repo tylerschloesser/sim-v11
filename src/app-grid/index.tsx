@@ -42,6 +42,7 @@ interface PixiState {
   app: PIXI.Application
   ro: ResizeObserver
   controller: AbortController
+  g: ReturnType<typeof initGraphics>
 }
 
 const cache = new Map<string, Promise<PixiState>>()
@@ -207,7 +208,7 @@ function initPixi(
         { signal },
       )
 
-      resolve({ id, canvas, app, ro, controller })
+      resolve({ id, canvas, app, ro, controller, g })
     },
   )
   cache.set(id, promise)
