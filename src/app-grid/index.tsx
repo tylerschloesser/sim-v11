@@ -42,7 +42,7 @@ interface PixiState {
   app: PIXI.Application
   ro: ResizeObserver
   controller: AbortController
-  g: ReturnType<typeof initGraphics>
+  g: Graphics
 }
 
 const cache = new Map<string, Promise<PixiState>>()
@@ -215,15 +215,23 @@ function initPixi(
   return promise
 }
 
+interface Graphics {
+  pointer: PIXI.Graphics
+  grid: PIXI.Graphics
+  world: PIXI.Graphics
+  nodes: PIXI.Graphics | null
+}
+
 function initGraphics(
   app: PIXI.Application,
   cellSize: number,
   viewport: Vec2,
-) {
+): Graphics {
   const g = {
     pointer: new PIXI.Graphics(),
     grid: new PIXI.Graphics(),
     world: new PIXI.Graphics(),
+    nodes: null,
   }
 
   {
