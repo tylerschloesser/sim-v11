@@ -2,13 +2,29 @@ import { debounce, uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
+import { useImmer } from 'use-immer'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
+import { initState, step } from '../game'
 
 export function AppGrid() {
+  const [state, setState] = useImmer(initState)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setState(step)
+    }, 150)
+    return () => {
+      clearInterval(interval)
+    }
+  }, [])
   return (
-    <div className="w-dvw h-dvh">
+    <div className="w-dvw h-dvh relative">
       <Canvas />
+      <div className="absolute top-0 left-0 p-1 pointer-events-none">
+        <span className="block text-gray-400 leading-none">
+          Tick: {state.tick}
+        </span>
+      </div>
     </div>
   )
 }
