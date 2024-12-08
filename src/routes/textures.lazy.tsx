@@ -43,9 +43,23 @@ const Texture = forwardRef<SVGSVGElement, TextureProps>(
         return <PlainTextureSvg ref={ref} color="red" />
       case TextureId.enum.NodeArrow:
         return (
-          <div className="w-[100px] h-[100px] flex items-center justify-end p-2">
-            <span className="text-xl">&rarr;</span>
-          </div>
+          <svg
+            ref={ref}
+            width={100}
+            height={100}
+            viewBox="0 0 100 100"
+          >
+            <text
+              x="50"
+              y="50"
+              fontFamily="system-ui"
+              fontSize="30"
+              textAnchor="middle"
+              dominantBaseline="middle"
+            >
+              {'→'}
+            </text>
+          </svg>
         )
     }
   },
