@@ -60,7 +60,35 @@ function TextureSection({ id }: TextureSectionProps) {
   const ref = useRef<SVGSVGElement>(null)
   const renderToImage = useCallback(() => {
     invariant(ref.current)
-    console.log('todo')
+
+    const svgString = new XMLSerializer().serializeToString(
+      ref.current,
+    )
+    const svgBlob = new Blob([svgString], {
+      type: 'image/svg+xml;charset=utf-8',
+    })
+    const url = URL.createObjectURL(svgBlob)
+
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = 100
+      canvas.height = 100
+      const context = canvas.getContext('2d')
+      invariant(context)
+      context.drawImage(img, 0, 0)
+
+      const imgBlob = canvas.toDataURL('image/png')
+
+      const link = document.createElement('a')
+      link.href = imgBlob
+      link.download = `${id}.png`
+
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+    img.src = url
   }, [])
   return (
     <>
