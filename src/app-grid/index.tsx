@@ -5,7 +5,10 @@ import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
-import { initGame, step } from '../game'
+import { Game, initGame, step } from '../game'
+
+// @ts-ignore
+function renderGame(game: Game, state: PixiState) {}
 
 export function AppGrid() {
   const [game, setGame] = useImmer(initGame)
@@ -13,6 +16,9 @@ export function AppGrid() {
   useEffect(() => {
     const interval = setInterval(() => {
       setGame(step)
+      if (state.current) {
+        renderGame(game, state.current)
+      }
     }, 150)
     return () => {
       clearInterval(interval)
