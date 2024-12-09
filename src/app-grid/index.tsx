@@ -138,7 +138,6 @@ async function initTextures(
     )
     invariant(svg instanceof SVGSVGElement)
 
-    console.log('loading', id)
     textures[id] = await PIXI.Assets.load(
       await renderSvgToImage(svg),
     )
@@ -388,7 +387,7 @@ function destroyPixi(id: string) {
     state.controller.abort()
     state.canvas.style.display = 'none'
     state.ro.disconnect()
-    // state.app.destroy()
+    state.app.destroy()
     state.canvas.remove()
     cache.delete(id)
   })
