@@ -19,20 +19,6 @@ import { Texture } from '../textures/texture'
 
 const CELL_SIZE = 32
 
-function nodeColor(node: Node): string {
-  const s = 40
-  const l = 30
-  const o = 1
-  switch (node.type) {
-    case NodeType.enum.Normal:
-      return `hsla(120, ${s}%, ${l}%, ${o.toFixed(2)})`
-    case NodeType.enum.Consumer:
-      return `hsla(0, ${s}%, ${l}%, ${o.toFixed(2)})`
-    case NodeType.enum.Producer:
-      return `hsla(240, ${s}%, ${l}%, ${o.toFixed(2)})`
-  }
-}
-
 function itemColor(item: NodeItem): string {
   const s = 40
   const l = 50
@@ -47,21 +33,30 @@ function itemColor(item: NodeItem): string {
   }
 }
 
+function nodeTextureId(node: Node): TextureId {
+  switch (node.type) {
+    case NodeType.enum.Normal:
+      return TextureId.enum.NodeNormal
+    case NodeType.enum.Consumer:
+      return TextureId.enum.NodeConsumer
+    case NodeType.enum.Producer:
+      return TextureId.enum.NodeProducer
+  }
+}
+
 function renderGame(game: Game, state: PixiState) {
   for (const node of game.nodes.values()) {
     if (!state.g.nodes.has(node.id)) {
-      const g = new PIXI.Graphics()
-      g.rect(
+      const texture = state.textures[nodeTextureId(node)]
+      const sprite = new PIXI.Sprite(texture)
+      sprite.position.set(
         node.p.x * CELL_SIZE,
         node.p.y * CELL_SIZE,
-        CELL_SIZE,
-        CELL_SIZE,
       )
-      g.fill({ color: nodeColor(node) })
 
-      state.g.nodes.set(node.id, g)
+      state.g.nodes.set(node.id, sprite)
       // add to the beginning, so they're always behind items
-      state.g.world.addChildAt(g, 0)
+      state.g.world.addChildAt(sprite, 0)
     }
 
     if (!node.item) {
@@ -143,7 +138,8 @@ async function initTextures(
     )
     invariant(svg instanceof SVGSVGElement)
 
-    textures[id] = PIXI.Texture.from(
+    console.log('loading', id)
+    textures[id] = await PIXI.Assets.load(
       await renderSvgToImage(svg),
     )
   }
@@ -156,8 +152,6 @@ function initPixi(
 ): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
-      const textures = await initTextures(container)
-
       const { width, height } =
         container.getBoundingClientRect()
 
@@ -175,6 +169,8 @@ function initPixi(
         height: canvas.height,
         antialias: true,
       })
+
+      const textures = await initTextures(container)
 
       const reloadOnResize = debounce(
         window.location.reload.bind(window.location),
@@ -331,7 +327,7 @@ interface Graphics {
   pointer: PIXI.Graphics
   grid: PIXI.Graphics
   world: PIXI.Container
-  nodes: Map<string, PIXI.Graphics>
+  nodes: Map<string, PIXI.Container>
   items: Map<string, PIXI.Graphics>
 }
 
@@ -392,7 +388,7 @@ function destroyPixi(id: string) {
     state.controller.abort()
     state.canvas.style.display = 'none'
     state.ro.disconnect()
-    state.app.destroy()
+    // state.app.destroy()
     state.canvas.remove()
     cache.delete(id)
   })

@@ -3,6 +3,7 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 import { enableMapSet } from 'immer'
+import { Assets } from 'pixi.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import invariant from 'tiny-invariant'
@@ -17,6 +18,9 @@ declare module '@tanstack/react-router' {
 }
 
 enableMapSet()
+
+// fixes race condition between PIXI and StrictMode
+await Assets.init()
 
 const container = document.getElementById('root')
 invariant(container)
