@@ -55,6 +55,11 @@ function renderGame(game: Game, state: PixiState) {
   for (const node of game.nodes.values()) {
     if (!state.g.nodes.has(node.id)) {
       const container = new PIXI.Container()
+      container.position.set(
+        node.p.x * CELL_SIZE,
+        node.p.y * CELL_SIZE,
+      )
+
       state.g.nodes.set(node.id, container)
       // add to the beginning, so they're always behind items
       state.g.world.addChildAt(container, 0)
@@ -62,10 +67,6 @@ function renderGame(game: Game, state: PixiState) {
       {
         const texture = state.textures[nodeTextureId(node)]
         const sprite = new PIXI.Sprite(texture)
-        sprite.position.set(
-          node.p.x * CELL_SIZE,
-          node.p.y * CELL_SIZE,
-        )
         sprite.width = CELL_SIZE
         sprite.height = CELL_SIZE
 
@@ -76,10 +77,6 @@ function renderGame(game: Game, state: PixiState) {
         const texture =
           state.textures[TextureId.enum.NodeArrow]
         const sprite = new PIXI.Sprite(texture)
-        sprite.position.set(
-          node.p.x * CELL_SIZE,
-          node.p.y * CELL_SIZE,
-        )
         sprite.width = CELL_SIZE
         sprite.height = CELL_SIZE
 
