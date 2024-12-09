@@ -11,6 +11,7 @@ import {
   Node,
   NodeColor,
   NodeItem,
+  NodeRef,
   NodeType,
   step,
 } from '../game'
@@ -45,18 +46,46 @@ function nodeTextureId(node: Node): TextureId {
 }
 
 function renderGame(game: Game, state: PixiState) {
+  function refToNode({ id }: NodeRef) {
+    const node = game.nodes.get(id)
+    invariant(node)
+    return node
+  }
+
   for (const node of game.nodes.values()) {
     if (!state.g.nodes.has(node.id)) {
-      const texture = state.textures[nodeTextureId(node)]
-      const sprite = new PIXI.Sprite(texture)
-      sprite.position.set(
-        node.p.x * CELL_SIZE,
-        node.p.y * CELL_SIZE,
-      )
-
-      state.g.nodes.set(node.id, sprite)
+      const container = new PIXI.Container()
+      state.g.nodes.set(node.id, container)
       // add to the beginning, so they're always behind items
-      state.g.world.addChildAt(sprite, 0)
+      state.g.world.addChildAt(container, 0)
+
+      {
+        const texture = state.textures[nodeTextureId(node)]
+        const sprite = new PIXI.Sprite(texture)
+        sprite.position.set(
+          node.p.x * CELL_SIZE,
+          node.p.y * CELL_SIZE,
+        )
+        sprite.width = CELL_SIZE
+        sprite.height = CELL_SIZE
+
+        container.addChild(sprite)
+      }
+
+      for (const _output of node.outputs.map(refToNode)) {
+        const texture =
+          state.textures[TextureId.enum.NodeArrow]
+        const sprite = new PIXI.Sprite(texture)
+        sprite.position.set(
+          node.p.x * CELL_SIZE,
+          node.p.y * CELL_SIZE,
+        )
+        sprite.width = CELL_SIZE
+        sprite.height = CELL_SIZE
+
+        container.addChild(sprite)
+        break
+      }
     }
 
     if (!node.item) {
