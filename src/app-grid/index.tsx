@@ -387,7 +387,7 @@ function destroyPixi(id: string) {
     state.controller.abort()
     state.canvas.style.display = 'none'
     state.ro.disconnect()
-    state.app.destroy()
+    state.app.destroy(false, true)
     state.canvas.remove()
     cache.delete(id)
   })
