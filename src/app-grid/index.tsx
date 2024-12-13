@@ -182,6 +182,10 @@ export function AppGrid() {
   )
 }
 
+interface ItemAnimation {
+  from: Vec2
+}
+
 interface PixiState {
   id: string
   canvas: HTMLCanvasElement
@@ -190,6 +194,7 @@ interface PixiState {
   controller: AbortController
   g: Graphics
   textures: Record<TextureId, PIXI.Texture>
+  itemAnimations: Map<string, ItemAnimation>
 }
 
 const cache = new Map<string, Promise<PixiState>>()
@@ -374,7 +379,7 @@ function initPixi(
         { signal },
       )
 
-      resolve({
+      const state: PixiState = {
         id,
         canvas,
         app,
@@ -382,7 +387,10 @@ function initPixi(
         controller,
         g,
         textures,
-      })
+        itemAnimations: new Map(),
+      }
+
+      resolve(state)
     },
   )
   cache.set(id, promise)
