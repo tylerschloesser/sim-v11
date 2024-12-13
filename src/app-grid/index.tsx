@@ -124,6 +124,13 @@ function gameToGameView(game: Game): GameView {
   return view
 }
 
+function renderFrame(state: PixiState) {
+  if (!state.viewPrev) {
+    return
+  }
+  invariant(state.viewNext)
+}
+
 function renderGame(game: Game, state: PixiState) {
   state.viewPrev = state.viewNext
   state.viewNext = gameToGameView(game)
@@ -238,10 +245,6 @@ export function AppGrid() {
   )
 }
 
-interface ItemAnimation {
-  from: Vec2
-}
-
 interface PixiState {
   id: string
   canvas: HTMLCanvasElement
@@ -250,7 +253,6 @@ interface PixiState {
   controller: AbortController
   g: Graphics
   textures: Record<TextureId, PIXI.Texture>
-  itemAnimations: Map<string, ItemAnimation>
   frameHandle: number
 
   viewPrev: GameView | null
@@ -439,9 +441,6 @@ function initPixi(
         { signal },
       )
 
-      const itemAnimations: PixiState['itemAnimations'] =
-        new Map()
-
       const state: PixiState = {
         id,
         canvas,
@@ -450,7 +449,6 @@ function initPixi(
         controller,
         g,
         textures,
-        itemAnimations,
         frameHandle: -1,
         viewPrev: null,
         viewNext: null,
@@ -458,6 +456,7 @@ function initPixi(
 
       const frameRequestCallback: FrameRequestCallback =
         () => {
+          renderFrame(state)
           state.frameHandle = self.requestAnimationFrame(
             frameRequestCallback,
           )
