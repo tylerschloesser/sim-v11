@@ -47,14 +47,87 @@ function nodeTextureId(node: Node): TextureId {
 
 type Direction = 'n' | 's' | 'e' | 'w'
 
-function renderGame(game: Game, state: PixiState) {
+interface NodeView {
+  id: string
+  p: Vec2
+  textureId: TextureId
+  outputs: Direction[]
+}
+
+interface ItemView {
+  id: string
+  p: Vec2
+  color: string
+}
+
+interface GameView {
+  nodes: Record<string, NodeView>
+  items: Record<string, ItemView>
+}
+
+function gameToGameView(game: Game): GameView {
   function refToNode({ id }: NodeRef) {
     const node = game.nodes.get(id)
     invariant(node)
     return node
   }
 
+  const view: GameView = {
+    nodes: {},
+    items: {},
+  }
+
   for (const node of game.nodes.values()) {
+    const textureId = nodeTextureId(node)
+
+    function outputToDirection(output: Node): Direction {
+      const dx = output.p.x - node.p.x
+      const dy = output.p.y - node.p.y
+      if (dx === 0 && dy === -1) {
+        return 'n'
+      }
+      if (dx === 0 && dy === 1) {
+        return 's'
+      }
+      if (dx === 1 && dy === 0) {
+        return 'e'
+      }
+      if (dx === -1 && dy === 0) {
+        return 'w'
+      }
+      throw new Error('Invalid output direction')
+    }
+
+    const outputs = node.outputs
+      .map(refToNode)
+      .map(outputToDirection)
+
+    const nodeView: NodeView = {
+      id: node.id,
+      p: new Vec2(node.p),
+      outputs,
+      textureId,
+    }
+
+    view.nodes[node.id] = nodeView
+
+    if (!node.item) {
+      continue
+    }
+
+    view.items[node.item.id] = {
+      id: node.item.id,
+      color: itemColor(node.item),
+      p: nodeView.p,
+    }
+  }
+  return view
+}
+
+function renderGame(game: Game, state: PixiState) {
+  const view = gameToGameView(game)
+
+  for (const node of Object.values(view.nodes)) {
     if (!state.g.nodes.has(node.id)) {
       const container = new PIXI.Container()
       container.position.set(
@@ -67,7 +140,7 @@ function renderGame(game: Game, state: PixiState) {
       state.g.world.addChildAt(container, 0)
 
       {
-        const texture = state.textures[nodeTextureId(node)]
+        const texture = state.textures[node.textureId]
         const sprite = new PIXI.Sprite(texture)
         sprite.width = CELL_SIZE
         sprite.height = CELL_SIZE
@@ -75,27 +148,7 @@ function renderGame(game: Game, state: PixiState) {
         container.addChild(sprite)
       }
 
-      function outputToDirection(output: Node): Direction {
-        const dx = output.p.x - node.p.x
-        const dy = output.p.y - node.p.y
-        if (dx === 0 && dy === -1) {
-          return 'n'
-        }
-        if (dx === 0 && dy === 1) {
-          return 's'
-        }
-        if (dx === 1 && dy === 0) {
-          return 'e'
-        }
-        if (dx === -1 && dy === 0) {
-          return 'w'
-        }
-        throw new Error('Invalid output direction')
-      }
-
-      for (const direction of node.outputs
-        .map(refToNode)
-        .map(outputToDirection)) {
+      for (const direction of node.outputs) {
         const texture =
           state.textures[TextureId.enum.NodeArrow]
         const sprite = new PIXI.Sprite(texture)
@@ -125,12 +178,10 @@ function renderGame(game: Game, state: PixiState) {
         container.addChild(sprite)
       }
     }
+  }
 
-    if (!node.item) {
-      continue
-    }
-
-    let g = state.g.items.get(node.item.id)
+  for (const item of Object.values(view.items)) {
+    let g = state.g.items.get(item.id)
     if (!g) {
       g = new PIXI.Graphics()
       g.rect(
@@ -139,15 +190,15 @@ function renderGame(game: Game, state: PixiState) {
         CELL_SIZE * 0.6,
         CELL_SIZE * 0.6,
       )
-      g.fill({ color: itemColor(node.item) })
+      g.fill({ color: item.color })
 
-      state.g.items.set(node.item.id, g)
+      state.g.items.set(item.id, g)
       state.g.world.addChild(g)
     }
 
     g.position.set(
-      node.p.x * CELL_SIZE,
-      node.p.y * CELL_SIZE,
+      item.p.x * CELL_SIZE,
+      item.p.y * CELL_SIZE,
     )
   }
 }

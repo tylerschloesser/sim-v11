@@ -4,9 +4,17 @@ import { z } from 'zod'
 export class Vec2 {
   x: number
   y: number
-  constructor(x: number, y: number) {
-    this.x = x
-    this.y = y
+  constructor(x: number, y: number)
+  constructor(x: ZVec2)
+  constructor(x: number | ZVec2, y?: number) {
+    if (typeof x === 'number') {
+      invariant(typeof y === 'number')
+      this.x = x
+      this.y = y
+    } else {
+      this.x = x.x
+      this.y = x.y
+    }
   }
   add(v: Vec2) {
     return new Vec2(this.x + v.x, this.y + v.y)
