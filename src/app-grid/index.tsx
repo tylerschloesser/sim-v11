@@ -99,6 +99,10 @@ function renderGame(game: Game, state: PixiState) {
         const texture =
           state.textures[TextureId.enum.NodeArrow]
         const sprite = new PIXI.Sprite(texture)
+
+        sprite.anchor.set(0.5)
+
+        sprite.position.set(CELL_SIZE / 2)
         sprite.width = CELL_SIZE
         sprite.height = CELL_SIZE
 
