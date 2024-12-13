@@ -127,6 +127,9 @@ function gameToGameView(game: Game): GameView {
 function renderGame(game: Game, state: PixiState) {
   const view = gameToGameView(game)
 
+  state.viewPrev = state.viewNext
+  state.viewNext = view
+
   for (const node of Object.values(view.nodes)) {
     if (!state.g.nodes.has(node.id)) {
       const container = new PIXI.Container()
@@ -247,6 +250,9 @@ interface PixiState {
   textures: Record<TextureId, PIXI.Texture>
   itemAnimations: Map<string, ItemAnimation>
   frameHandle: number
+
+  viewPrev: GameView | null
+  viewNext: GameView | null
 }
 
 const cache = new Map<string, Promise<PixiState>>()
@@ -444,6 +450,8 @@ function initPixi(
         textures,
         itemAnimations,
         frameHandle: -1,
+        viewPrev: null,
+        viewNext: null,
       }
 
       const frameRequestCallback: FrameRequestCallback =
