@@ -130,7 +130,11 @@ function renderGame(game: Game, state: PixiState) {
   state.viewPrev = state.viewNext
   state.viewNext = view
 
-  for (const node of Object.values(view.nodes)) {
+  if (!state.viewPrev) {
+    return
+  }
+
+  for (const node of Object.values(state.viewPrev.nodes)) {
     if (!state.g.nodes.has(node.id)) {
       const container = new PIXI.Container()
       container.position.set(
@@ -183,7 +187,7 @@ function renderGame(game: Game, state: PixiState) {
     }
   }
 
-  for (const item of Object.values(view.items)) {
+  for (const item of Object.values(state.viewPrev.items)) {
     let g = state.g.items.get(item.id)
     if (!g) {
       g = new PIXI.Graphics()
