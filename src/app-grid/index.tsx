@@ -18,7 +18,7 @@ import {
 import { renderSvgToImage, TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 
-const CELL_SIZE = 32
+const CELL_SIZE = 64
 
 function itemColor(item: NodeItem): string {
   const s = 40
@@ -93,7 +93,7 @@ function renderGame(game: Game, state: PixiState) {
         throw new Error('Invalid output direction')
       }
 
-      for (const _direction of node.outputs
+      for (const direction of node.outputs
         .map(refToNode)
         .map(outputToDirection)) {
         const texture =
@@ -101,6 +101,21 @@ function renderGame(game: Game, state: PixiState) {
         const sprite = new PIXI.Sprite(texture)
         sprite.width = CELL_SIZE
         sprite.height = CELL_SIZE
+
+        switch (direction) {
+          case 'n':
+            sprite.angle = -90
+            break
+          case 's':
+            sprite.angle = 90
+            break
+          case 'e':
+            // default angle
+            break
+          case 'w':
+            sprite.angle = 180
+            break
+        }
 
         container.addChild(sprite)
         break

@@ -73,6 +73,7 @@ export const Texture = forwardRef<
             fontSize="30"
             textAnchor="end"
             dominantBaseline="middle"
+            fill="pink"
           >
             {'→'}
           </text>
