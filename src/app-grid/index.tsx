@@ -125,10 +125,8 @@ function gameToGameView(game: Game): GameView {
 }
 
 function renderGame(game: Game, state: PixiState) {
-  const view = gameToGameView(game)
-
   state.viewPrev = state.viewNext
-  state.viewNext = view
+  state.viewNext = gameToGameView(game)
 
   if (!state.viewPrev) {
     return
