@@ -214,6 +214,14 @@ function renderGame(game: Game, state: PixiState) {
 
   for (const item of Object.values(state.viewPrev.items)) {
     let g = state.g.items.get(item.id)
+
+    if (!state.viewNext.items[item.id]) {
+      if (g) {
+        g.destroy()
+      }
+      continue
+    }
+
     if (!g) {
       g = new PIXI.Graphics()
       g.rect(
