@@ -66,17 +66,15 @@ export const Texture = forwardRef<
           height={100}
           viewBox="0 0 100 100"
         >
-          <text
-            x="90"
-            y="50"
-            fontFamily="system-ui"
-            fontSize="30"
-            textAnchor="end"
-            dominantBaseline="middle"
-            fill="pink"
+          <g
+            strokeWidth="4"
+            stroke="white"
+            strokeLinecap="round"
           >
-            {'→'}
-          </text>
+            <line x1="70" y1="50" x2="90" y2="50" />
+            <line x1="80" y1="40" x2="90" y2="50" />
+            <line x1="80" y1="60" x2="90" y2="50" />
+          </g>
         </svg>
       )
   }

@@ -105,6 +105,7 @@ function renderGame(game: Game, state: PixiState) {
         sprite.position.set(CELL_SIZE / 2)
         sprite.width = CELL_SIZE
         sprite.height = CELL_SIZE
+        sprite.alpha = 0.8
 
         switch (direction) {
           case 'n':
