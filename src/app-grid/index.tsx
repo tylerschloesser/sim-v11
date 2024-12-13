@@ -45,6 +45,8 @@ function nodeTextureId(node: Node): TextureId {
   }
 }
 
+type Direction = 'n' | 's' | 'e' | 'w'
+
 function renderGame(game: Game, state: PixiState) {
   function refToNode({ id }: NodeRef) {
     const node = game.nodes.get(id)
@@ -73,7 +75,27 @@ function renderGame(game: Game, state: PixiState) {
         container.addChild(sprite)
       }
 
-      for (const _output of node.outputs.map(refToNode)) {
+      function outputToDirection(output: Node): Direction {
+        const dx = output.p.x - node.p.x
+        const dy = output.p.y - node.p.y
+        if (dx === 0 && dy === -1) {
+          return 'n'
+        }
+        if (dx === 0 && dy === 1) {
+          return 's'
+        }
+        if (dx === 1 && dy === 0) {
+          return 'e'
+        }
+        if (dx === -1 && dy === 0) {
+          return 'w'
+        }
+        throw new Error('Invalid output direction')
+      }
+
+      for (const _direction of node.outputs
+        .map(refToNode)
+        .map(outputToDirection)) {
         const texture =
           state.textures[TextureId.enum.NodeArrow]
         const sprite = new PIXI.Sprite(texture)
