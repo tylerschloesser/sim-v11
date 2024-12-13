@@ -130,6 +130,15 @@ export function AppGrid() {
           Tick: {game.tick}
         </span>
       </div>
+      <AppActions />
+    </div>
+  )
+}
+
+function AppActions() {
+  return (
+    <div className="absolute bottom-0 right-0 p-1">
+      <button>Start</button>
     </div>
   )
 }
