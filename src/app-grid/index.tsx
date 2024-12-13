@@ -195,6 +195,7 @@ interface PixiState {
   g: Graphics
   textures: Record<TextureId, PIXI.Texture>
   itemAnimations: Map<string, ItemAnimation>
+  frameHandle: number
 }
 
 const cache = new Map<string, Promise<PixiState>>()
@@ -379,6 +380,9 @@ function initPixi(
         { signal },
       )
 
+      const itemAnimations: PixiState['itemAnimations'] =
+        new Map()
+
       const state: PixiState = {
         id,
         canvas,
@@ -387,8 +391,19 @@ function initPixi(
         controller,
         g,
         textures,
-        itemAnimations: new Map(),
+        itemAnimations,
+        frameHandle: -1,
       }
+
+      const frameRequestCallback: FrameRequestCallback =
+        () => {
+          state.frameHandle = self.requestAnimationFrame(
+            frameRequestCallback,
+          )
+        }
+      state.frameHandle = self.requestAnimationFrame(
+        frameRequestCallback,
+      )
 
       resolve(state)
     },
@@ -459,6 +474,7 @@ function destroyPixi(id: string) {
   const promise = cache.get(id)
   invariant(promise)
   promise.then((state) => {
+    self.cancelAnimationFrame(state.frameHandle)
     state.controller.abort()
     state.canvas.style.display = 'none'
     state.ro.disconnect()
