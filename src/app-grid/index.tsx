@@ -18,7 +18,8 @@ import {
 import { renderSvgToImage, TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 
-const CELL_SIZE = 64
+const TICK_DURATION = 150
+const CELL_SIZE = 32
 
 function itemColor(item: NodeItem): string {
   const s = 40
@@ -124,14 +125,33 @@ function gameToGameView(game: Game): GameView {
   return view
 }
 
-function renderFrame(state: PixiState) {
+function renderFrame(
+  state: PixiState,
+  tickProgress: number,
+) {
   if (!state.viewPrev) {
     return
   }
   invariant(state.viewNext)
+
+  for (const item of Object.values(state.viewNext.items)) {
+    const prev = state.viewPrev.items[item.id]
+    if (!prev || item.p.equals(prev.p)) {
+      continue
+    }
+
+    const g = state.g.items.get(item.id)
+    invariant(g)
+
+    const d = item.p.sub(prev.p)
+    const p = prev.p.add(d.mul(tickProgress))
+
+    g.position.set(p.x * CELL_SIZE, p.y * CELL_SIZE)
+  }
 }
 
 function renderGame(game: Game, state: PixiState) {
+  state.lastTickTime = self.performance.now()
   state.viewPrev = state.viewNext
   state.viewNext = gameToGameView(game)
 
@@ -221,7 +241,7 @@ export function AppGrid() {
   useEffect(() => {
     const interval = setInterval(() => {
       setGame(step)
-    }, 150)
+    }, TICK_DURATION)
     return () => {
       clearInterval(interval)
     }
@@ -255,6 +275,7 @@ interface PixiState {
   textures: Record<TextureId, PIXI.Texture>
   frameHandle: number
 
+  lastTickTime: number | null
   viewPrev: GameView | null
   viewNext: GameView | null
 }
@@ -450,13 +471,22 @@ function initPixi(
         g,
         textures,
         frameHandle: -1,
+        lastTickTime: null,
         viewPrev: null,
         viewNext: null,
       }
 
       const frameRequestCallback: FrameRequestCallback =
         () => {
-          renderFrame(state)
+          const time = self.performance.now()
+          let tickProgress = 0
+          if (state.lastTickTime !== null) {
+            tickProgress =
+              (time - state.lastTickTime) / TICK_DURATION
+          }
+          invariant(tickProgress >= 0)
+          // invariant(tickProgress < 1.1)
+          renderFrame(state, tickProgress)
           state.frameHandle = self.requestAnimationFrame(
             frameRequestCallback,
           )

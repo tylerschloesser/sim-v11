@@ -32,6 +32,9 @@ export class Vec2 {
   floor() {
     return new Vec2(Math.floor(this.x), Math.floor(this.y))
   }
+  equals(v: Vec2): boolean {
+    return this.x === v.x && this.y === v.y
+  }
   static ZERO = new Vec2(0, 0)
 }
 
