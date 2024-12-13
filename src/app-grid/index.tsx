@@ -122,7 +122,6 @@ function renderGame(game: Game, state: PixiState) {
         }
 
         container.addChild(sprite)
-        break
       }
     }
 
