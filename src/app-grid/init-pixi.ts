@@ -286,7 +286,7 @@ function initGraphics(
     g.pointer.visible = false
     g.pointer.rect(0, 0, cellSize, cellSize)
     g.pointer.stroke({
-      color: 'hsl(240, 50%, 50%)',
+      color: 'white',
       width: 2,
     })
     app.stage.addChild(g.pointer)
