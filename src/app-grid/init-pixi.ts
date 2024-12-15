@@ -133,7 +133,7 @@ export function initPixi(
         (ev) => {
           pointer = new Vec2(ev.offsetX, ev.offsetY)
           const world = screenToWorld(pointer)
-          const screen = worldToScreen(world).floor()
+          const screen = worldToScreen(world.floor())
 
           if (!state.inputViewNext) {
             state.inputViewNext = { pointer: screen }
@@ -145,7 +145,7 @@ export function initPixi(
           g.pointer.position.set(screen.x, screen.y)
 
           setInput((draft) => {
-            if (!draft.hoverCell?.equals(screen)) {
+            if (!draft.hoverCell?.equals(world)) {
               draft.hoverCell = screen
             }
           })
@@ -177,8 +177,8 @@ export function initPixi(
           g.pointer.position.set(screen.x, screen.y)
 
           setInput((draft) => {
-            if (!draft.hoverCell?.equals(screen)) {
-              draft.hoverCell = screen
+            if (!draft.hoverCell?.equals(world.floor())) {
+              draft.hoverCell = world.floor()
             }
           })
         },
