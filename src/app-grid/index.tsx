@@ -1,8 +1,10 @@
+import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
-import { useImmer } from 'use-immer'
+import { Updater, useImmer } from 'use-immer'
+import { Input } from '../app-graph/input-view'
 import { Game, initGame, step } from '../game'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
@@ -106,6 +108,9 @@ function renderGame(game: Game, state: PixiState) {
 
 export function AppGrid() {
   const [game, setGame] = useImmer(initGame)
+  const [input, setInput] = useImmer<Input>({
+    hoverCell: null,
+  })
   const state = useRef<PixiState | null>(null)
   useEffect(() => {
     const interval = setInterval(() => {
@@ -124,11 +129,15 @@ export function AppGrid() {
 
   return (
     <div className="w-dvw h-dvh relative">
-      <Canvas state={state} />
-      <div className="absolute top-0 left-0 p-1 pointer-events-none">
-        <span className="block text-gray-400 leading-none">
-          Tick: {game.tick}
-        </span>
+      <Canvas state={state} setInput={setInput} />
+      <div
+        className={clsx(
+          'absolute top-0 left-0 p-1 pointer-events-none',
+          'text-gray-400 leading-none',
+        )}
+      >
+        <div>Tick: {game.tick}</div>
+        <div>{JSON.stringify(input)}</div>
       </div>
       <AppActions />
     </div>
@@ -145,17 +154,20 @@ function AppActions() {
 
 interface CanvasProps {
   state: React.MutableRefObject<PixiState | null>
+  setInput: Updater<Input>
 }
 
-export function Canvas({ state }: CanvasProps) {
+export function Canvas({ state, setInput }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     invariant(container.current)
     const id = uniqueId()
-    initPixi(id, container.current).then((_state) => {
-      state.current = _state
-    })
+    initPixi(id, container.current, setInput).then(
+      (_state) => {
+        state.current = _state
+      },
+    )
     return () => {
       state.current = null
       destroyPixi(id)

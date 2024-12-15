@@ -1,6 +1,8 @@
 import { debounce } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import invariant from 'tiny-invariant'
+import { Updater } from 'use-immer'
+import { Input } from '../app-graph/input-view'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { renderSvgToImage, TextureId } from '../textures'
@@ -12,6 +14,7 @@ const cache = new Map<string, Promise<PixiState>>()
 export function initPixi(
   id: string,
   container: HTMLDivElement,
+  setInput: Updater<Input>,
 ): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
@@ -140,6 +143,12 @@ export function initPixi(
 
           g.pointer.visible = true
           g.pointer.position.set(screen.x, screen.y)
+
+          setInput((draft) => {
+            if (!draft.hoverCell?.equals(screen)) {
+              draft.hoverCell = screen
+            }
+          })
         },
         { signal },
       )
@@ -166,6 +175,12 @@ export function initPixi(
 
           g.pointer.visible = true
           g.pointer.position.set(screen.x, screen.y)
+
+          setInput((draft) => {
+            if (!draft.hoverCell?.equals(screen)) {
+              draft.hoverCell = screen
+            }
+          })
         },
         { signal },
       )
@@ -177,6 +192,10 @@ export function initPixi(
 
           pointer = null
           g.pointer.visible = false
+
+          setInput((draft) => {
+            draft.hoverCell = null
+          })
         },
         { signal },
       )

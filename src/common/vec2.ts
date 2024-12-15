@@ -2,8 +2,8 @@ import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
 export class Vec2 {
-  x: number
-  y: number
+  readonly x: number
+  readonly y: number
   constructor(x: number, y: number)
   constructor(x: ZVec2)
   constructor(x: number | ZVec2, y?: number) {
