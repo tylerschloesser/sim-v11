@@ -10,20 +10,12 @@ import { Game, initGame, step, UpdateType } from '../game'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 import { CELL_SIZE, TICK_DURATION } from './const'
-import { gameToGameView } from './game-view'
+import { gameToGameView, GameView } from './game-view'
 import { destroyPixi, initPixi } from './init-pixi'
 import { PixiState } from './pixi-state'
 
-function renderGame(game: Game, state: PixiState) {
-  state.lastTickTime = self.performance.now()
-  state.viewPrev = state.viewNext
-  state.viewNext = gameToGameView(game)
-
-  if (!state.viewPrev) {
-    return
-  }
-
-  for (const node of Object.values(state.viewPrev.nodes)) {
+function renderNodes(view: GameView, state: PixiState) {
+  for (const node of Object.values(view.nodes)) {
     if (!state.g.nodes.has(node.id)) {
       const container = new PIXI.Container()
       container.position.set(
@@ -75,6 +67,18 @@ function renderGame(game: Game, state: PixiState) {
       }
     }
   }
+}
+
+function renderGame(game: Game, state: PixiState) {
+  state.lastTickTime = self.performance.now()
+  state.viewPrev = state.viewNext
+  state.viewNext = gameToGameView(game)
+
+  if (!state.viewPrev) {
+    return
+  }
+
+  renderNodes(state.viewPrev, state)
 
   for (const item of Object.values(state.viewPrev.items)) {
     let g = state.g.items.get(item.id)
