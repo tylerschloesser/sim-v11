@@ -109,12 +109,34 @@ export function initPixi(
           .sub(delta)
       }
 
+      const state: PixiState = {
+        id,
+        canvas,
+        app,
+        ro,
+        controller,
+        g,
+        textures,
+        frameHandle: -1,
+        lastTickTime: null,
+        viewPrev: null,
+        viewNext: null,
+        inputViewPrev: { pointer: null },
+        inputViewNext: { pointer: null },
+      }
+
       document.addEventListener(
         'pointerenter',
         (ev) => {
           pointer = new Vec2(ev.offsetX, ev.offsetY)
           const world = screenToWorld(pointer)
           const screen = worldToScreen(world).floor()
+
+          if (!state.inputViewNext) {
+            state.inputViewNext = { pointer: screen }
+          } else {
+            state.inputViewNext.pointer = screen
+          }
 
           g.pointer.visible = true
           g.pointer.position.set(screen.x, screen.y)
@@ -136,6 +158,12 @@ export function initPixi(
           const world = screenToWorld(pointer)
           const screen = worldToScreen(world.floor())
 
+          if (!state.inputViewNext) {
+            state.inputViewNext = { pointer: screen }
+          } else {
+            state.inputViewNext.pointer = screen
+          }
+
           g.pointer.visible = true
           g.pointer.position.set(screen.x, screen.y)
         },
@@ -145,6 +173,8 @@ export function initPixi(
       document.addEventListener(
         'pointerleave',
         (_ev) => {
+          state.inputViewNext.pointer = null
+
           pointer = null
           g.pointer.visible = false
         },
@@ -170,20 +200,6 @@ export function initPixi(
         },
         { signal },
       )
-
-      const state: PixiState = {
-        id,
-        canvas,
-        app,
-        ro,
-        controller,
-        g,
-        textures,
-        frameHandle: -1,
-        lastTickTime: null,
-        viewPrev: null,
-        viewNext: null,
-      }
 
       const frameRequestCallback: FrameRequestCallback =
         () => {
