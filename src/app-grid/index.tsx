@@ -5,7 +5,8 @@ import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
 import { Input } from '../app-graph/input-view'
-import { Game, initGame, step } from '../game'
+import { Vec2 } from '../common/vec2'
+import { Game, initGame, step, UpdateType } from '../game'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 import { CELL_SIZE, TICK_DURATION } from './const'
@@ -122,10 +123,97 @@ export function AppGrid() {
   }, [])
 
   useEffect(() => {
-    if (state.current) {
+    if (
+      game.updateType === UpdateType.enum.Tick &&
+      state.current
+    ) {
       renderGame(game, state.current)
     }
   }, [game])
+
+  const gameRef = useRef<Game>(game)
+  useEffect(() => {
+    gameRef.current = game
+  }, [game])
+
+  const inputRef = useRef<Input>(input)
+  useEffect(() => {
+    inputRef.current = input
+  }, [input])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    const { signal } = controller
+
+    window.addEventListener(
+      'keyup',
+      (ev) => {
+        let d: Vec2 | null = null
+        switch (ev.key) {
+          case 'ArrowLeft':
+            d = new Vec2(-1, 0)
+            break
+          case 'ArrowRight':
+            d = new Vec2(1, 0)
+            break
+          case 'ArrowUp':
+            d = new Vec2(0, -1)
+            break
+          case 'ArrowDown':
+            d = new Vec2(0, 1)
+            break
+        }
+        if (!d) {
+          return
+        }
+
+        setGame((draft) => {
+          draft.updateType = null
+          if (!inputRef.current.hoverCell) {
+            return
+          }
+
+          const cell = Array.from(
+            draft.nodes.values(),
+          ).find((node) =>
+            new Vec2(node.p).equals(
+              inputRef.current.hoverCell!,
+            ),
+          )
+
+          if (!cell) {
+            return cell
+          }
+
+          const output = Array.from(
+            draft.nodes.values(),
+          ).find((node) =>
+            new Vec2(node.p).equals(
+              new Vec2(cell.p).add(d),
+            ),
+          )
+
+          if (!output) {
+            return
+          }
+
+          const outputIndex = cell.outputs.findIndex(
+            (node) => node.id === output.id,
+          )
+          if (outputIndex === -1) {
+            cell.outputs.push({ id: output.id })
+          } else {
+            cell.outputs.splice(outputIndex, 1)
+          }
+        })
+      },
+      { signal },
+    )
+
+    return () => {
+      controller.abort()
+    }
+  }, [])
 
   return (
     <div className="w-dvw h-dvh relative">

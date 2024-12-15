@@ -50,8 +50,12 @@ export const Node = z.strictObject({
 })
 export type Node = z.infer<typeof Node>
 
+export const UpdateType = z.enum(['Tick'])
+export type UpdateType = z.infer<typeof UpdateType>
+
 export const Game = z.strictObject({
   tick: z.number(),
+  updateType: UpdateType.nullable(),
   nodes: z.map(z.string(), Node),
 
   nextItemId: z.number(),
@@ -109,6 +113,7 @@ export function initGame(): Game {
 
   return {
     tick: 0,
+    updateType: null,
     nodes,
     nextItemId,
   }
@@ -116,6 +121,7 @@ export function initGame(): Game {
 
 export function step(game: Game) {
   game.tick += 1
+  game.updateType = UpdateType.enum.Tick
   const { nodes } = game
 
   function refToNode({ id }: NodeRef) {
