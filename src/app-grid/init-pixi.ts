@@ -93,7 +93,7 @@ export function initPixi(
       const cellSize = CELL_SIZE
       const g = initGraphics(app, cellSize, viewport)
 
-      let camera = Vec2.ZERO
+      const camera$ = new BehaviorSubject<Vec2>(Vec2.ZERO)
       const pointer$ = new BehaviorSubject<Pointer | null>(
         null,
       )
@@ -101,7 +101,7 @@ export function initPixi(
       function updateCamera() {
         const delta = pointerToDelta(pointer$.value)
         {
-          const t = camera
+          const t = camera$.value
             .mul(cellSize)
             .add(delta)
             .mul(-1)
@@ -113,7 +113,7 @@ export function initPixi(
         }
 
         {
-          const t = camera
+          const t = camera$.value
             .mul(cellSize)
             .add(delta)
             .mul(-1)
@@ -129,13 +129,13 @@ export function initPixi(
           .sub(viewport.div(2))
           .add(delta)
           .div(cellSize)
-          .add(camera)
+          .add(camera$.value)
       }
 
       function worldToScreen(world: Vec2): Vec2 {
         const delta = pointerToDelta(pointer$.value)
         return world
-          .sub(camera)
+          .sub(camera$.value)
           .mul(cellSize)
           .add(viewport.div(2))
           .sub(delta)
@@ -264,7 +264,11 @@ export function initPixi(
           const pointer = pointer$.value
 
           if (pointer?.type === PointerType.Drag) {
-            camera = camera.add(pointer.delta.div(cellSize))
+            camera$.next(
+              camera$.value.add(
+                pointer.delta.div(cellSize),
+              ),
+            )
           }
 
           pointer$.next({
