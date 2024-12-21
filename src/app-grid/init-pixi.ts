@@ -117,23 +117,20 @@ export function initPixi(
         distinctUntilChanged(),
       )
 
-      effectiveCamera$
-        .pipe(
-          // convert to screen coordinates
-          map((camera) =>
-            camera
-              .mul(cellSize)
-              .mul(-1)
-              .add(viewport.div(2)),
-          ),
+      // convert to screen coordinates
+      const effectiveCameraScreen$ = effectiveCamera$.pipe(
+        map((camera) =>
+          camera.mul(cellSize).mul(-1).add(viewport.div(2)),
+        ),
+      )
+
+      effectiveCameraScreen$.subscribe((screen) => {
+        g.grid.position.set(
+          mod(screen.x, cellSize) - cellSize,
+          mod(screen.y, cellSize) - cellSize,
         )
-        .subscribe((screen) => {
-          g.grid.position.set(
-            mod(screen.x, cellSize) - cellSize,
-            mod(screen.y, cellSize) - cellSize,
-          )
-          g.world.position.set(screen.x, screen.y)
-        })
+        g.world.position.set(screen.x, screen.y)
+      })
 
       function screenToWorld(screen: Vec2): Vec2 {
         const delta = pointerToDelta(pointer$.value)
