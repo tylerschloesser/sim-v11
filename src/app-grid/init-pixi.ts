@@ -16,6 +16,7 @@ import { Updater } from 'use-immer'
 import { Input } from '../app-graph/input-view'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
+import { Game } from '../game'
 import { renderSvgToImage, TextureId } from '../textures'
 import {
   CELL_SIZE,
@@ -49,6 +50,7 @@ export function initPixi(
   id: string,
   container: HTMLDivElement,
   setInput: Updater<Input>,
+  setGame: Updater<Game>,
 ): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
@@ -164,10 +166,25 @@ export function initPixi(
           .pipe(
             throttleTime(100),
             withLatestFrom(hover$),
-            map(([_, hover]) => hover),
+            map(([_, hover]) => {
+              invariant(
+                hover,
+                'Received click but hover is null',
+              )
+              return hover
+            }),
           )
           .subscribe((hover) => {
             console.log('click!', hover)
+            setGame((draft) => {
+              const node = Array.from(
+                draft.nodes.values(),
+              ).find((node) =>
+                new Vec2(node.p).equals(hover),
+              )
+              if (!node) return
+              console.log('found node', node)
+            })
           }),
       )
 
