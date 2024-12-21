@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import { Subscription } from 'rxjs'
 import { TextureId } from '../textures'
 import { GameView, NodeView } from './game-view'
 
@@ -31,4 +32,6 @@ export interface PixiState {
   lastTickTime: number | null
   viewPrev: GameView | null
   viewNext: GameView | null
+
+  sub: Subscription
 }

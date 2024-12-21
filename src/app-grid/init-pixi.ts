@@ -5,6 +5,8 @@ import {
   combineLatest,
   distinctUntilChanged,
   map,
+  shareReplay,
+  Subscription,
 } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { Updater } from 'use-immer'
@@ -97,6 +99,8 @@ export function initPixi(
         null,
       )
 
+      const sub = new Subscription()
+
       const effectiveCamera$ = combineLatest([
         camera$,
         pointer$,
@@ -109,6 +113,7 @@ export function initPixi(
           return camera.add(delta)
         }),
         distinctUntilChanged(isEqual),
+        shareReplay(1),
       )
 
       // convert to screen coordinates
@@ -118,14 +123,17 @@ export function initPixi(
         ),
       )
 
-      effectiveCameraScreen$.subscribe((screen) => {
-        g.grid.position.set(
-          mod(screen.x, cellSize) - cellSize,
-          mod(screen.y, cellSize) - cellSize,
-        )
-        g.world.position.set(screen.x, screen.y)
-      })
+      sub.add(
+        effectiveCameraScreen$.subscribe((screen) => {
+          g.grid.position.set(
+            mod(screen.x, cellSize) - cellSize,
+            mod(screen.y, cellSize) - cellSize,
+          )
+          g.world.position.set(screen.x, screen.y)
+        }),
+      )
 
+      console.log('subscribing')
       const hover$ = combineLatest([
         effectiveCamera$,
         pointer$,
@@ -141,34 +149,39 @@ export function initPixi(
             .floor()
         }),
         distinctUntilChanged(isEqual),
+        shareReplay(1),
       )
 
-      hover$.subscribe((hover) => {
-        setInput((draft) => {
-          draft.hoverCell = hover
-        })
-      })
+      sub.add(
+        hover$.subscribe((hover) => {
+          setInput((draft) => {
+            draft.hoverCell = hover
+          })
+        }),
+      )
 
-      combineLatest([effectiveCamera$, hover$])
-        .pipe(
-          map(([camera, hover]) =>
-            hover
-              ? hover
-                  .sub(camera)
-                  .mul(cellSize)
-                  .add(viewport.div(2))
-              : null,
-          ),
-          distinctUntilChanged(isEqual),
-        )
-        .subscribe((screen) => {
-          if (screen) {
-            g.pointer.visible = true
-            g.pointer.position.set(screen.x, screen.y)
-          } else {
-            g.pointer.visible = false
-          }
-        })
+      sub.add(
+        combineLatest([effectiveCamera$, hover$])
+          .pipe(
+            map(([camera, hover]) =>
+              hover
+                ? hover
+                    .sub(camera)
+                    .mul(cellSize)
+                    .add(viewport.div(2))
+                : null,
+            ),
+            distinctUntilChanged(isEqual),
+          )
+          .subscribe((screen) => {
+            if (screen) {
+              g.pointer.visible = true
+              g.pointer.position.set(screen.x, screen.y)
+            } else {
+              g.pointer.visible = false
+            }
+          }),
+      )
 
       const state: PixiState = {
         id,
@@ -182,6 +195,7 @@ export function initPixi(
         lastTickTime: null,
         viewPrev: null,
         viewNext: null,
+        sub,
       }
 
       document.addEventListener(
@@ -393,5 +407,7 @@ export function destroyPixi(id: string) {
     })
     state.canvas.remove()
     cache.delete(id)
+    console.log('unsubscribeing')
+    state.sub.unsubscribe()
   })
 }
