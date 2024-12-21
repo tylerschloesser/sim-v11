@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import {
@@ -66,6 +67,7 @@ export function gameToGameView(game: Game): GameView {
     const outputs = node.outputs
       .map(refToNode)
       .map(outputToDirection)
+    outputs.sort()
 
     const nodeView: NodeView = {
       id: node.id,
@@ -74,17 +76,21 @@ export function gameToGameView(game: Game): GameView {
       textureId,
     }
 
-    view.nodes[node.id] = nodeView
+    if (!isEqual(view.nodes[node.id], nodeView)) {
+      view.nodes[node.id] = nodeView
+    }
 
     if (!node.item) {
       continue
     }
 
-    view.items[node.item.id] = {
+    const itemView: ItemView = {
       id: node.item.id,
+      p: new Vec2(node.p),
       color: itemColor(node.item),
-      p: nodeView.p,
     }
+
+    view.items[node.item.id] = itemView
   }
   return view
 }
