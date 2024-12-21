@@ -11,6 +11,31 @@ import { Graphics, PixiState } from './pixi-state'
 
 const cache = new Map<string, Promise<PixiState>>()
 
+enum PointerType {
+  Free = 'free',
+  Drag = 'drag',
+}
+
+interface FreePointer {
+  type: PointerType.Free
+  p: Vec2
+}
+
+interface DragPointer {
+  type: PointerType.Drag
+  p: Vec2
+  down: Vec2
+  delta: Vec2
+}
+
+type Pointer = FreePointer | DragPointer
+
+function pointerToDelta(pointer: Pointer | null): Vec2 {
+  return pointer?.type === PointerType.Drag
+    ? pointer.delta
+    : Vec2.ZERO
+}
+
 export function initPixi(
   id: string,
   container: HTMLDivElement,
@@ -68,11 +93,10 @@ export function initPixi(
       const g = initGraphics(app, cellSize, viewport)
 
       let camera = Vec2.ZERO
-      let pointer: Vec2 | null = null
-      let pointerDown: Vec2 | null = null
-      let delta = Vec2.ZERO
+      let pointer: Pointer | null = null
 
       function updateCamera() {
+        const delta = pointerToDelta(pointer)
         {
           const t = camera
             .mul(cellSize)
@@ -97,6 +121,7 @@ export function initPixi(
       updateCamera()
 
       function screenToWorld(screen: Vec2): Vec2 {
+        const delta = pointerToDelta(pointer)
         return screen
           .sub(viewport.div(2))
           .add(delta)
@@ -105,6 +130,7 @@ export function initPixi(
       }
 
       function worldToScreen(world: Vec2): Vec2 {
+        const delta = pointerToDelta(pointer)
         return world
           .sub(camera)
           .mul(cellSize)
@@ -131,8 +157,11 @@ export function initPixi(
       document.addEventListener(
         'pointerenter',
         (ev) => {
-          pointer = new Vec2(ev.offsetX, ev.offsetY)
-          const world = screenToWorld(pointer)
+          pointer = {
+            type: PointerType.Free,
+            p: new Vec2(ev.offsetX, ev.offsetY),
+          }
+          const world = screenToWorld(pointer.p)
           const screen = worldToScreen(world.floor())
 
           if (!state.inputViewNext) {
@@ -156,15 +185,19 @@ export function initPixi(
       document.addEventListener(
         'pointermove',
         (ev) => {
-          if (pointerDown !== null) {
-            const p = new Vec2(ev.offsetX, ev.offsetY)
-            // update delta before updating camera!
-            delta = pointerDown.sub(p)
+          const p = new Vec2(ev.offsetX, ev.offsetY)
+          if (pointer === null) {
+            pointer = { type: PointerType.Free, p }
+          } else {
+            pointer.p = p
+          }
+
+          if (pointer.type === PointerType.Drag) {
+            pointer.delta = pointer.down.sub(p)
             updateCamera()
           }
 
-          pointer = new Vec2(ev.offsetX, ev.offsetY)
-          const world = screenToWorld(pointer)
+          const world = screenToWorld(pointer.p)
           const screen = worldToScreen(world.floor())
 
           if (!state.inputViewNext) {
@@ -203,18 +236,38 @@ export function initPixi(
       document.addEventListener(
         'pointerdown',
         (ev) => {
-          pointerDown = new Vec2(ev.offsetX, ev.offsetY)
+          const p = new Vec2(ev.offsetX, ev.offsetY)
+          pointer = {
+            type: PointerType.Drag,
+            p,
+            down: p,
+            delta: Vec2.ZERO,
+          }
         },
         { signal },
       )
 
       document.addEventListener(
         'pointerup',
-        (_ev) => {
-          pointerDown = null
-          camera = camera.add(delta.div(cellSize))
-          console.log('camera', camera)
-          delta = Vec2.ZERO
+        (ev) => {
+          const p = new Vec2(ev.offsetX, ev.offsetY)
+          if (
+            pointer === null ||
+            pointer.type === PointerType.Drag
+          ) {
+            if (pointer?.type === PointerType.Drag) {
+              camera = camera.add(
+                pointer.delta.div(cellSize),
+              )
+            }
+            pointer = {
+              type: PointerType.Free,
+              p,
+            }
+          } else {
+            pointer.p = p
+          }
+
           updateCamera()
         },
         { signal },
