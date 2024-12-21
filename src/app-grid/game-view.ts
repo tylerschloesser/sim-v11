@@ -12,7 +12,7 @@ import { TextureId } from '../textures'
 
 type Direction = 'n' | 's' | 'e' | 'w'
 
-interface NodeView {
+export interface NodeView {
   id: string
   p: Vec2
   textureId: TextureId

@@ -10,68 +10,68 @@ import { Game, initGame, step, UpdateType } from '../game'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 import { CELL_SIZE, TICK_DURATION } from './const'
-import { gameToGameView, GameView } from './game-view'
+import { gameToGameView, NodeView } from './game-view'
 import { destroyPixi, initPixi } from './init-pixi'
-import { PixiState } from './pixi-state'
+import { NodeContainer, PixiState } from './pixi-state'
 
-function renderNodes(view: GameView, state: PixiState) {
-  for (const node of Object.values(view.nodes)) {
-    if (!state.g.nodes.has(node.id)) {
-      const container = new PIXI.Container()
-      container.position.set(
-        node.p.x * CELL_SIZE,
-        node.p.y * CELL_SIZE,
-      )
+function renderNode(node: NodeView, state: PixiState) {
+  if (!state.g.nodes.has(node.id)) {
+    const container = new NodeContainer(node)
+    container.position.set(
+      node.p.x * CELL_SIZE,
+      node.p.y * CELL_SIZE,
+    )
 
-      state.g.nodes.set(node.id, container)
-      // add to the beginning, so they're always behind items
-      state.g.world.addChildAt(container, 0)
+    state.g.nodes.set(node.id, container)
+    // add to the beginning, so they're always behind items
+    state.g.world.addChildAt(container, 0)
 
-      {
-        const texture = state.textures[node.textureId]
-        const sprite = new PIXI.Sprite(texture)
-        sprite.width = CELL_SIZE
-        sprite.height = CELL_SIZE
+    {
+      const texture = state.textures[node.textureId]
+      const sprite = new PIXI.Sprite(texture)
+      sprite.width = CELL_SIZE
+      sprite.height = CELL_SIZE
 
-        container.addChild(sprite)
+      container.addChild(sprite)
+    }
+
+    for (const direction of node.outputs) {
+      const texture =
+        state.textures[TextureId.enum.NodeArrow]
+      const sprite = new PIXI.Sprite(texture)
+
+      sprite.anchor.set(0.5)
+
+      sprite.position.set(CELL_SIZE / 2)
+      sprite.width = CELL_SIZE
+      sprite.height = CELL_SIZE
+      sprite.alpha = 0.8
+
+      switch (direction) {
+        case 'n':
+          sprite.angle = -90
+          break
+        case 's':
+          sprite.angle = 90
+          break
+        case 'e':
+          // default angle
+          break
+        case 'w':
+          sprite.angle = 180
+          break
       }
 
-      for (const direction of node.outputs) {
-        const texture =
-          state.textures[TextureId.enum.NodeArrow]
-        const sprite = new PIXI.Sprite(texture)
-
-        sprite.anchor.set(0.5)
-
-        sprite.position.set(CELL_SIZE / 2)
-        sprite.width = CELL_SIZE
-        sprite.height = CELL_SIZE
-        sprite.alpha = 0.8
-
-        switch (direction) {
-          case 'n':
-            sprite.angle = -90
-            break
-          case 's':
-            sprite.angle = 90
-            break
-          case 'e':
-            // default angle
-            break
-          case 'w':
-            sprite.angle = 180
-            break
-        }
-
-        container.addChild(sprite)
-      }
+      container.addChild(sprite)
     }
   }
 }
 
 function renderGame(game: Game, state: PixiState) {
   const view = gameToGameView(game)
-  renderNodes(view, state)
+  for (const node of Object.values(view.nodes)) {
+    renderNode(node, state)
+  }
 }
 
 function renderTick(game: Game, state: PixiState) {
@@ -82,8 +82,6 @@ function renderTick(game: Game, state: PixiState) {
   if (!state.viewPrev) {
     return
   }
-
-  renderNodes(state.viewPrev, state)
 
   for (const item of Object.values(state.viewPrev.items)) {
     let g = state.g.items.get(item.id)
@@ -228,7 +226,11 @@ export function AppGrid() {
 
   return (
     <div className="w-dvw h-dvh relative">
-      <Canvas state={state} setInput={setInput} />
+      <Canvas
+        state={state}
+        setInput={setInput}
+        gameRef={gameRef}
+      />
       <div
         className={clsx(
           'absolute top-0 left-0 p-1 pointer-events-none',
@@ -254,9 +256,14 @@ function AppActions() {
 interface CanvasProps {
   state: React.MutableRefObject<PixiState | null>
   setInput: Updater<Input>
+  gameRef: React.MutableRefObject<Game>
 }
 
-export function Canvas({ state, setInput }: CanvasProps) {
+export function Canvas({
+  state,
+  setInput,
+  gameRef,
+}: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -265,6 +272,7 @@ export function Canvas({ state, setInput }: CanvasProps) {
     initPixi(id, container.current, setInput).then(
       (_state) => {
         state.current = _state
+        renderGame(gameRef.current, _state)
       },
     )
     return () => {

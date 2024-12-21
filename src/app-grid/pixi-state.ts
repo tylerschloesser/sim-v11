@@ -1,7 +1,15 @@
 import * as PIXI from 'pixi.js'
 import { InputView } from '../app-graph/input-view'
 import { TextureId } from '../textures'
-import { GameView } from './game-view'
+import { GameView, NodeView } from './game-view'
+
+export class NodeContainer extends PIXI.Container {
+  ref: NodeView
+  constructor(ref: NodeView) {
+    super()
+    this.ref = ref
+  }
+}
 
 export interface Graphics {
   pointer: PIXI.Graphics
