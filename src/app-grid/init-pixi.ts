@@ -133,7 +133,6 @@ export function initPixi(
         }),
       )
 
-      console.log('subscribing')
       const hover$ = combineLatest([
         effectiveCamera$,
         pointer$,
@@ -405,7 +404,6 @@ export function destroyPixi(id: string) {
     })
     state.canvas.remove()
     cache.delete(id)
-    console.log('unsubscribeing')
     state.sub.unsubscribe()
   })
 }
