@@ -8,6 +8,7 @@ import {
   shareReplay,
   Subject,
   Subscription,
+  throttleTime,
   withLatestFrom,
 } from 'rxjs'
 import invariant from 'tiny-invariant'
@@ -161,6 +162,7 @@ export function initPixi(
       sub.add(
         click$
           .pipe(
+            throttleTime(100),
             withLatestFrom(hover$),
             map(([_, hover]) => hover),
           )
