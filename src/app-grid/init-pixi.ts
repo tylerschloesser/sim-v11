@@ -256,12 +256,10 @@ export function initPixi(
         (ev) => {
           const p = new Vec2(ev.offsetX, ev.offsetY)
 
-          const pointer = pointer$.value
-
-          if (pointer?.type === PointerType.Drag) {
+          if (pointer$.value?.type === PointerType.Drag) {
             camera$.next(
               camera$.value.add(
-                pointer.delta.div(cellSize),
+                pointer$.value.delta.div(cellSize),
               ),
             )
           }
