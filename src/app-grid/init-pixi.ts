@@ -103,16 +103,22 @@ export function initPixi(
         null,
       )
 
-      combineLatest([camera$, pointer$])
+      const effectiveCamera$ = combineLatest([
+        camera$,
+        pointer$,
+      ]).pipe(
+        map(([camera, pointer]) => {
+          if (pointer?.type !== PointerType.Drag) {
+            return camera
+          }
+          const delta = pointer.delta.div(cellSize)
+          return camera.add(delta)
+        }),
+        distinctUntilChanged(),
+      )
+
+      effectiveCamera$
         .pipe(
-          map(([camera, pointer]) => {
-            if (pointer?.type !== PointerType.Drag) {
-              return camera
-            }
-            const delta = pointer.delta.div(cellSize)
-            return camera.add(delta)
-          }),
-          distinctUntilChanged(),
           // convert to screen coordinates
           map((camera) =>
             camera
