@@ -120,7 +120,7 @@ export function initPixi(
           const delta = pointer.delta.div(cellSize)
           return camera.add(delta)
         }),
-        distinctUntilChanged(isEqual),
+        distinctUntilChanged<Vec2>(isEqual),
         shareReplay(1),
       )
 
@@ -155,7 +155,7 @@ export function initPixi(
             .add(camera)
             .floor()
         }),
-        distinctUntilChanged(isEqual),
+        distinctUntilChanged<Vec2 | null>(isEqual),
         shareReplay(1),
       )
 
@@ -190,7 +190,7 @@ export function initPixi(
                     .add(viewport.div(2))
                 : null,
             ),
-            distinctUntilChanged(isEqual),
+            distinctUntilChanged<Vec2 | null>(isEqual),
           )
           .subscribe((screen) => {
             if (screen) {
