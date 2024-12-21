@@ -36,12 +36,6 @@ interface DragPointer {
 
 type Pointer = FreePointer | DragPointer
 
-function pointerToDelta(pointer: Pointer | null): Vec2 {
-  return pointer?.type === PointerType.Drag
-    ? pointer.delta
-    : Vec2.ZERO
-}
-
 export function initPixi(
   id: string,
   container: HTMLDivElement,
@@ -132,23 +126,49 @@ export function initPixi(
         g.world.position.set(screen.x, screen.y)
       })
 
-      function screenToWorld(screen: Vec2): Vec2 {
-        const delta = pointerToDelta(pointer$.value)
-        return screen
-          .sub(viewport.div(2))
-          .add(delta)
-          .div(cellSize)
-          .add(camera$.value)
-      }
+      const hover$ = combineLatest([
+        effectiveCamera$,
+        pointer$,
+      ]).pipe(
+        map(([camera, pointer]) => {
+          if (pointer === null) {
+            return null
+          }
+          return pointer.p
+            .sub(viewport.div(2))
+            .div(cellSize)
+            .add(camera)
+            .floor()
+        }),
+        distinctUntilChanged(),
+      )
 
-      function worldToScreen(world: Vec2): Vec2 {
-        const delta = pointerToDelta(pointer$.value)
-        return world
-          .sub(camera$.value)
-          .mul(cellSize)
-          .add(viewport.div(2))
-          .sub(delta)
-      }
+      hover$.subscribe((hover) => {
+        setInput((draft) => {
+          draft.hoverCell = hover
+        })
+      })
+
+      combineLatest([effectiveCamera$, hover$])
+        .pipe(
+          map(([camera, hover]) =>
+            hover
+              ? hover
+                  .sub(camera)
+                  .mul(cellSize)
+                  .add(viewport.div(2))
+              : null,
+          ),
+          distinctUntilChanged(),
+        )
+        .subscribe((screen) => {
+          if (screen) {
+            g.pointer.visible = true
+            g.pointer.position.set(screen.x, screen.y)
+          } else {
+            g.pointer.visible = false
+          }
+        })
 
       const state: PixiState = {
         id,
@@ -171,18 +191,6 @@ export function initPixi(
             type: PointerType.Free,
             p: new Vec2(ev.offsetX, ev.offsetY),
           })
-          invariant(pointer$.value)
-          const world = screenToWorld(pointer$.value.p)
-          const screen = worldToScreen(world.floor())
-
-          g.pointer.visible = true
-          g.pointer.position.set(screen.x, screen.y)
-
-          setInput((draft) => {
-            if (!draft.hoverCell?.equals(world)) {
-              draft.hoverCell = screen
-            }
-          })
         },
         { signal },
       )
@@ -203,20 +211,6 @@ export function initPixi(
               p,
             })
           }
-
-          invariant(pointer$.value)
-
-          const world = screenToWorld(pointer$.value.p)
-          const screen = worldToScreen(world.floor())
-
-          g.pointer.visible = true
-          g.pointer.position.set(screen.x, screen.y)
-
-          setInput((draft) => {
-            if (!draft.hoverCell?.equals(world.floor())) {
-              draft.hoverCell = world.floor()
-            }
-          })
         },
         { signal },
       )
@@ -225,11 +219,6 @@ export function initPixi(
         'pointerleave',
         (_ev) => {
           pointer$.next(null)
-          g.pointer.visible = false
-
-          setInput((draft) => {
-            draft.hoverCell = null
-          })
         },
         { signal },
       )
