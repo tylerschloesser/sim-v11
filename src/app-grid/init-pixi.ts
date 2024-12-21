@@ -1,6 +1,11 @@
 import { debounce } from 'lodash-es'
 import * as PIXI from 'pixi.js'
-import { BehaviorSubject } from 'rxjs'
+import {
+  BehaviorSubject,
+  combineLatest,
+  distinctUntilChanged,
+  map,
+} from 'rxjs'
 import invariant from 'tiny-invariant'
 import { Updater } from 'use-immer'
 import { Input } from '../app-graph/input-view'
@@ -98,30 +103,37 @@ export function initPixi(
         null,
       )
 
-      function updateCamera() {
-        const delta = pointerToDelta(pointer$.value)
-        {
-          const t = camera$.value
-            .mul(cellSize)
-            .add(delta)
-            .mul(-1)
-            .add(viewport.div(2))
-          g.grid.position.set(
-            mod(t.x, cellSize) - cellSize,
-            mod(t.y, cellSize) - cellSize,
-          )
-        }
+      combineLatest([camera$, pointer$])
+        .pipe(
+          map(([camera, pointer]) => {
+            if (pointer?.type !== PointerType.Drag) {
+              return camera
+            }
+            const delta = pointer.delta.div(cellSize)
+            return camera.add(delta)
+          }),
+          distinctUntilChanged(),
+        )
+        .subscribe((camera) => {
+          {
+            const t = camera
+              .mul(cellSize)
+              .mul(-1)
+              .add(viewport.div(2))
+            g.grid.position.set(
+              mod(t.x, cellSize) - cellSize,
+              mod(t.y, cellSize) - cellSize,
+            )
+          }
 
-        {
-          const t = camera$.value
-            .mul(cellSize)
-            .add(delta)
-            .mul(-1)
-            .add(viewport.div(2))
-          g.world.position.set(t.x, t.y)
-        }
-      }
-      updateCamera()
+          {
+            const t = camera
+              .mul(cellSize)
+              .mul(-1)
+              .add(viewport.div(2))
+            g.world.position.set(t.x, t.y)
+          }
+        })
 
       function screenToWorld(screen: Vec2): Vec2 {
         const delta = pointerToDelta(pointer$.value)
@@ -196,7 +208,6 @@ export function initPixi(
               p,
               delta: pointer$.value.down.sub(p),
             })
-            updateCamera()
           } else {
             pointer$.next({
               type: PointerType.Free,
@@ -275,8 +286,6 @@ export function initPixi(
             type: PointerType.Free,
             p,
           })
-
-          updateCamera()
         },
         { signal },
       )
