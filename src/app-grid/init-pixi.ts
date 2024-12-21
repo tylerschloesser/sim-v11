@@ -1,4 +1,4 @@
-import { debounce } from 'lodash-es'
+import { debounce, isEqual } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import {
   BehaviorSubject,
@@ -108,7 +108,7 @@ export function initPixi(
           const delta = pointer.delta.div(cellSize)
           return camera.add(delta)
         }),
-        distinctUntilChanged(),
+        distinctUntilChanged(isEqual),
       )
 
       // convert to screen coordinates
@@ -140,7 +140,7 @@ export function initPixi(
             .add(camera)
             .floor()
         }),
-        distinctUntilChanged(),
+        distinctUntilChanged(isEqual),
       )
 
       hover$.subscribe((hover) => {
@@ -159,7 +159,7 @@ export function initPixi(
                   .add(viewport.div(2))
               : null,
           ),
-          distinctUntilChanged(),
+          distinctUntilChanged(isEqual),
         )
         .subscribe((screen) => {
           if (screen) {
