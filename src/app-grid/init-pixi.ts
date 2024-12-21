@@ -347,7 +347,10 @@ export function destroyPixi(id: string) {
     state.controller.abort()
     state.canvas.style.display = 'none'
     state.ro.disconnect()
-    state.app.destroy(false, true)
+    state.app.destroy(false, {
+      children: true,
+      texture: false,
+    })
     state.canvas.remove()
     cache.delete(id)
   })
