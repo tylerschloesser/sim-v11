@@ -70,6 +70,11 @@ function renderNodes(view: GameView, state: PixiState) {
 }
 
 function renderGame(game: Game, state: PixiState) {
+  const view = gameToGameView(game)
+  renderNodes(view, state)
+}
+
+function renderTick(game: Game, state: PixiState) {
   state.lastTickTime = self.performance.now()
   state.viewPrev = state.viewNext
   state.viewNext = gameToGameView(game)
@@ -117,6 +122,7 @@ export function AppGrid() {
     hoverCell: null,
   })
   const state = useRef<PixiState | null>(null)
+
   useEffect(() => {
     const interval = setInterval(() => {
       setGame(step)
@@ -127,11 +133,12 @@ export function AppGrid() {
   }, [])
 
   useEffect(() => {
-    if (
-      game.updateType === UpdateType.enum.Tick &&
-      state.current
-    ) {
-      renderGame(game, state.current)
+    if (state.current) {
+      if (game.updateType === UpdateType.enum.Tick) {
+        renderTick(game, state.current)
+      } else {
+        renderGame(game, state.current)
+      }
     }
   }, [game])
 
