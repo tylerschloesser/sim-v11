@@ -113,26 +113,20 @@ export function initPixi(
             return camera.add(delta)
           }),
           distinctUntilChanged(),
+          // convert to screen coordinates
+          map((camera) =>
+            camera
+              .mul(cellSize)
+              .mul(-1)
+              .add(viewport.div(2)),
+          ),
         )
-        .subscribe((camera) => {
-          {
-            const t = camera
-              .mul(cellSize)
-              .mul(-1)
-              .add(viewport.div(2))
-            g.grid.position.set(
-              mod(t.x, cellSize) - cellSize,
-              mod(t.y, cellSize) - cellSize,
-            )
-          }
-
-          {
-            const t = camera
-              .mul(cellSize)
-              .mul(-1)
-              .add(viewport.div(2))
-            g.world.position.set(t.x, t.y)
-          }
+        .subscribe((screen) => {
+          g.grid.position.set(
+            mod(screen.x, cellSize) - cellSize,
+            mod(screen.y, cellSize) - cellSize,
+          )
+          g.world.position.set(screen.x, screen.y)
         })
 
       function screenToWorld(screen: Vec2): Vec2 {
