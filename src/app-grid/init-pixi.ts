@@ -159,8 +159,6 @@ export function initPixi(
         lastTickTime: null,
         viewPrev: null,
         viewNext: null,
-        inputViewPrev: { pointer: null },
-        inputViewNext: { pointer: null },
       }
 
       document.addEventListener(
@@ -173,12 +171,6 @@ export function initPixi(
           invariant(pointer$.value)
           const world = screenToWorld(pointer$.value.p)
           const screen = worldToScreen(world.floor())
-
-          if (!state.inputViewNext) {
-            state.inputViewNext = { pointer: screen }
-          } else {
-            state.inputViewNext.pointer = screen
-          }
 
           g.pointer.visible = true
           g.pointer.position.set(screen.x, screen.y)
@@ -214,12 +206,6 @@ export function initPixi(
           const world = screenToWorld(pointer$.value.p)
           const screen = worldToScreen(world.floor())
 
-          if (!state.inputViewNext) {
-            state.inputViewNext = { pointer: screen }
-          } else {
-            state.inputViewNext.pointer = screen
-          }
-
           g.pointer.visible = true
           g.pointer.position.set(screen.x, screen.y)
 
@@ -235,8 +221,6 @@ export function initPixi(
       document.addEventListener(
         'pointerleave',
         (_ev) => {
-          state.inputViewNext.pointer = null
-
           pointer$.next(null)
           g.pointer.visible = false
 

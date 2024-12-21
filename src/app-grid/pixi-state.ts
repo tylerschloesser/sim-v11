@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-import { InputView } from '../app-graph/input-view'
 import { TextureId } from '../textures'
 import { GameView, NodeView } from './game-view'
 
@@ -32,7 +31,4 @@ export interface PixiState {
   lastTickTime: number | null
   viewPrev: GameView | null
   viewNext: GameView | null
-
-  inputViewPrev: InputView
-  inputViewNext: InputView
 }
