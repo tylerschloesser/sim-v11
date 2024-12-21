@@ -1,5 +1,6 @@
 import { debounce } from 'lodash-es'
 import * as PIXI from 'pixi.js'
+import { BehaviorSubject } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { Updater } from 'use-immer'
 import { Input } from '../app-graph/input-view'
@@ -93,10 +94,12 @@ export function initPixi(
       const g = initGraphics(app, cellSize, viewport)
 
       let camera = Vec2.ZERO
-      let pointer: Pointer | null = null
+      const pointer$ = new BehaviorSubject<Pointer | null>(
+        null,
+      )
 
       function updateCamera() {
-        const delta = pointerToDelta(pointer)
+        const delta = pointerToDelta(pointer$.value)
         {
           const t = camera
             .mul(cellSize)
@@ -121,7 +124,7 @@ export function initPixi(
       updateCamera()
 
       function screenToWorld(screen: Vec2): Vec2 {
-        const delta = pointerToDelta(pointer)
+        const delta = pointerToDelta(pointer$.value)
         return screen
           .sub(viewport.div(2))
           .add(delta)
@@ -130,7 +133,7 @@ export function initPixi(
       }
 
       function worldToScreen(world: Vec2): Vec2 {
-        const delta = pointerToDelta(pointer)
+        const delta = pointerToDelta(pointer$.value)
         return world
           .sub(camera)
           .mul(cellSize)
@@ -157,11 +160,12 @@ export function initPixi(
       document.addEventListener(
         'pointerenter',
         (ev) => {
-          pointer = {
+          pointer$.next({
             type: PointerType.Free,
             p: new Vec2(ev.offsetX, ev.offsetY),
-          }
-          const world = screenToWorld(pointer.p)
+          })
+          invariant(pointer$.value)
+          const world = screenToWorld(pointer$.value.p)
           const screen = worldToScreen(world.floor())
 
           if (!state.inputViewNext) {
@@ -186,18 +190,23 @@ export function initPixi(
         'pointermove',
         (ev) => {
           const p = new Vec2(ev.offsetX, ev.offsetY)
-          if (pointer === null) {
-            pointer = { type: PointerType.Free, p }
-          } else {
-            pointer.p = p
-          }
-
-          if (pointer.type === PointerType.Drag) {
-            pointer.delta = pointer.down.sub(p)
+          if (pointer$.value?.type === PointerType.Drag) {
+            pointer$.next({
+              ...pointer$.value,
+              p,
+              delta: pointer$.value.down.sub(p),
+            })
             updateCamera()
+          } else {
+            pointer$.next({
+              type: PointerType.Free,
+              p,
+            })
           }
 
-          const world = screenToWorld(pointer.p)
+          invariant(pointer$.value)
+
+          const world = screenToWorld(pointer$.value.p)
           const screen = worldToScreen(world.floor())
 
           if (!state.inputViewNext) {
@@ -223,7 +232,7 @@ export function initPixi(
         (_ev) => {
           state.inputViewNext.pointer = null
 
-          pointer = null
+          pointer$.next(null)
           g.pointer.visible = false
 
           setInput((draft) => {
@@ -237,12 +246,12 @@ export function initPixi(
         'pointerdown',
         (ev) => {
           const p = new Vec2(ev.offsetX, ev.offsetY)
-          pointer = {
+          pointer$.next({
             type: PointerType.Drag,
             p,
             down: p,
             delta: Vec2.ZERO,
-          }
+          })
         },
         { signal },
       )
@@ -251,22 +260,17 @@ export function initPixi(
         'pointerup',
         (ev) => {
           const p = new Vec2(ev.offsetX, ev.offsetY)
-          if (
-            pointer === null ||
-            pointer.type === PointerType.Drag
-          ) {
-            if (pointer?.type === PointerType.Drag) {
-              camera = camera.add(
-                pointer.delta.div(cellSize),
-              )
-            }
-            pointer = {
-              type: PointerType.Free,
-              p,
-            }
-          } else {
-            pointer.p = p
+
+          const pointer = pointer$.value
+
+          if (pointer?.type === PointerType.Drag) {
+            camera = camera.add(pointer.delta.div(cellSize))
           }
+
+          pointer$.next({
+            type: PointerType.Free,
+            p,
+          })
 
           updateCamera()
         },
