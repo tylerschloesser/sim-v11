@@ -32,6 +32,9 @@ export class Vec2 {
   floor() {
     return new Vec2(Math.floor(this.x), Math.floor(this.y))
   }
+  length() {
+    return Math.sqrt(this.x * this.x + this.y * this.y)
+  }
   equals(v: Vec2): boolean {
     return this.x === v.x && this.y === v.y
   }

@@ -6,7 +6,9 @@ import {
   distinctUntilChanged,
   map,
   shareReplay,
+  Subject,
   Subscription,
+  withLatestFrom,
 } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { Updater } from 'use-immer'
@@ -14,7 +16,11 @@ import { Input } from '../app-graph/input-view'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { renderSvgToImage, TextureId } from '../textures'
-import { CELL_SIZE, TICK_DURATION } from './const'
+import {
+  CELL_SIZE,
+  DRAG_THRESHOLD_PX,
+  TICK_DURATION,
+} from './const'
 import { Graphics, PixiState } from './pixi-state'
 
 const cache = new Map<string, Promise<PixiState>>()
@@ -32,7 +38,7 @@ interface FreePointer {
 interface DragPointer {
   type: PointerType.Drag
   p: Vec2
-  down: Vec2
+  down: { t: number; p: Vec2 }
   delta: Vec2
 }
 
@@ -94,6 +100,7 @@ export function initPixi(
       const cellSize = CELL_SIZE
       const g = initGraphics(app, cellSize, viewport)
 
+      const click$ = new Subject<void>()
       const camera$ = new BehaviorSubject<Vec2>(Vec2.ZERO)
       const pointer$ = new BehaviorSubject<Pointer | null>(
         null,
@@ -149,6 +156,17 @@ export function initPixi(
         }),
         distinctUntilChanged(isEqual),
         shareReplay(1),
+      )
+
+      sub.add(
+        click$
+          .pipe(
+            withLatestFrom(hover$),
+            map(([_, hover]) => hover),
+          )
+          .subscribe((hover) => {
+            console.log('click!', hover)
+          }),
       )
 
       sub.add(
@@ -216,7 +234,7 @@ export function initPixi(
             pointer$.next({
               ...pointer$.value,
               p,
-              delta: pointer$.value.down.sub(p),
+              delta: pointer$.value.down.p.sub(p),
             })
           } else {
             pointer$.next({
@@ -243,7 +261,10 @@ export function initPixi(
           pointer$.next({
             type: PointerType.Drag,
             p,
-            down: p,
+            down: {
+              t: self.performance.now(),
+              p,
+            },
             delta: Vec2.ZERO,
           })
         },
@@ -256,6 +277,16 @@ export function initPixi(
           const p = new Vec2(ev.offsetX, ev.offsetY)
 
           if (pointer$.value?.type === PointerType.Drag) {
+            const dt =
+              self.performance.now() - pointer$.value.down.t
+            if (dt < 200) {
+              click$.next()
+            } else if (
+              pointer$.value.delta.length() <
+              DRAG_THRESHOLD_PX
+            ) {
+              click$.next()
+            }
             camera$.next(
               camera$.value.add(
                 pointer$.value.delta.div(cellSize),
