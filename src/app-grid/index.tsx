@@ -15,10 +15,13 @@ import { destroyPixi, initPixi } from './init-pixi'
 import { NodeContainer, PixiState } from './pixi-state'
 
 function renderNode(node: NodeView, state: PixiState) {
-  if (state.g.nodes.has(node.id)) {
+  let container = state.g.nodes.get(node.id)
+  if (container?.ref === node) {
     return
   }
-  const container = new NodeContainer(node)
+  container?.destroy({ children: true })
+
+  container = new NodeContainer(node)
   container.position.set(
     node.p.x * CELL_SIZE,
     node.p.y * CELL_SIZE,

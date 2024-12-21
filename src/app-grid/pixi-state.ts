@@ -15,7 +15,7 @@ export interface Graphics {
   pointer: PIXI.Graphics
   grid: PIXI.Graphics
   world: PIXI.Container
-  nodes: Map<string, PIXI.Container>
+  nodes: Map<string, NodeContainer>
   items: Map<string, PIXI.Graphics>
 }
 
