@@ -25,27 +25,9 @@ import {
   TICK_DURATION,
 } from './const'
 import { Graphics, PixiState } from './pixi-state'
+import { Pointer, PointerType } from './pointer'
 
 const cache = new Map<string, Promise<PixiState>>()
-
-enum PointerType {
-  Free = 'free',
-  Drag = 'drag',
-}
-
-interface FreePointer {
-  type: PointerType.Free
-  p: Vec2
-}
-
-interface DragPointer {
-  type: PointerType.Drag
-  p: Vec2
-  down: { t: number; p: Vec2 }
-  delta: Vec2
-}
-
-type Pointer = FreePointer | DragPointer
 
 function deleteNode(draft: Game, node: Node): void {
   for (const input of Object.values(draft.nodes)) {
