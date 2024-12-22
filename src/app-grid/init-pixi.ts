@@ -42,7 +42,11 @@ function deleteNode(draft: Game, node: Node): void {
   delete draft.nodes[node.id]
 }
 
-function handleClick(draft: Game, hover: Vec2): void {
+function handleClick(
+  draft: Game,
+  hover: Vec2,
+  input: Input,
+): void {
   const node = Object.values(draft.nodes).find((node) =>
     new Vec2(node.p).equals(hover),
   )
@@ -53,16 +57,26 @@ function handleClick(draft: Game, hover: Vec2): void {
   } else {
     addNode(draft.nodes, {
       p: hover,
+      type: input.nodeType,
     })
   }
 }
 
-export function initPixi(
-  id: string,
-  container: HTMLDivElement,
-  setInput: Updater<Input>,
-  setGame: Updater<Game>,
-): Promise<PixiState> {
+interface InitPixiArgs {
+  id: string
+  container: HTMLDivElement
+  setInput: Updater<Input>
+  setGame: Updater<Game>
+  inputRef: React.MutableRefObject<Input>
+}
+
+export function initPixi({
+  id,
+  container,
+  setInput,
+  setGame,
+  inputRef,
+}: InitPixiArgs): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
       const { width, height } =
@@ -187,7 +201,7 @@ export function initPixi(
           )
           .subscribe((hover) => {
             setGame((draft) => {
-              handleClick(draft, hover)
+              handleClick(draft, hover, inputRef.current)
             })
           }),
       )

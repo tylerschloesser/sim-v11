@@ -223,6 +223,7 @@ export function AppGrid() {
           setInput={setInput}
           setGame={setGame}
           gameRef={gameRef}
+          inputRef={inputRef}
         />
         <div
           className={clsx(
@@ -298,6 +299,7 @@ interface CanvasProps {
   setInput: Updater<Input>
   setGame: Updater<Game>
   gameRef: React.MutableRefObject<Game>
+  inputRef: React.MutableRefObject<Input>
 }
 
 export function Canvas({
@@ -305,18 +307,23 @@ export function Canvas({
   setInput,
   setGame,
   gameRef,
+  inputRef,
 }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     invariant(container.current)
     const id = uniqueId()
-    initPixi(id, container.current, setInput, setGame).then(
-      (_state) => {
-        state.current = _state
-        renderGame(gameRef.current, _state)
-      },
-    )
+    initPixi({
+      id,
+      container: container.current,
+      setInput,
+      setGame,
+      inputRef,
+    }).then((_state) => {
+      state.current = _state
+      renderGame(gameRef.current, _state)
+    })
     return () => {
       state.current = null
       destroyPixi(id)
