@@ -53,6 +53,8 @@ function handleClick(draft: Game, hover: Vec2): void {
 
   if (!node) return
 
+  draft.updateType = null
+
   for (const input of Array.from(draft.nodes.values())) {
     const index = input.outputs.findIndex(
       ({ id }) => id === node.id,
@@ -66,6 +68,8 @@ function handleClick(draft: Game, hover: Vec2): void {
   }
 
   draft.nodes.delete(node.id)
+
+  console.log('deleted node', node.id)
 }
 
 export function initPixi(
