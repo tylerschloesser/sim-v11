@@ -85,12 +85,17 @@ export function initGame(): Game {
     },
     {
       id: '1.0',
-      outputs: ['0.0'],
+      outputs: ['0.0', '2.0'],
     },
     {
-      id: '0.-1',
+      id: '-1.0',
       outputs: ['0.0'],
       type: NodeType.enum.Producer,
+    },
+    {
+      id: '2.0',
+      outputs: [],
+      type: NodeType.enum.Consumer,
     },
   ] satisfies {
     id: string
