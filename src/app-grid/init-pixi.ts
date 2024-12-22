@@ -62,15 +62,22 @@ function deleteNode(draft: Game, node: Node): void {
   draft.nodes.delete(node.id)
 }
 
+// @ts-expect-error
+function addNode(draft: Game, p: Vec2): void {
+  console.log('todo add node')
+}
+
 function handleClick(draft: Game, hover: Vec2): void {
   const node = Array.from(draft.nodes.values()).find(
     (node) => new Vec2(node.p).equals(hover),
   )
 
-  if (!node) return
-
   draft.updateType = null
-  deleteNode(draft, node)
+  if (node) {
+    deleteNode(draft, node)
+  } else {
+    addNode(draft, hover)
+  }
 }
 
 export function initPixi(
