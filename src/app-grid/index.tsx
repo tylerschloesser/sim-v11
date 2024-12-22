@@ -1,7 +1,12 @@
 import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
-import { useCallback, useEffect, useRef } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
 import { Input } from '../app-graph/input-view'
@@ -133,6 +138,11 @@ function renderTick(game: Game, state: PixiState) {
   }
 }
 
+const AppContext = React.createContext<{
+  input: Input
+  setInput: Updater<Input>
+}>(null!)
+
 function initialGame(): Game {
   const item = localStorage.getItem('game')
   if (!item) {
@@ -196,52 +206,82 @@ export function AppGrid() {
     }
   }, [setGame])
 
+  const context = useMemo(
+    () => ({
+      input,
+      setInput,
+    }),
+    [input, setInput],
+  )
+
   return (
-    <div className="w-dvw h-dvh relative">
-      <Canvas
-        state={state}
-        setInput={setInput}
-        setGame={setGame}
-        gameRef={gameRef}
-      />
-      <div
-        className={clsx(
-          'absolute top-0 left-0 p-1 pointer-events-none',
-          'text-gray-400 leading-none',
-        )}
-      >
-        <div>Tick: {game.tick}</div>
-        <div>{JSON.stringify(input)}</div>
+    <AppContext.Provider value={context}>
+      <div className="w-dvw h-dvh relative">
+        <Canvas
+          state={state}
+          setInput={setInput}
+          setGame={setGame}
+          gameRef={gameRef}
+        />
+        <div
+          className={clsx(
+            'absolute top-0 left-0 p-1 pointer-events-none',
+            'text-gray-400 leading-none',
+          )}
+        >
+          <div>Tick: {game.tick}</div>
+          <div>{JSON.stringify(input)}</div>
+        </div>
+        <AppActions setGame={setGame} />
       </div>
-      <AppActions setGame={setGame} setInput={setInput} />
+    </AppContext.Provider>
+  )
+}
+
+function ChooseNodeType() {
+  const { input, setInput } = React.useContext(AppContext)
+  const options = useMemo(
+    () =>
+      NodeType.options.map((nodeType) => ({
+        label: nodeType,
+        value: nodeType,
+      })),
+    [],
+  )
+
+  return (
+    <div role="radiogroup">
+      {options.map((option) => (
+        <label key={option.value}>
+          <input
+            type="radio"
+            name="nodeType"
+            value={option.value}
+            checked={option.value === input.nodeType}
+            onChange={() =>
+              setInput((draft) => {
+                draft.nodeType = option.value
+              })
+            }
+          />
+          {option.label}
+        </label>
+      ))}
     </div>
   )
 }
 
-// @ts-expect-error
-function ChooseNodeType({
-  setInput,
-}: {
-  setInput: Updater<Input>
-}) {
-  return <>TODO</>
-}
-
 interface AppActionsProps {
   setGame: Updater<Game>
-  setInput: Updater<Input>
 }
 
-function AppActions({
-  setGame,
-  setInput,
-}: AppActionsProps) {
+function AppActions({ setGame }: AppActionsProps) {
   const onClickReset = useCallback(() => {
     setGame(initGame)
   }, [setGame])
   return (
     <div className="absolute bottom-0 right-0 p-1">
-      <ChooseNodeType setInput={setInput} />
+      <ChooseNodeType />
       <button onClick={onClickReset}>Reset</button>
     </div>
   )
