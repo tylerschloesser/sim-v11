@@ -19,11 +19,8 @@ import { Vec2 } from '../common/vec2'
 import { Game, Node } from '../game'
 import { addNode } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
-import {
-  CELL_SIZE,
-  DRAG_THRESHOLD_PX,
-  TICK_DURATION,
-} from './const'
+import { CELL_SIZE, TICK_DURATION } from './const'
+import { initInput } from './init-input'
 import { Graphics, PixiState } from './pixi-state'
 import { Pointer, PointerType } from './pointer'
 
@@ -241,92 +238,13 @@ export function initPixi(
         sub,
       }
 
-      document.addEventListener(
-        'pointerenter',
-        (ev) => {
-          pointer$.next({
-            type: PointerType.Free,
-            p: new Vec2(ev.offsetX, ev.offsetY),
-          })
-        },
-        { signal },
-      )
-
-      document.addEventListener(
-        'pointermove',
-        (ev) => {
-          const p = new Vec2(ev.offsetX, ev.offsetY)
-          if (pointer$.value?.type === PointerType.Drag) {
-            pointer$.next({
-              ...pointer$.value,
-              p,
-              delta: pointer$.value.down.p.sub(p),
-            })
-          } else {
-            pointer$.next({
-              type: PointerType.Free,
-              p,
-            })
-          }
-        },
-        { signal },
-      )
-
-      document.addEventListener(
-        'pointerleave',
-        (_ev) => {
-          pointer$.next(null)
-        },
-        { signal },
-      )
-
-      document.addEventListener(
-        'pointerdown',
-        (ev) => {
-          const p = new Vec2(ev.offsetX, ev.offsetY)
-          pointer$.next({
-            type: PointerType.Drag,
-            p,
-            down: {
-              t: self.performance.now(),
-              p,
-            },
-            delta: Vec2.ZERO,
-          })
-        },
-        { signal },
-      )
-
-      document.addEventListener(
-        'pointerup',
-        (ev) => {
-          const p = new Vec2(ev.offsetX, ev.offsetY)
-
-          if (pointer$.value?.type === PointerType.Drag) {
-            const dt =
-              self.performance.now() - pointer$.value.down.t
-            if (dt < 200) {
-              click$.next()
-            } else if (
-              pointer$.value.delta.length() <
-              DRAG_THRESHOLD_PX
-            ) {
-              click$.next()
-            }
-            camera$.next(
-              camera$.value.add(
-                pointer$.value.delta.div(cellSize),
-              ),
-            )
-          }
-
-          pointer$.next({
-            type: PointerType.Free,
-            p,
-          })
-        },
-        { signal },
-      )
+      initInput({
+        signal,
+        pointer$,
+        click$,
+        camera$,
+        cellSize,
+      })
 
       const frameRequestCallback: FrameRequestCallback =
         () => {
