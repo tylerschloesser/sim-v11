@@ -17,6 +17,7 @@ import { Input } from '../app-graph/input-view'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { Game, Node } from '../game'
+import { addNode } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
 import {
   CELL_SIZE,
@@ -62,11 +63,6 @@ function deleteNode(draft: Game, node: Node): void {
   draft.nodes.delete(node.id)
 }
 
-// @ts-expect-error
-function addNode(draft: Game, p: Vec2): void {
-  console.log('todo add node')
-}
-
 function handleClick(draft: Game, hover: Vec2): void {
   const node = Array.from(draft.nodes.values()).find(
     (node) => new Vec2(node.p).equals(hover),
@@ -76,7 +72,9 @@ function handleClick(draft: Game, hover: Vec2): void {
   if (node) {
     deleteNode(draft, node)
   } else {
-    addNode(draft, hover)
+    addNode(draft.nodes, {
+      p: hover,
+    })
   }
 }
 
