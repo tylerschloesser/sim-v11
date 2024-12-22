@@ -5,7 +5,13 @@ import { useCallback, useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
 import { Input } from '../app-graph/input-view'
-import { Game, initGame, step, UpdateType } from '../game'
+import {
+  Game,
+  initGame,
+  NodeType,
+  step,
+  UpdateType,
+} from '../game'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 import { CELL_SIZE, TICK_DURATION } from './const'
@@ -140,6 +146,7 @@ function initialGame(): Game {
 export function AppGrid() {
   const [game, setGame] = useImmer(initialGame)
   const [input, setInput] = useImmer<Input>({
+    nodeType: NodeType.enum.Normal,
     hoverCell: null,
   })
   const state = useRef<PixiState | null>(null)
@@ -206,22 +213,35 @@ export function AppGrid() {
         <div>Tick: {game.tick}</div>
         <div>{JSON.stringify(input)}</div>
       </div>
-      <AppActions setGame={setGame} />
+      <AppActions setGame={setGame} setInput={setInput} />
     </div>
   )
 }
 
-interface AppActionsProps {
-  setGame: Updater<Game>
+// @ts-expect-error
+function ChooseNodeType({
+  setInput,
+}: {
+  setInput: Updater<Input>
+}) {
+  return <>TODO</>
 }
 
-function AppActions({ setGame }: AppActionsProps) {
+interface AppActionsProps {
+  setGame: Updater<Game>
+  setInput: Updater<Input>
+}
+
+function AppActions({
+  setGame,
+  setInput,
+}: AppActionsProps) {
   const onClickReset = useCallback(() => {
     setGame(initGame)
   }, [setGame])
   return (
     <div className="absolute bottom-0 right-0 p-1">
-      <button>Start</button>
+      <ChooseNodeType setInput={setInput} />
       <button onClick={onClickReset}>Reset</button>
     </div>
   )
