@@ -16,7 +16,7 @@ import { Updater } from 'use-immer'
 import { Input } from '../app-graph/input-view'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
-import { Game } from '../game'
+import { Game, Node } from '../game'
 import { renderSvgToImage, TextureId } from '../textures'
 import {
   CELL_SIZE,
@@ -46,15 +46,7 @@ interface DragPointer {
 
 type Pointer = FreePointer | DragPointer
 
-function handleClick(draft: Game, hover: Vec2): void {
-  const node = Array.from(draft.nodes.values()).find(
-    (node) => new Vec2(node.p).equals(hover),
-  )
-
-  if (!node) return
-
-  draft.updateType = null
-
+function deleteNode(draft: Game, node: Node): void {
   for (const input of Array.from(draft.nodes.values())) {
     const index = input.outputs.findIndex(
       ({ id }) => id === node.id,
@@ -68,8 +60,17 @@ function handleClick(draft: Game, hover: Vec2): void {
   }
 
   draft.nodes.delete(node.id)
+}
 
-  console.log('deleted node', node.id)
+function handleClick(draft: Game, hover: Vec2): void {
+  const node = Array.from(draft.nodes.values()).find(
+    (node) => new Vec2(node.p).equals(hover),
+  )
+
+  if (!node) return
+
+  draft.updateType = null
+  deleteNode(draft, node)
 }
 
 export function initPixi(
