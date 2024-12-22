@@ -46,6 +46,15 @@ interface DragPointer {
 
 type Pointer = FreePointer | DragPointer
 
+function handleClick(draft: Game, hover: Vec2): void {
+  const node = Array.from(draft.nodes.values()).find(
+    (node) => new Vec2(node.p).equals(hover),
+  )
+
+  if (!node) return
+  console.log('found node', node)
+}
+
 export function initPixi(
   id: string,
   container: HTMLDivElement,
@@ -175,15 +184,8 @@ export function initPixi(
             }),
           )
           .subscribe((hover) => {
-            console.log('click!', hover)
             setGame((draft) => {
-              const node = Array.from(
-                draft.nodes.values(),
-              ).find((node) =>
-                new Vec2(node.p).equals(hover),
-              )
-              if (!node) return
-              console.log('found node', node)
+              handleClick(draft, hover)
             })
           }),
       )
