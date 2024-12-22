@@ -48,7 +48,7 @@ interface DragPointer {
 type Pointer = FreePointer | DragPointer
 
 function deleteNode(draft: Game, node: Node): void {
-  for (const input of Array.from(draft.nodes.values())) {
+  for (const input of Object.values(draft.nodes)) {
     const index = input.outputs.findIndex(
       ({ id }) => id === node.id,
     )
@@ -60,12 +60,12 @@ function deleteNode(draft: Game, node: Node): void {
     input.outputs.splice(index, 1)
   }
 
-  draft.nodes.delete(node.id)
+  delete draft.nodes[node.id]
 }
 
 function handleClick(draft: Game, hover: Vec2): void {
-  const node = Array.from(draft.nodes.values()).find(
-    (node) => new Vec2(node.p).equals(hover),
+  const node = Object.values(draft.nodes).find((node) =>
+    new Vec2(node.p).equals(hover),
   )
 
   draft.updateType = null

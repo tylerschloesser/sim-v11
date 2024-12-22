@@ -33,7 +33,7 @@ export interface GameView {
 
 export function gameToGameView(game: Game): GameView {
   function refToNode({ id }: NodeRef) {
-    const node = game.nodes.get(id)
+    const node = game.nodes[id]
     invariant(node)
     return node
   }
@@ -43,7 +43,7 @@ export function gameToGameView(game: Game): GameView {
     items: {},
   }
 
-  for (const node of game.nodes.values()) {
+  for (const node of Object.values(game.nodes)) {
     const textureId = nodeTextureId(node)
 
     function outputToDirection(output: Node): Direction {

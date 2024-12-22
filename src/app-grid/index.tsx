@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
 import { Input } from '../app-graph/input-view'
@@ -127,8 +127,18 @@ function renderTick(game: Game, state: PixiState) {
   }
 }
 
+function initialGame(): Game {
+  const item = localStorage.getItem('game')
+  if (!item) {
+    return initGame()
+  }
+  const parsed = JSON.parse(item)
+  console.log('loading game', parsed)
+  return Game.parse(parsed)
+}
+
 export function AppGrid() {
-  const [game, setGame] = useImmer(initGame)
+  const [game, setGame] = useImmer(initialGame)
   const [input, setInput] = useImmer<Input>({
     hoverCell: null,
   })
@@ -151,6 +161,13 @@ export function AppGrid() {
         renderGame(game, state.current)
       }
     }
+  }, [game])
+
+  useEffect(() => {
+    localStorage.setItem(
+      'game',
+      JSON.stringify(Game.parse(game)),
+    )
   }, [game])
 
   const gameRef = useRef<Game>(game)
@@ -195,24 +212,22 @@ export function AppGrid() {
             return
           }
 
-          const cell = Array.from(
-            draft.nodes.values(),
-          ).find((node) =>
-            new Vec2(node.p).equals(
-              inputRef.current.hoverCell!,
-            ),
+          const cell = Object.values(draft.nodes).find(
+            (node) =>
+              new Vec2(node.p).equals(
+                inputRef.current.hoverCell!,
+              ),
           )
 
           if (!cell) {
             return cell
           }
 
-          const output = Array.from(
-            draft.nodes.values(),
-          ).find((node) =>
-            new Vec2(node.p).equals(
-              new Vec2(cell.p).add(d),
-            ),
+          const output = Object.values(draft.nodes).find(
+            (node) =>
+              new Vec2(node.p).equals(
+                new Vec2(cell.p).add(d),
+              ),
           )
 
           if (!output) {
@@ -254,15 +269,23 @@ export function AppGrid() {
         <div>Tick: {game.tick}</div>
         <div>{JSON.stringify(input)}</div>
       </div>
-      <AppActions />
+      <AppActions setGame={setGame} />
     </div>
   )
 }
 
-function AppActions() {
+interface AppActionsProps {
+  setGame: Updater<Game>
+}
+
+function AppActions({ setGame }: AppActionsProps) {
+  const onClickReset = useCallback(() => {
+    setGame(initGame)
+  }, [setGame])
   return (
     <div className="absolute bottom-0 right-0 p-1">
       <button>Start</button>
+      <button onClick={onClickReset}>Reset</button>
     </div>
   )
 }

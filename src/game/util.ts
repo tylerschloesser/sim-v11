@@ -34,8 +34,8 @@ export function addNode(
     type,
   }
 
-  invariant(!nodes.has(id))
-  nodes.set(id, node)
+  invariant(!nodes[id])
+  nodes[id] = node
 }
 
 export function connect(
@@ -44,10 +44,10 @@ export function connect(
   outputId: string,
 ): void {
   invariant(inputId !== outputId)
-  const input = nodes.get(inputId)
+  const input = nodes[inputId]
   invariant(input)
 
-  invariant(nodes.has(outputId))
+  invariant(nodes[outputId])
 
   invariant(input.outputs.every(({ id }) => id !== inputId))
 

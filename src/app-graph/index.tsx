@@ -98,11 +98,11 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
 
   const nodeModels = useMemo(() => {
     function refToNode({ id }: { id: string }) {
-      const node = nodes.get(id)
+      const node = nodes[id]
       invariant(node)
       return node
     }
-    return Array.from(nodes.values()).map(
+    return Object.values(nodes).map(
       (node) =>
         ({
           id: node.id,
@@ -132,7 +132,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
   }, [nodes])
 
   const itemModels = useMemo(() => {
-    return Array.from(nodes.values())
+    return Object.values(nodes)
       .filter(
         (node): node is Node & { item: NodeItem } =>
           node.item !== null,
@@ -150,7 +150,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
 
   const onClickNode = useCallback((id: string) => {
     setGame((draft) => {
-      const node = draft.nodes.get(id)
+      const node = draft.nodes[id]
       invariant(node)
       if (node.item === null) {
         node.item = {

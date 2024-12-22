@@ -61,14 +61,14 @@ export type UpdateType = z.infer<typeof UpdateType>
 export const Game = z.strictObject({
   tick: z.number(),
   updateType: UpdateType.nullable(),
-  nodes: z.map(z.string(), Node),
+  nodes: z.record(z.string(), Node),
 
   nextItemId: z.number(),
 })
 export type Game = z.infer<typeof Game>
 
 export function initGame(): Game {
-  const nodes = new Map<string, Node>()
+  const nodes: Game['nodes'] = {}
 
   const config = [
     {
@@ -128,7 +128,7 @@ export function step(game: Game) {
   const { nodes } = game
 
   function refToNode({ id }: NodeRef) {
-    const node = nodes.get(id)
+    const node = nodes[id]
     invariant(node)
     return node
   }
@@ -210,7 +210,7 @@ export function step(game: Game) {
     path.delete(node)
   }
 
-  for (const root of shuffle(Array.from(nodes.values()))) {
+  for (const root of shuffle(Object.values(nodes))) {
     if (!seen.has(root)) {
       visit(root)
       invariant(path.size === 0)
