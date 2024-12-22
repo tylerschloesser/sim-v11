@@ -20,7 +20,7 @@ console.log(`seed: ${seed}`)
 
 const rng = new Prando(seed)
 
-const shuffle = SHUFFLE
+const shuffle: <T>(arr: T) => T = SHUFFLE
   ? _shuffle(rng.next.bind(rng))
   : identity
 
@@ -157,9 +157,7 @@ export function step(game: Game) {
     }
 
     if (node.type === NodeType.enum.Producer) {
-      invariant(node.outputs.length === 1)
-      const output = refToNode(node.outputs.at(0)!)
-      if (output.item === null && rng.next() < 0.1) {
+      if (!node.item && rng.next() < 0.1) {
         node.item = {
           id: `${game.nextItemId++}`,
           tick: 0,
