@@ -52,7 +52,20 @@ function handleClick(draft: Game, hover: Vec2): void {
   )
 
   if (!node) return
-  console.log('found node', node)
+
+  for (const input of Array.from(draft.nodes.values())) {
+    const index = input.outputs.findIndex(
+      ({ id }) => id === node.id,
+    )
+    if (index === -1) {
+      continue
+    }
+
+    invariant(input.id !== node.id)
+    input.outputs.splice(index, 1)
+  }
+
+  draft.nodes.delete(node.id)
 }
 
 export function initPixi(
