@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
 import React, {
+  ChangeEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -249,20 +250,25 @@ function ChooseNodeType() {
     [],
   )
 
+  const onChange = useCallback(
+    (ev: ChangeEvent<HTMLInputElement>) => {
+      setInput((draft) => {
+        draft.nodeType = NodeType.parse(ev.target.value)
+      })
+    },
+    [],
+  )
+
   return (
-    <div role="radiogroup">
+    <div role="radiogroup" className="flex flex-col">
       {options.map((option) => (
-        <label key={option.value}>
+        <label key={option.value} className="flex gap-1">
           <input
             type="radio"
             name="nodeType"
             value={option.value}
             checked={option.value === input.nodeType}
-            onChange={() =>
-              setInput((draft) => {
-                draft.nodeType = option.value
-              })
-            }
+            onChange={onChange}
           />
           {option.label}
         </label>
@@ -280,7 +286,7 @@ function AppActions({ setGame }: AppActionsProps) {
     setGame(initGame)
   }, [setGame])
   return (
-    <div className="absolute bottom-0 right-0 p-1">
+    <div className="absolute bottom-0 right-0 p-1 flex gap-2">
       <ChooseNodeType />
       <button onClick={onClickReset}>Reset</button>
     </div>
