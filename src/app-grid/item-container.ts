@@ -28,7 +28,7 @@ export class ItemContainer extends PIXI.Container {
       this.g.clear()
       this.draw()
     }
-    if (this.p.equals(view.p)) {
+    if (!this.p.equals(view.p)) {
       this.p = view.p
       this.position.set(
         this.p.x * CELL_SIZE,
