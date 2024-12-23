@@ -114,7 +114,7 @@ interface InitPixiArgs {
   container: HTMLDivElement
   setView: Updater<AppView>
   setGame: Updater<Game>
-  viewRef: React.MutableRefObject<AppView>
+  view$: BehaviorSubject<AppView>
 }
 
 export function initPixi({
@@ -122,7 +122,7 @@ export function initPixi({
   container,
   setView,
   setGame,
-  viewRef,
+  view$,
 }: InitPixiArgs): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
@@ -347,11 +347,7 @@ export function initPixi({
                   ) {
                     invariant(hover)
                     setGame((draft) => {
-                      handleClick(
-                        draft,
-                        hover,
-                        viewRef.current,
-                      )
+                      handleClick(draft, hover, view$.value)
                     })
                   }
 

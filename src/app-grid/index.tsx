@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useRef,
 } from 'react'
+import { BehaviorSubject } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { Game, initGame, step, UpdateType } from '../game'
@@ -103,15 +104,15 @@ export function AppGrid() {
     gameRef.current = game
   }, [game])
 
-  const viewRef = useRef<AppView>(view)
+  const view$ = useRef(new BehaviorSubject(view))
   useEffect(() => {
-    viewRef.current = view
+    view$.current.next(view)
   }, [view])
 
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    initKeyboard({ signal, setGame, viewRef })
+    initKeyboard({ signal, setGame, view$: view$.current })
     return () => {
       controller.abort()
     }
@@ -133,7 +134,7 @@ export function AppGrid() {
         <Canvas
           state={state}
           gameRef={gameRef}
-          viewRef={viewRef}
+          view$={view$.current}
         />
         <div
           className={clsx(
@@ -163,13 +164,13 @@ function AppHover() {
 interface CanvasProps {
   state: React.MutableRefObject<PixiState | null>
   gameRef: React.MutableRefObject<Game>
-  viewRef: React.MutableRefObject<AppView>
+  view$: BehaviorSubject<AppView>
 }
 
 export function Canvas({
   state,
   gameRef,
-  viewRef,
+  view$,
 }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
 
@@ -183,7 +184,7 @@ export function Canvas({
       container: container.current,
       setView,
       setGame,
-      viewRef,
+      view$,
     }).then((_state) => {
       state.current = _state
       renderGame(gameRef.current, _state)

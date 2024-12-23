@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs'
 import { Updater } from 'use-immer'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game'
@@ -6,13 +7,13 @@ import { AppView } from './app-view'
 interface InitKeyboardArgs {
   signal: AbortSignal
   setGame: Updater<Game>
-  viewRef: React.MutableRefObject<AppView>
+  view$: BehaviorSubject<AppView>
 }
 
 export function initKeyboard({
   signal,
   setGame,
-  viewRef,
+  view$,
 }: InitKeyboardArgs) {
   window.addEventListener(
     'keyup',
@@ -42,13 +43,13 @@ export function initKeyboard({
 
       setGame((draft) => {
         draft.updateType = null
-        if (!viewRef.current.hover) {
+        if (!view$.value.hover) {
           return
         }
 
         const cell = Object.values(draft.nodes).find(
           (node) =>
-            new Vec2(node.p).equals(viewRef.current.hover!),
+            new Vec2(node.p).equals(view$.value.hover!),
         )
 
         if (!cell) {
