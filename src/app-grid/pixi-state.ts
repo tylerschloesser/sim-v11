@@ -4,6 +4,7 @@ import { TextureId } from '../textures'
 import { GameView, NodeView } from './game-view'
 import { ItemContainer } from './item-container'
 import { PathContainer } from './path-container'
+import { PointerContainer } from './pointer-container'
 
 export class NodeContainer extends PIXI.Container {
   ref: NodeView
@@ -14,7 +15,7 @@ export class NodeContainer extends PIXI.Container {
 }
 
 export interface Graphics {
-  pointer: PIXI.Graphics
+  pointer: PointerContainer
   grid: PIXI.Graphics
   world: PIXI.Container
   nodes: Map<string, NodeContainer>

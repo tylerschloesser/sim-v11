@@ -35,6 +35,7 @@ import {
 import { PathContainer } from './path-container'
 import { Graphics, PixiState } from './pixi-state'
 import { Pointer, PointerType } from './pointer'
+import { PointerContainer } from './pointer-container'
 
 const cache = new Map<string, Promise<PixiState>>()
 
@@ -262,10 +263,9 @@ export function initPixi({
           )
           .subscribe((screen) => {
             if (screen) {
-              g.pointer.visible = true
-              g.pointer.position.set(screen.x, screen.y)
+              g.pointer.update(screen)
             } else {
-              g.pointer.visible = false
+              g.pointer.hide()
             }
           }),
       )
@@ -446,7 +446,7 @@ function initGraphics(
   viewport: Vec2,
 ): Graphics {
   const g: Graphics = {
-    pointer: new PIXI.Graphics(),
+    pointer: new PointerContainer(),
     grid: new PIXI.Graphics(),
     world: new PIXI.Container(),
     nodes: new Map(),
@@ -483,12 +483,6 @@ function initGraphics(
   }
 
   {
-    g.pointer.visible = false
-    g.pointer.rect(0, 0, cellSize, cellSize)
-    g.pointer.stroke({
-      color: 'white',
-      width: 2,
-    })
     app.stage.addChild(g.pointer)
   }
 
