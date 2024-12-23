@@ -258,9 +258,13 @@ export function initPixi({
           const first = screenToWorld(
             pointer.down.p,
           ).floor()
-          return [first]
+          const last = screenToWorld(pointer.p).floor()
+          return { first, last }
         }),
-        distinctUntilChanged<Array<Vec2> | null>(isEqual),
+        distinctUntilChanged<{
+          first: Vec2
+          last: Vec2
+        } | null>(isEqual),
         shareReplay(1),
       )
 
@@ -349,6 +353,7 @@ function initGraphics(
     world: new PIXI.Container(),
     nodes: new Map(),
     items: new Map(),
+    path: new PIXI.Container(),
   }
 
   {
