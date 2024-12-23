@@ -18,4 +18,13 @@ export interface DragPointer {
   delta: Vec2
 }
 
-export type Pointer = FreePointer | DragPointer
+export interface PathPointer {
+  type: PointerType.Path
+  p: Vec2
+  down: { t: number; p: Vec2 }
+}
+
+export type Pointer =
+  | FreePointer
+  | DragPointer
+  | PathPointer

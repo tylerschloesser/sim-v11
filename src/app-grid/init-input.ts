@@ -35,17 +35,23 @@ export function initInput({
     'pointermove',
     (ev) => {
       const p = new Vec2(ev.offsetX, ev.offsetY)
-      if (pointer$.value?.type === PointerType.Drag) {
-        pointer$.next({
-          ...pointer$.value,
-          p,
-          delta: pointer$.value.down.p.sub(p),
-        })
-      } else {
-        pointer$.next({
-          type: PointerType.Free,
-          p,
-        })
+
+      switch (pointer$.value?.type) {
+        case PointerType.Drag: {
+          pointer$.next({
+            ...pointer$.value,
+            p,
+            delta: pointer$.value.down.p.sub(p),
+          })
+          break
+        }
+        default: {
+          break
+          pointer$.next({
+            type: PointerType.Free,
+            p,
+          })
+        }
       }
     },
     { signal },
@@ -65,13 +71,12 @@ export function initInput({
       const p = new Vec2(ev.offsetX, ev.offsetY)
       if (ev.shiftKey) {
         pointer$.next({
-          type: PointerType.Drag,
+          type: PointerType.Path,
           p,
           down: {
             t: self.performance.now(),
             p,
           },
-          delta: Vec2.ZERO,
         })
       } else {
         pointer$.next({
