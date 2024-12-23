@@ -45,6 +45,13 @@ export function initInput({
           })
           break
         }
+        case PointerType.Path: {
+          pointer$.next({
+            ...pointer$.value,
+            p,
+          })
+          break
+        }
         default: {
           pointer$.next({
             type: PointerType.Free,
