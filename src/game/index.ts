@@ -160,9 +160,11 @@ export function step(game: Game) {
         visit(output)
       }
 
+      const tickRequirement =
+        node.type === NodeType.enum.Purifier ? 10 : 1
       if (
         node.item &&
-        node.item.tick > 0 &&
+        node.item.tick >= tickRequirement &&
         output.item === null
       ) {
         output.item = node.item
