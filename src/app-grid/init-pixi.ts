@@ -247,7 +247,6 @@ export function initPixi({
           }),
       )
 
-      // @ts-expect-error
       const path$ = combineLatest([
         screenToWorld$,
         pointer$,
@@ -256,10 +255,19 @@ export function initPixi({
           if (pointer?.type !== PointerType.Path) {
             return null
           }
-          const first = screenToWorld(pointer.down.p)
+          const first = screenToWorld(
+            pointer.down.p,
+          ).floor()
           return [first]
         }),
-        distinctUntilChanged<Array<Vec2> | null>(),
+        distinctUntilChanged<Array<Vec2> | null>(isEqual),
+        shareReplay(1),
+      )
+
+      sub.add(
+        path$.subscribe((path) => {
+          console.log(path)
+        }),
       )
 
       const state: PixiState = {
