@@ -16,6 +16,7 @@ import {
   step,
   UpdateType,
 } from '../game'
+import { toNodeId } from '../game/util'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 import { AppActions } from './app-actions'
@@ -241,12 +242,22 @@ export function AppGrid() {
           )}
         >
           <div>Tick: {game.tick}</div>
-          <div>{JSON.stringify(view)}</div>
+          <AppHover />
         </div>
         <AppActions />
       </div>
     </AppContext.Provider>
   )
+}
+
+function AppHover() {
+  const { view, game } = useContext(AppContext)
+  const id = useMemo(
+    () => (view.hover ? toNodeId(view.hover) : null),
+    [view.hover],
+  )
+  const node = id ? game.nodes[id] : null
+  return node && <div>{node.type}</div>
 }
 
 interface CanvasProps {

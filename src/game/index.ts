@@ -179,7 +179,7 @@ export function step(game: Game) {
     }
 
     if (node.type === NodeType.enum.Producer) {
-      if (!node.item && rng.next() < 0.1) {
+      if (!node.item && rng.next() < node.rate) {
         node.item = {
           id: `${game.nextItemId++}`,
           tick: 0,
