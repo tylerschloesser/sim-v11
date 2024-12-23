@@ -253,6 +253,7 @@ export function initPixi({
       }
 
       initInput({
+        container,
         signal,
         pointer$,
         click$,

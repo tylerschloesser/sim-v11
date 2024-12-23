@@ -4,6 +4,7 @@ import { DRAG_THRESHOLD_PX } from './const'
 import { Pointer, PointerType } from './pointer'
 
 interface InitInputArgs {
+  container: HTMLElement
   signal: AbortSignal
   pointer$: BehaviorSubject<Pointer | null>
   click$: Subject<void>
@@ -12,13 +13,14 @@ interface InitInputArgs {
 }
 
 export function initInput({
+  container,
   signal,
   pointer$,
   click$,
   camera$,
   cellSize,
 }: InitInputArgs): void {
-  document.addEventListener(
+  container.addEventListener(
     'pointerenter',
     (ev) => {
       pointer$.next({
@@ -29,7 +31,7 @@ export function initInput({
     { signal },
   )
 
-  document.addEventListener(
+  container.addEventListener(
     'pointermove',
     (ev) => {
       const p = new Vec2(ev.offsetX, ev.offsetY)
@@ -49,7 +51,7 @@ export function initInput({
     { signal },
   )
 
-  document.addEventListener(
+  container.addEventListener(
     'pointerleave',
     (_ev) => {
       pointer$.next(null)
@@ -57,7 +59,7 @@ export function initInput({
     { signal },
   )
 
-  document.addEventListener(
+  container.addEventListener(
     'pointerdown',
     (ev) => {
       const p = new Vec2(ev.offsetX, ev.offsetY)
@@ -74,7 +76,7 @@ export function initInput({
     { signal },
   )
 
-  document.addEventListener(
+  container.addEventListener(
     'pointerup',
     (ev) => {
       const p = new Vec2(ev.offsetX, ev.offsetY)
