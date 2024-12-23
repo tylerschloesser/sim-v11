@@ -20,6 +20,7 @@ import {
 } from '../game'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
+import { AppContext } from './app-context'
 import { CELL_SIZE, TICK_DURATION } from './const'
 import { gameToGameView, NodeView } from './game-view'
 import { initKeyboard } from './init-keyboard'
@@ -138,11 +139,6 @@ function renderTick(game: Game, state: PixiState) {
     )
   }
 }
-
-const AppContext = React.createContext<{
-  input: Input
-  setInput: Updater<Input>
-}>(null!)
 
 function initialGame(): Game {
   const item = localStorage.getItem('game')
