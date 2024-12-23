@@ -172,19 +172,25 @@ export function initPixi({
         }),
       )
 
-      const hover$ = combineLatest([
-        effectiveCamera$,
-        pointer$,
-      ]).pipe(
-        map(([camera, pointer]) => {
-          if (pointer === null) {
-            return null
-          }
-          return pointer.p
+      const screenToWorld$ = effectiveCamera$.pipe(
+        map((camera) => (screen: Vec2) => {
+          return screen
             .sub(viewport.div(2))
             .div(cellSize)
             .add(camera)
-            .floor()
+        }),
+        shareReplay(1),
+      )
+
+      const hover$ = combineLatest([
+        screenToWorld$,
+        pointer$,
+      ]).pipe(
+        map(([screenToWorld, pointer]) => {
+          if (pointer === null) {
+            return null
+          }
+          return screenToWorld(pointer.p).floor()
         }),
         distinctUntilChanged<Vec2 | null>(isEqual),
         shareReplay(1),
@@ -247,6 +253,7 @@ export function initPixi({
           if (pointer?.type !== PointerType.Path) {
             return null
           }
+          // const first = pointer.p
           return []
         }),
         distinctUntilChanged<Array<void> | null>(),
