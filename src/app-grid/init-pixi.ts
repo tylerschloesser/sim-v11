@@ -22,7 +22,7 @@ import { renderSvgToImage, TextureId } from '../textures'
 import { AppView, AppViewType } from './app-view'
 import { CELL_SIZE, TICK_DURATION } from './const'
 import { initInput } from './init-input'
-import { Path } from './path'
+import { buildPath, PathStart, PathState } from './path'
 import { PathContainer } from './path-container'
 import { Graphics, PixiState } from './pixi-state'
 import { Pointer, PointerType } from './pointer'
@@ -250,13 +250,6 @@ export function initPixi({
           }),
       )
 
-      interface PathState {
-        first: Vec2
-        last: Vec2
-        delta: Vec2
-        start: 'x' | 'y' | null
-      }
-
       const path$ = combineLatest([
         screenToWorld$,
         pointer$,
@@ -285,7 +278,7 @@ export function initPixi({
               start: acc.start,
             }
           }
-          const start: PathState['start'] =
+          const start: PathStart =
             Math.abs(state.delta.x) >
             Math.abs(state.delta.y)
               ? 'x'
@@ -300,57 +293,7 @@ export function initPixi({
           if (state === null) {
             return null
           }
-          const { first, last, delta, start } = state
-          const path: Path = []
-          if (first.equals(last)) {
-            path.push(first)
-            return path
-          }
-
-          invariant(start !== null)
-
-          if (start === 'x') {
-            for (let x = 0; x < Math.abs(delta.x); x++) {
-              path.push(
-                first.add(
-                  new Vec2(x * Math.sign(delta.x), 0),
-                ),
-              )
-            }
-            for (
-              let y = 0;
-              y < Math.abs(delta.y) + 1;
-              y++
-            ) {
-              path.push(
-                first.add(
-                  new Vec2(delta.x, y * Math.sign(delta.y)),
-                ),
-              )
-            }
-          } else {
-            invariant(start === 'y')
-            for (let y = 0; y < Math.abs(delta.y); y++) {
-              path.push(
-                first.add(
-                  new Vec2(0, y * Math.sign(delta.y)),
-                ),
-              )
-            }
-            for (
-              let x = 0;
-              x < Math.abs(delta.x) + 1;
-              x++
-            ) {
-              path.push(
-                first.add(
-                  new Vec2(x * Math.sign(delta.x), delta.y),
-                ),
-              )
-            }
-          }
-
-          return path
+          return buildPath(state)
         }),
         shareReplay(1),
       )
