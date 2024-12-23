@@ -20,7 +20,7 @@ export interface NodeView {
   outputs: Direction[]
 }
 
-interface ItemView {
+export interface ItemView {
   id: string
   p: Vec2
   color: string

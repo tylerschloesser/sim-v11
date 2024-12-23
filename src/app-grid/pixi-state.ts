@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import { Subscription } from 'rxjs'
 import { TextureId } from '../textures'
 import { GameView, NodeView } from './game-view'
+import { ItemContainer } from './item-container'
 import { PathContainer } from './path-container'
 
 export class NodeContainer extends PIXI.Container {
@@ -17,7 +18,7 @@ export interface Graphics {
   grid: PIXI.Graphics
   world: PIXI.Container
   nodes: Map<string, NodeContainer>
-  items: Map<string, PIXI.Graphics>
+  items: Map<string, ItemContainer>
   path: PathContainer
 }
 
