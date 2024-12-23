@@ -11,6 +11,7 @@ import { Button } from './button'
 
 export function AppActions() {
   const { view } = useContext(AppContext)
+  console.log(view.type)
   return (
     <div className="absolute bottom-0 right-0 p-1 flex gap-2">
       {view.type === AppViewType.AddNode && <AddNodeView />}
@@ -26,6 +27,7 @@ function HomeView() {
   }, [setGame])
 
   const onClickAddNode = useCallback(() => {
+    console.log('add node')
     setView((draft) => {
       draft.type === AppViewType.AddNode
     })

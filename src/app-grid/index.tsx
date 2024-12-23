@@ -1,9 +1,14 @@
 import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import invariant from 'tiny-invariant'
-import { Updater, useImmer } from 'use-immer'
+import { useImmer } from 'use-immer'
 import {
   Game,
   initGame,
@@ -214,8 +219,6 @@ export function AppGrid() {
       <div className="w-dvw h-dvh relative">
         <Canvas
           state={state}
-          setView={setView}
-          setGame={setGame}
           gameRef={gameRef}
           viewRef={viewRef}
         />
@@ -236,20 +239,18 @@ export function AppGrid() {
 
 interface CanvasProps {
   state: React.MutableRefObject<PixiState | null>
-  setView: Updater<AppView>
-  setGame: Updater<Game>
   gameRef: React.MutableRefObject<Game>
   viewRef: React.MutableRefObject<AppView>
 }
 
 export function Canvas({
   state,
-  setView,
-  setGame,
   gameRef,
   viewRef,
 }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
+
+  const { setView, setGame } = useContext(AppContext)
 
   useEffect(() => {
     invariant(container.current)

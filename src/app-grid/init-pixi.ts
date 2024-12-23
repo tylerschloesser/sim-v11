@@ -77,7 +77,7 @@ interface InitPixiArgs {
 export function initPixi({
   id,
   container,
-  setView: setInput,
+  setView,
   setGame,
   viewRef,
 }: InitPixiArgs): Promise<PixiState> {
@@ -212,7 +212,7 @@ export function initPixi({
 
       sub.add(
         hover$.subscribe((hover) => {
-          setInput((draft) => {
+          setView((draft) => {
             draft.hover = hover
           })
         }),
