@@ -3,6 +3,7 @@ import { Vec2 } from '../common/vec2'
 export enum PointerType {
   Free = 'free',
   Drag = 'drag',
+  Path = 'path',
 }
 
 export interface FreePointer {

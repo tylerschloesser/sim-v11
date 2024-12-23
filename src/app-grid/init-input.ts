@@ -63,15 +63,27 @@ export function initInput({
     'pointerdown',
     (ev) => {
       const p = new Vec2(ev.offsetX, ev.offsetY)
-      pointer$.next({
-        type: PointerType.Drag,
-        p,
-        down: {
-          t: self.performance.now(),
+      if (ev.shiftKey) {
+        pointer$.next({
+          type: PointerType.Drag,
           p,
-        },
-        delta: Vec2.ZERO,
-      })
+          down: {
+            t: self.performance.now(),
+            p,
+          },
+          delta: Vec2.ZERO,
+        })
+      } else {
+        pointer$.next({
+          type: PointerType.Drag,
+          p,
+          down: {
+            t: self.performance.now(),
+            p,
+          },
+          delta: Vec2.ZERO,
+        })
+      }
     },
     { signal },
   )
