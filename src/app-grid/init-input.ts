@@ -46,11 +46,11 @@ export function initInput({
           break
         }
         default: {
-          break
           pointer$.next({
             type: PointerType.Free,
             p,
           })
+          break
         }
       }
     },
