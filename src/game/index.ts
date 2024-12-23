@@ -124,20 +124,21 @@ export function step(game: Game) {
       node.item.tick += 1
     }
 
-    if (node.type === NodeType.enum.Consumer) {
-      if (node.item && node.item.tick > 0) {
-        node.item = null
+    switch (node.type) {
+      case NodeType.enum.Consumer: {
+        if (node.item && node.item.tick > 0) {
+          node.item = null
+        }
+        return
       }
-      return
-    }
-
-    if (node.type === NodeType.enum.Producer) {
-      if (!node.item && rng.next() < node.rate) {
-        node.item = {
-          id: `${game.nextItemId++}`,
-          tick: 0,
-          color: sample(ItemColor.options),
-          purity: 0,
+      case NodeType.enum.Producer: {
+        if (!node.item && rng.next() < node.rate) {
+          node.item = {
+            id: `${game.nextItemId++}`,
+            tick: 0,
+            color: sample(ItemColor.options),
+            purity: 0,
+          }
         }
       }
     }
