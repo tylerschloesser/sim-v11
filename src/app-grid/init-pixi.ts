@@ -68,6 +68,19 @@ function handlePath(draft: Game, path: Path): void {
     const id = toNodeId(p)
     const node = draft.nodes[id]
     invariant(node)
+
+    const next = path.at(i + 1)
+    invariant(next)
+    const nextId = toNodeId(next)
+
+    const delta = next.sub(p)
+    invariant(delta.length() === 1)
+
+    if (
+      node.outputs.every((value) => value.id !== nextId)
+    ) {
+      node.outputs.push({ id: nextId })
+    }
   }
 }
 
