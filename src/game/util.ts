@@ -31,19 +31,24 @@ export function addNode(
   let node: Node
 
   switch (type) {
-    case NodeType.enum.Normal:
+    case NodeType.enum.Normal: {
       node = { id, p, item, outputs, type }
       break
-    case NodeType.enum.Consumer:
+    }
+    case NodeType.enum.Consumer: {
       node = { id, p, item, outputs, type }
       break
-    case NodeType.enum.Producer:
+    }
+    case NodeType.enum.Producer: {
       const rate = 0.1
-      node = { id, p, item: null, outputs, type, rate }
+      node = { id, p, item, outputs, type, rate }
       break
-    case NodeType.enum.Purifier:
-      node = { id, p, item, outputs, type }
+    }
+    case NodeType.enum.Purifier: {
+      const rate = 0.1
+      node = { id, p, item, outputs, type, rate }
       break
+    }
   }
 
   invariant(!nodes[id])

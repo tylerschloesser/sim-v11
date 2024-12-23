@@ -51,6 +51,7 @@ export type ProducerNode = z.infer<typeof ProducerNode>
 
 export const PurifierNode = BaseNode.extend({
   type: z.literal(NodeType.enum.Purifier),
+  rate: z.number().min(0).max(1),
 })
 export type PurifierNode = z.infer<typeof PurifierNode>
 
