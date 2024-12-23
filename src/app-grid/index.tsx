@@ -1,13 +1,7 @@
 import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
 import * as PIXI from 'pixi.js'
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
 import { Input } from '../app-graph/input-view'
@@ -20,6 +14,7 @@ import {
 } from '../game'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
+import { AppActions } from './app-actions'
 import { AppContext } from './app-context'
 import { CELL_SIZE, TICK_DURATION } from './const'
 import { gameToGameView, NodeView } from './game-view'
@@ -233,60 +228,6 @@ export function AppGrid() {
         <AppActions setGame={setGame} />
       </div>
     </AppContext.Provider>
-  )
-}
-
-function ChooseNodeType() {
-  const { input, setInput } = React.useContext(AppContext)
-  const options = useMemo(
-    () =>
-      NodeType.options.map((nodeType) => ({
-        label: nodeType,
-        value: nodeType,
-      })),
-    [],
-  )
-
-  const onChange = useCallback(
-    (ev: ChangeEvent<HTMLInputElement>) => {
-      setInput((draft) => {
-        draft.nodeType = NodeType.parse(ev.target.value)
-      })
-    },
-    [],
-  )
-
-  return (
-    <div role="radiogroup" className="flex flex-col">
-      {options.map((option) => (
-        <label key={option.value} className="flex gap-1">
-          <input
-            type="radio"
-            name="nodeType"
-            value={option.value}
-            checked={option.value === input.nodeType}
-            onChange={onChange}
-          />
-          {option.label}
-        </label>
-      ))}
-    </div>
-  )
-}
-
-interface AppActionsProps {
-  setGame: Updater<Game>
-}
-
-function AppActions({ setGame }: AppActionsProps) {
-  const onClickReset = useCallback(() => {
-    setGame(initGame)
-  }, [setGame])
-  return (
-    <div className="absolute bottom-0 right-0 p-1 flex gap-2">
-      <ChooseNodeType />
-      <button onClick={onClickReset}>Reset</button>
-    </div>
   )
 }
 
