@@ -137,6 +137,7 @@ export function step(game: Game) {
           id: `${game.nextItemId++}`,
           tick: 0,
           color: sample(NodeColor.options),
+          purity: 0,
         }
       }
     }

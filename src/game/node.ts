@@ -13,6 +13,7 @@ export const NodeItem = z.strictObject({
   id: z.string(),
   tick: z.number(),
   color: NodeColor,
+  purity: z.number().min(0).max(1),
 })
 export type NodeItem = z.infer<typeof NodeItem>
 
