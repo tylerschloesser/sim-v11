@@ -1,26 +1,37 @@
 import * as PIXI from 'pixi.js'
 import { Vec2 } from '../common/vec2'
-import { toNodeId } from '../game/util'
 import { Path } from './path'
 
 export class PathContainer extends PIXI.Container {
-  private readonly cache = new Map()
+  private readonly g: PIXI.Graphics = new PIXI.Graphics({
+    visible: false,
+  })
 
   constructor() {
     super()
+    this.addChild(this.g)
   }
 
-  public update(path: Path | null): void {
+  public update(path: Path | null, cellSize: number): void {
     if (path === null) {
-      this.cache.clear()
-      this.removeChildren()
+      this.g.visible = false
       return
     }
 
+    this.g.clear()
+    this.g.visible = true
+
     for (const cell of iteratePath(path)) {
-      // @ts-expect-error
-      const id = toNodeId(cell)
+      this.g.rect(
+        cell.x * cellSize,
+        cell.y * cellSize,
+        cellSize,
+        cellSize,
+      )
     }
+    this.g.fill({
+      color: 'hsl(0, 50%, 50%)',
+    })
   }
 }
 

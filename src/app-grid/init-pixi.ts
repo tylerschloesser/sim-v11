@@ -269,7 +269,7 @@ export function initPixi({
 
       sub.add(
         path$.subscribe((path) => {
-          g.path.update(path)
+          g.path.update(path, cellSize)
         }),
       )
 
@@ -377,6 +377,10 @@ function initGraphics(
 
   {
     app.stage.addChild(g.world)
+  }
+
+  {
+    g.world.addChild(g.path)
   }
 
   {
