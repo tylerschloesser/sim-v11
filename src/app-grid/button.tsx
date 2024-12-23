@@ -1,7 +1,15 @@
 import React from 'react'
 
 export const Button: React.FC<
-  React.ButtonHTMLAttributes<HTMLButtonElement>
+  Omit<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    'className'
+  >
 > = (props) => {
-  return <button {...props} />
+  return (
+    <button
+      className="p-1 border border-white"
+      {...props}
+    />
+  )
 }
