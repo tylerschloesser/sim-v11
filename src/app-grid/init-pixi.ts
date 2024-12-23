@@ -250,6 +250,13 @@ export function initPixi({
           }),
       )
 
+      interface PathState {
+        first: Vec2
+        last: Vec2
+        delta: Vec2
+        start: 'x' | 'y' | null
+      }
+
       const path$ = combineLatest([
         screenToWorld$,
         pointer$,
@@ -262,32 +269,89 @@ export function initPixi({
             pointer.down.p,
           ).floor()
           const last = screenToWorld(pointer.p).floor()
-          return { first, last, start: null }
+          const delta = last.sub(first)
+          return { first, last, delta, start: null }
         }),
-        scan((acc, path) => {
+        scan((acc, state) => {
           if (
-            path === null ||
-            path.first.equals(path.last)
+            state === null ||
+            state.first.equals(state.last)
           ) {
-            return path
+            return state
           }
           if (acc?.start) {
             return {
-              ...path,
+              ...state,
               start: acc.start,
             }
           }
-          const delta = path.last.sub(path.first)
-          const start: Path['start'] =
-            Math.abs(delta.x) > Math.abs(delta.y)
+          const start: PathState['start'] =
+            Math.abs(state.delta.x) >
+            Math.abs(state.delta.y)
               ? 'x'
               : 'y'
           return {
-            ...path,
+            ...state,
             start,
           }
         }),
-        distinctUntilChanged<Path | null>(isEqual),
+        distinctUntilChanged<PathState | null>(isEqual),
+        map((state) => {
+          if (state === null) {
+            return null
+          }
+          const { first, last, delta, start } = state
+          const path: Path = []
+          if (first.equals(last)) {
+            path.push(first)
+            return path
+          }
+
+          invariant(start !== null)
+
+          if (start === 'x') {
+            for (let x = 0; x < Math.abs(delta.x); x++) {
+              path.push(
+                first.add(
+                  new Vec2(x * Math.sign(delta.x), 0),
+                ),
+              )
+            }
+            for (
+              let y = 0;
+              y < Math.abs(delta.y) + 1;
+              y++
+            ) {
+              path.push(
+                first.add(
+                  new Vec2(delta.x, y * Math.sign(delta.y)),
+                ),
+              )
+            }
+          } else {
+            invariant(start === 'y')
+            for (let y = 0; y < Math.abs(delta.y); y++) {
+              path.push(
+                first.add(
+                  new Vec2(0, y * Math.sign(delta.y)),
+                ),
+              )
+            }
+            for (
+              let x = 0;
+              x < Math.abs(delta.x) + 1;
+              x++
+            ) {
+              path.push(
+                first.add(
+                  new Vec2(x * Math.sign(delta.x), delta.y),
+                ),
+              )
+            }
+          }
+
+          return path
+        }),
         shareReplay(1),
       )
 
