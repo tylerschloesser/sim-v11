@@ -23,8 +23,7 @@ export function addNode(
   },
 ): void {
   const { p, type = NodeType.enum.Normal } = partial
-  invariant(p.equals(p.floor()))
-  const id = `${p.x}.${p.y}`
+  const id = toNodeId(p)
 
   const node: Node = {
     id,
@@ -61,4 +60,9 @@ export function parseNodeId(id: string): Vec2 {
     parseInt(match.at(1)!),
     parseInt(match.at(2)!),
   )
+}
+
+export function toNodeId(p: Vec2): string {
+  invariant(p.equals(p.floor()))
+  return `${p.x}.${p.y}`
 }
