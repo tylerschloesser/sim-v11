@@ -248,15 +248,18 @@ export function initPixi({
       )
 
       // @ts-expect-error
-      const path$ = pointer$.pipe(
-        map((pointer) => {
+      const path$ = combineLatest([
+        screenToWorld$,
+        pointer$,
+      ]).pipe(
+        map(([screenToWorld, pointer]) => {
           if (pointer?.type !== PointerType.Path) {
             return null
           }
-          // const first = pointer.p
-          return []
+          const first = screenToWorld(pointer.down.p)
+          return [first]
         }),
-        distinctUntilChanged<Array<void> | null>(),
+        distinctUntilChanged<Array<Vec2> | null>(),
       )
 
       const state: PixiState = {
