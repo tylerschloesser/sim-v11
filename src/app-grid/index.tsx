@@ -15,7 +15,7 @@ import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 import { AppActions } from './app-actions'
 import { AppContext } from './app-context'
-import { AppView } from './app-view'
+import { AppView, AppViewType } from './app-view'
 import { CELL_SIZE, TICK_DURATION } from './const'
 import { gameToGameView, NodeView } from './game-view'
 import { initKeyboard } from './init-keyboard'
@@ -148,6 +148,7 @@ function initialGame(): Game {
 export function AppGrid() {
   const [game, setGame] = useImmer(initialGame)
   const [view, setView] = useImmer<AppView>({
+    type: AppViewType.Home,
     nodeType: NodeType.enum.Normal,
     hover: null,
   })
