@@ -261,7 +261,7 @@ export function initPixi({
             pointer.down.p,
           ).floor()
           const last = screenToWorld(pointer.p).floor()
-          return { first, last }
+          return { start: null, first, last }
         }),
         distinctUntilChanged<Path | null>(isEqual),
         shareReplay(1),
