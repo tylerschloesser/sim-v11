@@ -209,7 +209,7 @@ export function initPixi({
       sub.add(
         hover$.subscribe((hover) => {
           setInput((draft) => {
-            draft.hoverCell = hover
+            draft.hover = hover
           })
         }),
       )

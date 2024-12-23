@@ -149,7 +149,7 @@ export function AppGrid() {
   const [game, setGame] = useImmer(initialGame)
   const [input, setInput] = useImmer<Input>({
     nodeType: NodeType.enum.Normal,
-    hoverCell: null,
+    hover: null,
   })
   const state = useRef<PixiState | null>(null)
 

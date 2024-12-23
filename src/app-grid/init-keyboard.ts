@@ -42,14 +42,14 @@ export function initKeyboard({
 
       setGame((draft) => {
         draft.updateType = null
-        if (!inputRef.current.hoverCell) {
+        if (!inputRef.current.hover) {
           return
         }
 
         const cell = Object.values(draft.nodes).find(
           (node) =>
             new Vec2(node.p).equals(
-              inputRef.current.hoverCell!,
+              inputRef.current.hover!,
             ),
         )
 
