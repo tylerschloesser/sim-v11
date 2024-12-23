@@ -10,12 +10,19 @@ import { AppViewType } from './app-view'
 import { Button } from './button'
 
 export function AppActions() {
-  const { view } = useContext(AppContext)
-  console.log(view.type)
+  const { view, setView } = useContext(AppContext)
+  const onClickHome = useCallback(() => {
+    setView((draft) => {
+      draft.type = AppViewType.Home
+    })
+  }, [setView])
   return (
     <div className="absolute bottom-0 right-0 p-1 flex gap-2">
       {view.type === AppViewType.AddNode && <AddNodeView />}
       {view.type === AppViewType.Home && <HomeView />}
+      {view.type !== AppViewType.Home && (
+        <Button onClick={onClickHome}>Home</Button>
+      )}
     </div>
   )
 }
@@ -23,13 +30,14 @@ export function AppActions() {
 function HomeView() {
   const { setGame, setView } = useContext(AppContext)
   const onClickReset = useCallback(() => {
-    setGame(initGame)
+    if (window.confirm('Reset game?')) {
+      setGame(initGame)
+    }
   }, [setGame])
 
   const onClickAddNode = useCallback(() => {
-    console.log('add node')
     setView((draft) => {
-      draft.type === AppViewType.AddNode
+      draft.type = AppViewType.AddNode
     })
   }, [setView])
 
