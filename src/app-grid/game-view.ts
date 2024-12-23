@@ -117,5 +117,7 @@ function nodeTextureId(node: Node): TextureId {
       return TextureId.enum.NodeConsumer
     case NodeType.enum.Producer:
       return TextureId.enum.NodeProducer
+    case NodeType.enum.Purifier:
+      return TextureId.enum.NodePurifier
   }
 }

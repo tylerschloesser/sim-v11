@@ -5,6 +5,7 @@ export const TextureId = z.enum([
   'NodeNormal',
   'NodeConsumer',
   'NodeProducer',
+  'NodePurifier',
   'NodeArrow',
 ])
 export type TextureId = z.infer<typeof TextureId>

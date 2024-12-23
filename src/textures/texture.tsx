@@ -57,6 +57,14 @@ export const Texture = forwardRef<
           textureId={id}
         />
       )
+    case TextureId.enum.NodePurifier:
+      return (
+        <PlainTextureSvg
+          ref={ref}
+          color="magenta"
+          textureId={id}
+        />
+      )
     case TextureId.enum.NodeArrow:
       return (
         <svg

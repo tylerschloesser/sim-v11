@@ -21,6 +21,7 @@ export const NodeType = z.enum([
   'Normal',
   'Consumer',
   'Producer',
+  'Purifier',
 ])
 export type NodeType = z.infer<typeof NodeType>
 
@@ -48,9 +49,15 @@ export const ProducerNode = BaseNode.extend({
 })
 export type ProducerNode = z.infer<typeof ProducerNode>
 
+export const PurifierNode = BaseNode.extend({
+  type: z.literal(NodeType.enum.Purifier),
+})
+export type PurifierNode = z.infer<typeof PurifierNode>
+
 export const Node = z.union([
   NormalNode,
   ConsumerNode,
   ProducerNode,
+  PurifierNode,
 ])
 export type Node = z.infer<typeof Node>
