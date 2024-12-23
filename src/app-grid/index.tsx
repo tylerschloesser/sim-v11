@@ -1,6 +1,5 @@
 import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
-import * as PIXI from 'pixi.js'
 import React, {
   useContext,
   useEffect,
@@ -17,12 +16,13 @@ import { Texture } from '../textures/texture'
 import { AppActions } from './app-actions'
 import { AppContext } from './app-context'
 import { AppView, AppViewType } from './app-view'
-import { CELL_SIZE, TICK_DURATION } from './const'
+import { TICK_DURATION } from './const'
 import { gameToGameView } from './game-view'
 import { initKeyboard } from './init-keyboard'
 import { destroyPixi, initPixi } from './init-pixi'
 import { PixiState } from './pixi-state'
 import { renderNode } from './render-node'
+import { renderTick } from './render-tick'
 
 function renderGame(game: Game, state: PixiState) {
   const view = gameToGameView(game)
@@ -38,46 +38,6 @@ function renderGame(game: Game, state: PixiState) {
     container.destroy({ children: true })
 
     state.g.nodes.delete(id)
-  }
-}
-
-function renderTick(game: Game, state: PixiState) {
-  state.lastTickTime = self.performance.now()
-  state.viewPrev = state.viewNext
-  state.viewNext = gameToGameView(game)
-
-  if (!state.viewPrev) {
-    return
-  }
-
-  for (const item of Object.values(state.viewPrev.items)) {
-    let g = state.g.items.get(item.id)
-
-    if (!state.viewNext.items[item.id]) {
-      if (g) {
-        g.destroy()
-      }
-      continue
-    }
-
-    if (!g) {
-      g = new PIXI.Graphics()
-      g.rect(
-        CELL_SIZE * 0.2,
-        CELL_SIZE * 0.2,
-        CELL_SIZE * 0.6,
-        CELL_SIZE * 0.6,
-      )
-      g.fill({ color: item.color })
-
-      state.g.items.set(item.id, g)
-      state.g.world.addChild(g)
-    }
-
-    g.position.set(
-      item.p.x * CELL_SIZE,
-      item.p.y * CELL_SIZE,
-    )
   }
 }
 
