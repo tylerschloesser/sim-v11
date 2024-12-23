@@ -66,6 +66,7 @@ export type ConsumerNode = z.infer<typeof ConsumerNode>
 
 export const ProducerNode = BaseNode.extend({
   type: z.literal(NodeType.enum.Producer),
+  rate: z.number().min(0).max(1),
 })
 export type ProducerNode = z.infer<typeof ProducerNode>
 

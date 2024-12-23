@@ -147,7 +147,19 @@ function initialGame(): Game {
   }
   const parsed = JSON.parse(item)
   console.log('loading game', parsed)
-  return Game.parse(parsed)
+  const result = Game.safeParse(parsed)
+  if (result.success) {
+    return result.data
+  }
+
+  if (self.confirm('Failed to parse game. Reset?')) {
+    localStorage.removeItem('game')
+    return initGame()
+  }
+
+  throw new Error('Failed to parse game', {
+    cause: result.error,
+  })
 }
 
 export function AppGrid() {

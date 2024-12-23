@@ -25,12 +25,23 @@ export function addNode(
   const { p, type = NodeType.enum.Normal } = partial
   const id = toNodeId(p)
 
-  const node: Node = {
-    id,
-    p,
-    item: null,
-    outputs: [],
-    type,
+  const outputs: Node['outputs'] = []
+  const item: Node['item'] = null
+  let node: Node
+
+  switch (type) {
+    case NodeType.enum.Normal:
+      node = { id, p, item, outputs, type }
+      break
+    case NodeType.enum.Consumer:
+      node = { id, p, item, outputs, type }
+      break
+    case NodeType.enum.Producer:
+      const rate = 0.1
+      node = { id, p, item: null, outputs, type, rate }
+      break
+    default:
+      invariant(false)
   }
 
   invariant(!nodes[id])
