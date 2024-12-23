@@ -36,6 +36,32 @@ export class PathContainer extends PIXI.Container {
 }
 
 function* iteratePath(path: Path): Generator<Vec2> {
-  yield path.first
-  yield path.last
+  const delta = path.last.sub(path.first)
+  if (delta.length() === 0) {
+    yield path.first
+  }
+
+  if (Math.abs(delta.x) > Math.abs(delta.y)) {
+    for (let x = 0; x < Math.abs(delta.x); x++) {
+      yield path.first.add(
+        new Vec2(x * Math.sign(delta.x), 0),
+      )
+    }
+    for (let y = 0; y < Math.abs(delta.y) + 1; y++) {
+      yield path.first.add(
+        new Vec2(delta.x, y * Math.sign(delta.y)),
+      )
+    }
+  } else {
+    for (let y = 0; y < Math.abs(delta.y); y++) {
+      yield path.first.add(
+        new Vec2(0, y * Math.sign(delta.y)),
+      )
+    }
+    for (let x = 0; x < Math.abs(delta.x) + 1; x++) {
+      yield path.first.add(
+        new Vec2(x * Math.sign(delta.x), delta.y),
+      )
+    }
+  }
 }
