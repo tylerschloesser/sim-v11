@@ -21,6 +21,8 @@ import { renderSvgToImage, TextureId } from '../textures'
 import { AppView, AppViewType } from './app-view'
 import { CELL_SIZE, TICK_DURATION } from './const'
 import { initInput } from './init-input'
+import { Path } from './path'
+import { PathContainer } from './path-container'
 import { Graphics, PixiState } from './pixi-state'
 import { Pointer, PointerType } from './pointer'
 
@@ -261,16 +263,13 @@ export function initPixi({
           const last = screenToWorld(pointer.p).floor()
           return { first, last }
         }),
-        distinctUntilChanged<{
-          first: Vec2
-          last: Vec2
-        } | null>(isEqual),
+        distinctUntilChanged<Path | null>(isEqual),
         shareReplay(1),
       )
 
       sub.add(
         path$.subscribe((path) => {
-          console.log(path)
+          g.path.update(path)
         }),
       )
 
@@ -353,7 +352,7 @@ function initGraphics(
     world: new PIXI.Container(),
     nodes: new Map(),
     items: new Map(),
-    path: new PIXI.Container(),
+    path: new PathContainer(),
   }
 
   {
