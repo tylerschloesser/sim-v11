@@ -16,7 +16,7 @@ import { Updater } from 'use-immer'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { Game, Node } from '../game'
-import { addNode } from '../game/util'
+import { addNode, toNodeId } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
 import { AppView, AppViewType } from './app-view'
 import {
@@ -25,7 +25,12 @@ import {
   TICK_DURATION,
 } from './const'
 import { initInput } from './init-input'
-import { buildPath, PathStart, PathState } from './path'
+import {
+  buildPath,
+  Path,
+  PathStart,
+  PathState,
+} from './path'
 import { PathContainer } from './path-container'
 import { Graphics, PixiState } from './pixi-state'
 import { Pointer, PointerType } from './pointer'
@@ -46,6 +51,17 @@ function deleteNode(draft: Game, node: Node): void {
   }
 
   delete draft.nodes[node.id]
+}
+
+function handlePath(draft: Game, path: Path): void {
+  draft.updateType = null
+  for (const p of path) {
+    const id = toNodeId(p)
+    if (draft.nodes[id]) {
+      continue
+    }
+    addNode(draft.nodes, { p })
+  }
 }
 
 function handleClick(
@@ -298,7 +314,6 @@ export function initPixi({
             ),
           )
           .subscribe(
-            // @ts-expect-error
             ([p, pointer, hover, camera, path]) => {
               switch (pointer?.type) {
                 case PointerType.Drag: {
@@ -323,6 +338,13 @@ export function initPixi({
                     camera.add(pointer.delta.div(cellSize)),
                   )
 
+                  break
+                }
+                case PointerType.Path: {
+                  invariant(path)
+                  setGame((draft) => {
+                    handlePath(draft, path)
+                  })
                   break
                 }
               }
