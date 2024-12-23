@@ -201,10 +201,12 @@ export function AppGrid() {
 
   const context = useMemo(
     () => ({
+      game,
+      setGame,
       view,
       setView,
     }),
-    [view, setView],
+    [game, setGame, view, setView],
   )
 
   return (
@@ -226,7 +228,7 @@ export function AppGrid() {
           <div>Tick: {game.tick}</div>
           <div>{JSON.stringify(view)}</div>
         </div>
-        <AppActions setGame={setGame} />
+        <AppActions />
       </div>
     </AppContext.Provider>
   )

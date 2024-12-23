@@ -1,25 +1,41 @@
 import React, {
   ChangeEvent,
   useCallback,
+  useContext,
   useMemo,
 } from 'react'
-import { Updater } from 'use-immer'
-import { Game, initGame, NodeType } from '../game'
+import { initGame, NodeType } from '../game'
 import { AppContext } from './app-context'
+import { AppViewType } from './app-view'
 
-export interface AppActionsProps {
-  setGame: Updater<Game>
+export function AppActions() {
+  const { view } = useContext(AppContext)
+  return (
+    <div className="absolute bottom-0 right-0 p-1 flex gap-2">
+      {view.type === AppViewType.AddNode && <AddNodeView />}
+      {view.type === AppViewType.Home && <HomeView />}
+    </div>
+  )
 }
 
-export function AppActions({ setGame }: AppActionsProps) {
+function HomeView() {
+  const { setGame } = useContext(AppContext)
   const onClickReset = useCallback(() => {
     setGame(initGame)
   }, [setGame])
   return (
-    <div className="absolute bottom-0 right-0 p-1 flex gap-2">
-      <ChooseNodeType />
+    <div>
+      Home
       <button onClick={onClickReset}>Reset</button>
     </div>
+  )
+}
+
+function AddNodeView() {
+  return (
+    <>
+      <ChooseNodeType />
+    </>
   )
 }
 
