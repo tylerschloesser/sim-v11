@@ -46,13 +46,34 @@ export const NodeType = z.enum([
 ])
 export type NodeType = z.infer<typeof NodeType>
 
-export const Node = z.strictObject({
+const BaseNode = z.strictObject({
   id: z.string(),
   type: NodeType,
   p: ZVec2,
   item: NodeItem.nullable(),
   outputs: NodeRef.array(),
 })
+
+export const NormalNode = BaseNode.extend({
+  type: z.literal(NodeType.enum.Normal),
+})
+export type NormalNode = z.infer<typeof NormalNode>
+
+export const ConsumerNode = BaseNode.extend({
+  type: z.literal(NodeType.enum.Consumer),
+})
+export type ConsumerNode = z.infer<typeof ConsumerNode>
+
+export const ProducerNode = BaseNode.extend({
+  type: z.literal(NodeType.enum.Producer),
+})
+export type ProducerNode = z.infer<typeof ProducerNode>
+
+export const Node = z.union([
+  NormalNode,
+  ConsumerNode,
+  ProducerNode,
+])
 export type Node = z.infer<typeof Node>
 
 export const UpdateType = z.enum(['Tick'])
