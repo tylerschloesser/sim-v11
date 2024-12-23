@@ -128,6 +128,7 @@ export function step(game: Game) {
         if (node.item && node.item.tick > 0) {
           node.item = null
         }
+        // consumers can't output
         return
       }
       case NodeType.enum.Producer: {
@@ -139,6 +140,16 @@ export function step(game: Game) {
             purity: 0,
           }
         }
+        break
+      }
+      case NodeType.enum.Purifier: {
+        if (node.item) {
+          node.item.purity = Math.min(
+            node.item.purity + 0.1,
+            1,
+          )
+        }
+        break
       }
     }
 
@@ -162,6 +173,7 @@ export function step(game: Game) {
 
       const tickRequirement =
         node.type === NodeType.enum.Purifier ? 10 : 1
+
       if (
         node.item &&
         node.item.tick >= tickRequirement &&
