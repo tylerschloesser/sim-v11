@@ -241,6 +241,17 @@ export function initPixi({
           }),
       )
 
+      // @ts-expect-error
+      const path$ = pointer$.pipe(
+        map((pointer) => {
+          if (pointer?.type !== PointerType.Path) {
+            return null
+          }
+          return []
+        }),
+        distinctUntilChanged<Array<void> | null>(),
+      )
+
       const state: PixiState = {
         id,
         canvas,
