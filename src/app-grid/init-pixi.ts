@@ -18,7 +18,7 @@ import { Vec2 } from '../common/vec2'
 import { Game, Node } from '../game'
 import { addNode } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
-import { AppView } from './app-view'
+import { AppView, AppViewType } from './app-view'
 import { CELL_SIZE, TICK_DURATION } from './const'
 import { initInput } from './init-input'
 import { Graphics, PixiState } from './pixi-state'
@@ -47,6 +47,10 @@ function handleClick(
   hover: Vec2,
   view: AppView,
 ): void {
+  if (view.type !== AppViewType.AddNode) {
+    return
+  }
+
   const node = Object.values(draft.nodes).find((node) =>
     new Vec2(node.p).equals(hover),
   )
