@@ -7,8 +7,8 @@ import { Vec2 } from '../common/vec2'
 import { ViewportProvider } from '../common/viewport-provider'
 import { initGame, step } from '../game'
 import {
+  ItemColor,
   Node,
-  NodeColor,
   NodeItem,
   NodeType,
 } from '../game/node'
@@ -35,7 +35,7 @@ interface NodeModel {
 interface ItemModel {
   id: string
   p: Vec2
-  color: NodeColor
+  color: ItemColor
 }
 
 function radiansToDegrees(radians: number) {
@@ -155,7 +155,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
         node.item = {
           id: `${draft.nextItemId++}`,
           tick: 0,
-          color: sample(NodeColor.options),
+          color: sample(ItemColor.options),
           purity: 0,
         }
       }
@@ -217,11 +217,11 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
           <div
             className={clsx(
               'w-full h-full border-2',
-              item.color === NodeColor.enum.Green &&
+              item.color === ItemColor.enum.Green &&
                 'border-emerald-400',
-              item.color === NodeColor.enum.Blue &&
+              item.color === ItemColor.enum.Blue &&
                 'border-blue-400',
-              item.color === NodeColor.enum.Red &&
+              item.color === ItemColor.enum.Red &&
                 'border-red-400',
             )}
           >

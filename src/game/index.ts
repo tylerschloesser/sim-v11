@@ -5,7 +5,7 @@ import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import {
   Node,
-  NodeColor,
+  ItemColor,
   NodeItem,
   NodeRef,
   NodeType,
@@ -136,7 +136,7 @@ export function step(game: Game) {
         node.item = {
           id: `${game.nextItemId++}`,
           tick: 0,
-          color: sample(NodeColor.options),
+          color: sample(ItemColor.options),
           purity: 0,
         }
       }

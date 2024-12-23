@@ -4,7 +4,7 @@ import { Vec2 } from '../common/vec2'
 import { Game } from '../game'
 import {
   Node,
-  NodeColor,
+  ItemColor,
   NodeItem,
   NodeRef,
   NodeType,
@@ -100,11 +100,11 @@ function itemColor(item: NodeItem): string {
   const l = 50
   const o = 1
   switch (item.color) {
-    case NodeColor.enum.Green:
+    case ItemColor.enum.Green:
       return `hsla(120, ${s}%, ${l}%, ${o.toFixed(2)})`
-    case NodeColor.enum.Red:
+    case ItemColor.enum.Red:
       return `hsla(0, ${s}%, ${l}%, ${o.toFixed(2)})`
-    case NodeColor.enum.Blue:
+    case ItemColor.enum.Blue:
       return `hsla(240, ${s}%, ${l}%, ${o.toFixed(2)})`
   }
 }
