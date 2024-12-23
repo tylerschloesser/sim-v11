@@ -7,6 +7,7 @@ import React, {
 import { initGame, NodeType } from '../game'
 import { AppContext } from './app-context'
 import { AppViewType } from './app-view'
+import { Button } from './button'
 
 export function AppActions() {
   const { view } = useContext(AppContext)
@@ -19,14 +20,21 @@ export function AppActions() {
 }
 
 function HomeView() {
-  const { setGame } = useContext(AppContext)
+  const { setGame, setView } = useContext(AppContext)
   const onClickReset = useCallback(() => {
     setGame(initGame)
   }, [setGame])
+
+  const onClickAddNode = useCallback(() => {
+    setView((draft) => {
+      draft.type === AppViewType.AddNode
+    })
+  }, [setView])
+
   return (
     <div>
-      Home
-      <button onClick={onClickReset}>Reset</button>
+      <Button onClick={onClickAddNode}>Add Node</Button>
+      <Button onClick={onClickReset}>Reset</Button>
     </div>
   )
 }
