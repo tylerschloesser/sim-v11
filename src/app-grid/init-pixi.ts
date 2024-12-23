@@ -62,6 +62,13 @@ function handlePath(draft: Game, path: Path): void {
     }
     addNode(draft.nodes, { p })
   }
+  for (let i = 0; i < path.length - 1; i++) {
+    const p = path.at(i)
+    invariant(p)
+    const id = toNodeId(p)
+    const node = draft.nodes[id]
+    invariant(node)
+  }
 }
 
 function handleClick(
