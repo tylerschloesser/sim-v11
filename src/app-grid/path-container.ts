@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import { Path } from './path'
 
@@ -39,9 +40,12 @@ function* iteratePath(path: Path): Generator<Vec2> {
   const delta = path.last.sub(path.first)
   if (delta.length() === 0) {
     yield path.first
+    return
   }
 
-  if (Math.abs(delta.x) > Math.abs(delta.y)) {
+  invariant(path.start !== null)
+
+  if (path.start === 'x') {
     for (let x = 0; x < Math.abs(delta.x); x++) {
       yield path.first.add(
         new Vec2(x * Math.sign(delta.x), 0),
@@ -53,6 +57,7 @@ function* iteratePath(path: Path): Generator<Vec2> {
       )
     }
   } else {
+    invariant(path.start === 'y')
     for (let y = 0; y < Math.abs(delta.y); y++) {
       yield path.first.add(
         new Vec2(0, y * Math.sign(delta.y)),

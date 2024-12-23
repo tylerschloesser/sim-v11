@@ -5,6 +5,7 @@ import {
   combineLatest,
   distinctUntilChanged,
   map,
+  scan,
   shareReplay,
   Subject,
   Subscription,
@@ -261,7 +262,30 @@ export function initPixi({
             pointer.down.p,
           ).floor()
           const last = screenToWorld(pointer.p).floor()
-          return { start: null, first, last }
+          return { first, last, start: null }
+        }),
+        scan((acc, path) => {
+          if (
+            path === null ||
+            path.first.equals(path.last)
+          ) {
+            return path
+          }
+          if (acc?.start) {
+            return {
+              ...path,
+              start: acc.start,
+            }
+          }
+          const delta = path.last.sub(path.first)
+          const start: Path['start'] =
+            Math.abs(delta.x) > Math.abs(delta.y)
+              ? 'x'
+              : 'y'
+          return {
+            ...path,
+            start,
+          }
         }),
         distinctUntilChanged<Path | null>(isEqual),
         shareReplay(1),
