@@ -24,7 +24,7 @@ export function AppActions({ setGame }: AppActionsProps) {
 }
 
 function ChooseNodeType() {
-  const { input, setInput } = React.useContext(AppContext)
+  const { view, setView } = React.useContext(AppContext)
   const options = useMemo(
     () =>
       NodeType.options.map((nodeType) => ({
@@ -36,7 +36,7 @@ function ChooseNodeType() {
 
   const onChange = useCallback(
     (ev: ChangeEvent<HTMLInputElement>) => {
-      setInput((draft) => {
+      setView((draft) => {
         draft.nodeType = NodeType.parse(ev.target.value)
       })
     },
@@ -51,7 +51,7 @@ function ChooseNodeType() {
             type="radio"
             name="nodeType"
             value={option.value}
-            checked={option.value === input.nodeType}
+            checked={option.value === view.nodeType}
             onChange={onChange}
           />
           {option.label}

@@ -4,7 +4,6 @@ import * as PIXI from 'pixi.js'
 import React, { useEffect, useMemo, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { Updater, useImmer } from 'use-immer'
-import { Input } from '../app-graph/input-view'
 import {
   Game,
   initGame,
@@ -16,6 +15,7 @@ import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 import { AppActions } from './app-actions'
 import { AppContext } from './app-context'
+import { AppView } from './app-view'
 import { CELL_SIZE, TICK_DURATION } from './const'
 import { gameToGameView, NodeView } from './game-view'
 import { initKeyboard } from './init-keyboard'
@@ -147,7 +147,7 @@ function initialGame(): Game {
 
 export function AppGrid() {
   const [game, setGame] = useImmer(initialGame)
-  const [input, setInput] = useImmer<Input>({
+  const [view, setView] = useImmer<AppView>({
     nodeType: NodeType.enum.Normal,
     hover: null,
   })
@@ -184,15 +184,15 @@ export function AppGrid() {
     gameRef.current = game
   }, [game])
 
-  const inputRef = useRef<Input>(input)
+  const viewRef = useRef<AppView>(view)
   useEffect(() => {
-    inputRef.current = input
-  }, [input])
+    viewRef.current = view
+  }, [view])
 
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    initKeyboard({ signal, setGame, inputRef })
+    initKeyboard({ signal, setGame, viewRef })
     return () => {
       controller.abort()
     }
@@ -200,10 +200,10 @@ export function AppGrid() {
 
   const context = useMemo(
     () => ({
-      input,
-      setInput,
+      view,
+      setView,
     }),
-    [input, setInput],
+    [view, setView],
   )
 
   return (
@@ -211,10 +211,10 @@ export function AppGrid() {
       <div className="w-dvw h-dvh relative">
         <Canvas
           state={state}
-          setInput={setInput}
+          setView={setView}
           setGame={setGame}
           gameRef={gameRef}
-          inputRef={inputRef}
+          viewRef={viewRef}
         />
         <div
           className={clsx(
@@ -223,7 +223,7 @@ export function AppGrid() {
           )}
         >
           <div>Tick: {game.tick}</div>
-          <div>{JSON.stringify(input)}</div>
+          <div>{JSON.stringify(view)}</div>
         </div>
         <AppActions setGame={setGame} />
       </div>
@@ -233,18 +233,18 @@ export function AppGrid() {
 
 interface CanvasProps {
   state: React.MutableRefObject<PixiState | null>
-  setInput: Updater<Input>
+  setView: Updater<AppView>
   setGame: Updater<Game>
   gameRef: React.MutableRefObject<Game>
-  inputRef: React.MutableRefObject<Input>
+  viewRef: React.MutableRefObject<AppView>
 }
 
 export function Canvas({
   state,
-  setInput,
+  setView,
   setGame,
   gameRef,
-  inputRef,
+  viewRef,
 }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
 
@@ -254,9 +254,9 @@ export function Canvas({
     initPixi({
       id,
       container: container.current,
-      setInput,
+      setView,
       setGame,
-      inputRef,
+      viewRef,
     }).then((_state) => {
       state.current = _state
       renderGame(gameRef.current, _state)

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Updater } from 'use-immer'
-import { Input } from '../app-graph/input-view'
+import { AppView } from './app-view'
 
 export const AppContext = React.createContext<{
-  input: Input
-  setInput: Updater<Input>
+  view: AppView
+  setView: Updater<AppView>
 }>(null!)

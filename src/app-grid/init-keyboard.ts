@@ -1,18 +1,18 @@
 import { Updater } from 'use-immer'
-import { Input } from '../app-graph/input-view'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game'
+import { AppView } from './app-view'
 
 interface InitKeyboardArgs {
   signal: AbortSignal
   setGame: Updater<Game>
-  inputRef: React.MutableRefObject<Input>
+  viewRef: React.MutableRefObject<AppView>
 }
 
 export function initKeyboard({
   signal,
   setGame,
-  inputRef,
+  viewRef,
 }: InitKeyboardArgs) {
   window.addEventListener(
     'keyup',
@@ -42,15 +42,13 @@ export function initKeyboard({
 
       setGame((draft) => {
         draft.updateType = null
-        if (!inputRef.current.hover) {
+        if (!viewRef.current.hover) {
           return
         }
 
         const cell = Object.values(draft.nodes).find(
           (node) =>
-            new Vec2(node.p).equals(
-              inputRef.current.hover!,
-            ),
+            new Vec2(node.p).equals(viewRef.current.hover!),
         )
 
         if (!cell) {

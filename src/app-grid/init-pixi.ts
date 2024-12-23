@@ -13,12 +13,12 @@ import {
 } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { Updater } from 'use-immer'
-import { Input } from '../app-graph/input-view'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { Game, Node } from '../game'
 import { addNode } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
+import { AppView } from './app-view'
 import { CELL_SIZE, TICK_DURATION } from './const'
 import { initInput } from './init-input'
 import { Graphics, PixiState } from './pixi-state'
@@ -45,7 +45,7 @@ function deleteNode(draft: Game, node: Node): void {
 function handleClick(
   draft: Game,
   hover: Vec2,
-  input: Input,
+  view: AppView,
 ): void {
   const node = Object.values(draft.nodes).find((node) =>
     new Vec2(node.p).equals(hover),
@@ -57,7 +57,7 @@ function handleClick(
   } else {
     addNode(draft.nodes, {
       p: hover,
-      type: input.nodeType,
+      type: view.nodeType,
     })
   }
 }
@@ -65,17 +65,17 @@ function handleClick(
 interface InitPixiArgs {
   id: string
   container: HTMLDivElement
-  setInput: Updater<Input>
+  setView: Updater<AppView>
   setGame: Updater<Game>
-  inputRef: React.MutableRefObject<Input>
+  viewRef: React.MutableRefObject<AppView>
 }
 
 export function initPixi({
   id,
   container,
-  setInput,
+  setView: setInput,
   setGame,
-  inputRef,
+  viewRef,
 }: InitPixiArgs): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
@@ -201,7 +201,7 @@ export function initPixi({
           )
           .subscribe((hover) => {
             setGame((draft) => {
-              handleClick(draft, hover, inputRef.current)
+              handleClick(draft, hover, viewRef.current)
             })
           }),
       )
