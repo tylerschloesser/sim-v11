@@ -1,26 +1,19 @@
 import { BehaviorSubject, Subject } from 'rxjs'
 import { Vec2 } from '../common/vec2'
-import { DRAG_THRESHOLD_PX } from './const'
 import { Pointer, PointerType } from './pointer'
 
 interface InitInputArgs {
   container: HTMLElement
   signal: AbortSignal
   pointer$: BehaviorSubject<Pointer | null>
-  click$: Subject<void>
   pointerup$: Subject<Vec2>
-  camera$: BehaviorSubject<Vec2>
-  cellSize: number
 }
 
 export function initInput({
   container,
   signal,
   pointer$,
-  click$,
   pointerup$,
-  camera$,
-  cellSize,
 }: InitInputArgs): void {
   container.addEventListener(
     'pointerenter',
@@ -107,28 +100,6 @@ export function initInput({
     (ev) => {
       const p = new Vec2(ev.offsetX, ev.offsetY)
       pointerup$.next(p)
-
-      if (pointer$.value?.type === PointerType.Drag) {
-        const dt =
-          self.performance.now() - pointer$.value.down.t
-        if (dt < 200) {
-          click$.next()
-        } else if (
-          pointer$.value.delta.length() < DRAG_THRESHOLD_PX
-        ) {
-          click$.next()
-        }
-        camera$.next(
-          camera$.value.add(
-            pointer$.value.delta.div(cellSize),
-          ),
-        )
-      }
-
-      pointer$.next({
-        type: PointerType.Free,
-        p,
-      })
     },
     { signal },
   )

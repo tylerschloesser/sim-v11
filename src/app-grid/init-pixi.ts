@@ -9,7 +9,6 @@ import {
   shareReplay,
   Subject,
   Subscription,
-  throttleTime,
   withLatestFrom,
 } from 'rxjs'
 import invariant from 'tiny-invariant'
@@ -20,7 +19,11 @@ import { Game, Node } from '../game'
 import { addNode } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
 import { AppView, AppViewType } from './app-view'
-import { CELL_SIZE, TICK_DURATION } from './const'
+import {
+  CELL_SIZE,
+  DRAG_THRESHOLD_PX,
+  TICK_DURATION,
+} from './const'
 import { initInput } from './init-input'
 import { buildPath, PathStart, PathState } from './path'
 import { PathContainer } from './path-container'
@@ -135,7 +138,6 @@ export function initPixi({
       const cellSize = CELL_SIZE
       const g = initGraphics(app, cellSize, viewport)
 
-      const click$ = new Subject<void>()
       const pointerup$ = new Subject<Vec2>()
       const camera$ = new BehaviorSubject<Vec2>(Vec2.ZERO)
       const pointer$ = new BehaviorSubject<Pointer | null>(
@@ -198,26 +200,6 @@ export function initPixi({
         }),
         distinctUntilChanged<Vec2 | null>(isEqual),
         shareReplay(1),
-      )
-
-      sub.add(
-        click$
-          .pipe(
-            throttleTime(100),
-            withLatestFrom(hover$),
-            map(([_, hover]) => {
-              invariant(
-                hover,
-                'Received click but hover is null',
-              )
-              return hover
-            }),
-          )
-          .subscribe((hover) => {
-            setGame((draft) => {
-              handleClick(draft, hover, viewRef.current)
-            })
-          }),
       )
 
       sub.add(
@@ -317,8 +299,38 @@ export function initPixi({
           )
           .subscribe(
             // @ts-expect-error
-            ([ev, pointer, hover, camera, path]) => {
-              console.log('TODO')
+            ([p, pointer, hover, camera, path]) => {
+              switch (pointer?.type) {
+                case PointerType.Drag: {
+                  const dt =
+                    self.performance.now() - pointer.down.t
+                  if (
+                    dt < 200 ||
+                    pointer.delta.length() <
+                      DRAG_THRESHOLD_PX
+                  ) {
+                    invariant(hover)
+                    setGame((draft) => {
+                      handleClick(
+                        draft,
+                        hover,
+                        viewRef.current,
+                      )
+                    })
+                  }
+
+                  camera$.next(
+                    camera.add(pointer.delta.div(cellSize)),
+                  )
+
+                  break
+                }
+              }
+
+              pointer$.next({
+                type: PointerType.Free,
+                p,
+              })
             },
           ),
       )
@@ -342,10 +354,7 @@ export function initPixi({
         container,
         signal,
         pointer$,
-        click$,
         pointerup$,
-        camera$,
-        cellSize,
       })
 
       const frameRequestCallback: FrameRequestCallback =
