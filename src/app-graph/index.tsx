@@ -5,14 +5,13 @@ import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { Vec2 } from '../common/vec2'
 import { ViewportProvider } from '../common/viewport-provider'
+import { initGame, step } from '../game'
 import {
-  initGame,
   Node,
   NodeColor,
   NodeItem,
   NodeType,
-  step,
-} from '../game'
+} from '../game/node'
 
 export function AppGraph() {
   return (

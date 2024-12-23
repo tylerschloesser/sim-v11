@@ -4,7 +4,8 @@ import React, {
   useContext,
   useMemo,
 } from 'react'
-import { initGame, NodeType } from '../game'
+import { initGame } from '../game'
+import { NodeType } from '../game/node'
 import { AppContext } from './app-context'
 import { AppViewType } from './app-view'
 import { Button } from './button'

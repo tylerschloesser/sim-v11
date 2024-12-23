@@ -9,13 +9,8 @@ import React, {
 } from 'react'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
-import {
-  Game,
-  initGame,
-  NodeType,
-  step,
-  UpdateType,
-} from '../game'
+import { Game, initGame, step, UpdateType } from '../game'
+import { NodeType } from '../game/node'
 import { toNodeId } from '../game/util'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'

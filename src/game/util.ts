@@ -1,7 +1,8 @@
 import { curry } from 'lodash-es'
 import invariant from 'tiny-invariant'
-import { Game, Node, NodeType } from '.'
+import { Game } from '.'
 import { Vec2 } from '../common/vec2'
+import { Node, NodeType } from './node'
 
 export const shuffle = curry(function <T>(
   rng: () => number,

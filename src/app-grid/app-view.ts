@@ -1,5 +1,5 @@
 import { Vec2 } from '../common/vec2'
-import { NodeType } from '../game'
+import { NodeType } from '../game/node'
 
 export enum AppViewType {
   Home = 'home',
