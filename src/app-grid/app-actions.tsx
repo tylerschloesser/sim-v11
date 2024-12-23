@@ -20,6 +20,7 @@ export function AppActions() {
   return (
     <div className="absolute bottom-0 right-0 p-1 flex gap-2">
       {view.type === AppViewType.AddNode && <AddNodeView />}
+      {view.type === AppViewType.AddForm && <AddFormView />}
       {view.type === AppViewType.Home && <HomeView />}
       {view.type !== AppViewType.Home && (
         <Button onClick={onClickHome}>Home</Button>
@@ -42,9 +43,16 @@ function HomeView() {
     })
   }, [setView])
 
+  const onClickAddForm = useCallback(() => {
+    setView((draft) => {
+      draft.type = AppViewType.AddForm
+    })
+  }, [setView])
+
   return (
     <div>
       <Button onClick={onClickAddNode}>Add Node</Button>
+      <Button onClick={onClickAddForm}>Add Form</Button>
       <Button onClick={onClickReset}>Reset</Button>
     </div>
   )
@@ -56,6 +64,10 @@ function AddNodeView() {
       <ChooseNodeType />
     </>
   )
+}
+
+function AddFormView() {
+  return <>TODO</>
 }
 
 function ChooseNodeType() {

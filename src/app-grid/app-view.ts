@@ -4,6 +4,7 @@ import { NodeType } from '../game/node'
 export enum AppViewType {
   Home = 'home',
   AddNode = 'add-node',
+  AddForm = 'add-form',
 }
 
 export interface AppView {
