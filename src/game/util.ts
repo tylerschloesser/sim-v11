@@ -41,8 +41,9 @@ export function addNode(
       const rate = 0.1
       node = { id, p, item: null, outputs, type, rate }
       break
-    default:
-      invariant(false)
+    case NodeType.enum.Purifier:
+      node = { id, p, item, outputs, type }
+      break
   }
 
   invariant(!nodes[id])
