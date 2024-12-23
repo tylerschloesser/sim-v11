@@ -1,6 +1,5 @@
 import { identity, sample } from 'lodash-es'
 import Prando from 'prando'
-// import readline from 'readline/promises'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import {
@@ -195,15 +194,3 @@ export function step(game: Game) {
     }
   }
 }
-
-// const rl = readline.createInterface({
-//   input: process.stdin,
-//   output: process.stdout,
-// })
-//
-// const NODES = initNodes()
-// console.log(NODES)
-// rl.on('line', () => {
-//   step(NODES)
-//   console.log(NODES)
-// })
