@@ -143,11 +143,8 @@ export function step(game: Game) {
         break
       }
       case NodeType.enum.Purifier: {
-        if (node.item) {
-          node.item.purity = Math.min(
-            node.item.purity + 0.1,
-            1,
-          )
+        if (node.item && rng.next() < node.rate) {
+          node.item.purity += 1
         }
         break
       }
@@ -172,7 +169,7 @@ export function step(game: Game) {
       }
 
       const tickRequirement =
-        node.type === NodeType.enum.Purifier ? 10 : 1
+        node.type === NodeType.enum.Purifier ? 20 : 1
 
       if (
         node.item &&

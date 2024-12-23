@@ -96,7 +96,7 @@ export function gameToGameView(game: Game): GameView {
 }
 
 function itemColor(item: NodeItem): string {
-  const s = item.purity * 100
+  const s = Math.min(item.purity * 10, 100)
   const l = 50
   const o = 1
   switch (item.color) {
