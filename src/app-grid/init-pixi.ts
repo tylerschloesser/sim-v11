@@ -136,6 +136,7 @@ export function initPixi({
       const g = initGraphics(app, cellSize, viewport)
 
       const click$ = new Subject<void>()
+      const pointerup$ = new Subject<Vec2>()
       const camera$ = new BehaviorSubject<Vec2>(Vec2.ZERO)
       const pointer$ = new BehaviorSubject<Pointer | null>(
         null,
@@ -304,6 +305,24 @@ export function initPixi({
         }),
       )
 
+      sub.add(
+        pointerup$
+          .pipe(
+            withLatestFrom(
+              pointer$,
+              hover$,
+              camera$,
+              path$,
+            ),
+          )
+          .subscribe(
+            // @ts-expect-error
+            ([ev, pointer, hover, camera, path]) => {
+              console.log('TODO')
+            },
+          ),
+      )
+
       const state: PixiState = {
         id,
         canvas,
@@ -324,6 +343,7 @@ export function initPixi({
         signal,
         pointer$,
         click$,
+        pointerup$,
         camera$,
         cellSize,
       })

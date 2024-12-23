@@ -8,6 +8,7 @@ interface InitInputArgs {
   signal: AbortSignal
   pointer$: BehaviorSubject<Pointer | null>
   click$: Subject<void>
+  pointerup$: Subject<Vec2>
   camera$: BehaviorSubject<Vec2>
   cellSize: number
 }
@@ -17,6 +18,7 @@ export function initInput({
   signal,
   pointer$,
   click$,
+  pointerup$,
   camera$,
   cellSize,
 }: InitInputArgs): void {
@@ -104,6 +106,7 @@ export function initInput({
     'pointerup',
     (ev) => {
       const p = new Vec2(ev.offsetX, ev.offsetY)
+      pointerup$.next(p)
 
       if (pointer$.value?.type === PointerType.Drag) {
         const dt =
