@@ -58,6 +58,16 @@ export function addNode(
   nodes[id] = node
 }
 
+export function addFormNode(
+  nodes: Game['nodes'],
+  partial: {
+    p: Vec2
+    size: Vec2
+  },
+): void {
+  console.log('TODO', nodes, partial)
+}
+
 export function connect(
   nodes: Game['nodes'],
   inputId: string,

@@ -45,9 +45,6 @@ export function gameToGameView(game: Game): GameView {
 
   for (const node of Object.values(game.nodes)) {
     const textureId = nodeTextureId(node)
-    if (textureId === null) {
-      continue
-    }
 
     function outputToDirection(output: Node): Direction {
       const dx = output.p.x - node.p.x
@@ -112,7 +109,7 @@ function itemColor(item: NodeItem): string {
   }
 }
 
-function nodeTextureId(node: Node): TextureId | null {
+function nodeTextureId(node: Node): TextureId {
   switch (node.type) {
     case NodeType.enum.Normal:
       return TextureId.enum.NodeNormal
@@ -123,7 +120,8 @@ function nodeTextureId(node: Node): TextureId | null {
     case NodeType.enum.Purifier:
       return TextureId.enum.NodePurifier
     case NodeType.enum.FormRoot:
+      return TextureId.enum.NodeFormRoot
     case NodeType.enum.FormLeaf:
-      return null
+      return TextureId.enum.NodeFormLeaf
   }
 }

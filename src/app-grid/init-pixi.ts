@@ -17,7 +17,11 @@ import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game'
 import { Node } from '../game/node'
-import { addNode, toNodeId } from '../game/util'
+import {
+  addFormNode,
+  addNode,
+  toNodeId,
+} from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
 import { AppView, AppViewType } from './app-view'
 import {
@@ -92,22 +96,33 @@ function handleClick(
   hover: Hover,
   view: AppView,
 ): void {
-  if (view.type !== AppViewType.AddNode) {
-    return
-  }
+  switch (view.type) {
+    case AppViewType.Home: {
+      return
+    }
+    case AppViewType.AddNode: {
+      const node = Object.values(draft.nodes).find((node) =>
+        new Vec2(node.p).equals(hover.p),
+      )
 
-  const node = Object.values(draft.nodes).find((node) =>
-    new Vec2(node.p).equals(hover.p),
-  )
-
-  draft.updateType = null
-  if (node) {
-    deleteNode(draft, node)
-  } else {
-    addNode(draft.nodes, {
-      p: hover.p,
-      type: view.nodeType,
-    })
+      draft.updateType = null
+      if (node) {
+        deleteNode(draft, node)
+      } else {
+        addNode(draft.nodes, {
+          p: hover.p,
+          type: view.nodeType,
+        })
+      }
+      break
+    }
+    case AppViewType.AddForm: {
+      addFormNode(draft.nodes, {
+        p: hover.p,
+        size: new Vec2(4, 6),
+      })
+      break
+    }
   }
 }
 
