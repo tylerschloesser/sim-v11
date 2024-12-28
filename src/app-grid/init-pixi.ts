@@ -142,6 +142,7 @@ export function initPixi({
   setView,
   setGame,
   view$,
+  widgetContainer,
 }: InitPixiArgs): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
     async (resolve) => {
@@ -231,6 +232,12 @@ export function initPixi({
             mod(screen.y, cellSize) - cellSize,
           )
           g.world.position.set(screen.x, screen.y)
+        }),
+      )
+
+      sub.add(
+        effectiveCameraScreen$.subscribe((screen) => {
+          widgetContainer.style.translate = `${screen.x}px ${screen.y}px`
         }),
       )
 
