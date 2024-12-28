@@ -251,24 +251,27 @@ export function initPixi({
       )
 
       sub.add(
-        combineLatest([effectiveCamera$, hover$])
+        combineLatest([effectiveCamera$, hover$, view$])
           .pipe(
-            map(([camera, hover]) =>
+            map(([camera, hover, view]) =>
               hover
                 ? {
-                    ...hover,
-                    p: hover.p
+                    screen: hover.p
                       .sub(camera)
                       .mul(cellSize)
                       .add(viewport.div(2)),
+                    viewType: view.type,
                   }
                 : null,
             ),
-            distinctUntilChanged<Hover | null>(isEqual),
+            distinctUntilChanged<{
+              screen: Vec2
+              viewType: AppViewType
+            } | null>(isEqual),
           )
-          .subscribe((screen) => {
-            if (screen) {
-              g.pointer.update(screen)
+          .subscribe((state) => {
+            if (state) {
+              g.pointer.update(state.screen, state.viewType)
             } else {
               g.pointer.hide()
             }

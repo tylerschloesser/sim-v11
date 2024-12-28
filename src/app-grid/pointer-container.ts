@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
+import { Vec2 } from '../common/vec2'
+import { AppViewType } from './app-view'
 import { CELL_SIZE } from './const'
-import { Hover } from './hover'
 
 export class PointerContainer extends PIXI.Container {
   private readonly g: PIXI.Graphics = new PIXI.Graphics({
@@ -19,9 +20,10 @@ export class PointerContainer extends PIXI.Container {
     this.addChild(this.g)
   }
 
-  update(hover: Hover): void {
+  // @ts-expect-error
+  update(screen: Vec2, viewType: AppViewType): void {
     this.g.visible = true
-    this.g.position.set(hover.p.x, hover.p.y)
+    this.g.position.set(screen.x, screen.y)
   }
 
   hide(): void {
