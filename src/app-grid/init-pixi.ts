@@ -64,7 +64,7 @@ function deleteNode(draft: Game, nodeId: string): void {
 
   let item: Item | null = null
   if (node.itemId) {
-    item = draft.items[node.itemId]
+    item = draft.items[node.itemId]!
     invariant(item)
     delete draft.items[item.id]
   }

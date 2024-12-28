@@ -134,6 +134,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
       )
       .map((node) => {
         const item = items[node.itemId]
+        invariant(item)
         return {
           id: item.id,
           p: new Vec2(node.p.x, node.p.y),
