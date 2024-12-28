@@ -16,7 +16,7 @@ import { Updater } from 'use-immer'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game'
-import { Node } from '../game/node'
+import { Item } from '../game/node'
 import {
   addFormNode,
   addNode,
@@ -44,7 +44,9 @@ import { PointerContainer } from './pointer-container'
 
 const cache = new Map<string, Promise<PixiState>>()
 
-function deleteNode(draft: Game, node: Node): void {
+function deleteNode(draft: Game, nodeId: string): void {
+  const node = draft.nodes[nodeId]
+  invariant(node)
   for (const input of Object.values(draft.nodes)) {
     const index = input.outputs.findIndex(
       ({ id }) => id === node.id,
@@ -58,6 +60,13 @@ function deleteNode(draft: Game, node: Node): void {
   }
 
   delete draft.nodes[node.id]
+
+  let item: Item | null = null
+  if (node.itemId) {
+    item = draft.items[node.itemId]
+    invariant(item)
+    delete draft.items[item.id]
+  }
 }
 
 function handlePath(draft: Game, path: Path): void {
@@ -101,13 +110,10 @@ function handleClick(
       return
     }
     case AppViewType.AddNode: {
-      const node = Object.values(draft.nodes).find((node) =>
-        new Vec2(node.p).equals(hover.p),
-      )
-
       draft.updateType = null
-      if (node) {
-        deleteNode(draft, node)
+      const nodeId = toNodeId(hover.p)
+      if (draft.nodes[nodeId]) {
+        deleteNode(draft, nodeId)
       } else {
         addNode(draft.nodes, {
           p: hover.p,
