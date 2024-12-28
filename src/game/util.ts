@@ -30,6 +30,9 @@ export function addNode(
   const item: Node['item'] = null
   let node: Node
 
+  invariant(type !== NodeType.enum.FormRoot)
+  invariant(type !== NodeType.enum.FormLeaf)
+
   switch (type) {
     case NodeType.enum.Normal: {
       node = { id, p, item, outputs, type }

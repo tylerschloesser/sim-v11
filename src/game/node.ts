@@ -22,6 +22,8 @@ export const NodeType = z.enum([
   'Consumer',
   'Producer',
   'Purifier',
+  'FormRoot',
+  'FormLeaf',
 ])
 export type NodeType = z.infer<typeof NodeType>
 
@@ -55,10 +57,22 @@ export const PurifierNode = BaseNode.extend({
 })
 export type PurifierNode = z.infer<typeof PurifierNode>
 
+export const FormRootNode = BaseNode.extend({
+  type: z.literal(NodeType.enum.FormRoot),
+})
+export type FormRootNode = z.infer<typeof FormRootNode>
+
+export const FormLeafNode = BaseNode.extend({
+  type: z.literal(NodeType.enum.FormLeaf),
+})
+export type FormLeafNode = z.infer<typeof FormLeafNode>
+
 export const Node = z.union([
   NormalNode,
   ConsumerNode,
   ProducerNode,
   PurifierNode,
+  FormRootNode,
+  FormLeafNode,
 ])
 export type Node = z.infer<typeof Node>
