@@ -6,17 +6,6 @@ export const NodeRef = z.strictObject({
 })
 export type NodeRef = z.infer<typeof NodeRef>
 
-export const ItemColor = z.enum(['Green', 'Blue', 'Red'])
-export type ItemColor = z.infer<typeof ItemColor>
-
-export const Item = z.strictObject({
-  id: z.string(),
-  tick: z.number(),
-  color: ItemColor,
-  purity: z.number().nonnegative().int(),
-})
-export type Item = z.infer<typeof Item>
-
 export const NodeType = z.enum([
   'Normal',
   'Consumer',

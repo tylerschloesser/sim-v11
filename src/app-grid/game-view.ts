@@ -2,13 +2,8 @@ import { isEqual } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game'
-import {
-  Node,
-  ItemColor,
-  NodeRef,
-  NodeType,
-  Item,
-} from '../game/node'
+import { Item, ItemColor } from '../game/item'
+import { Node, NodeRef, NodeType } from '../game/node'
 import { TextureId } from '../textures'
 
 type Direction = 'n' | 's' | 'e' | 'w'

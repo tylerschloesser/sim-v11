@@ -6,12 +6,8 @@ import { useImmer } from 'use-immer'
 import { Vec2 } from '../common/vec2'
 import { ViewportProvider } from '../common/viewport-provider'
 import { initGame, step } from '../game'
-import {
-  Item,
-  ItemColor,
-  Node,
-  NodeType,
-} from '../game/node'
+import { Item, ItemColor } from '../game/item'
+import { Node, NodeType } from '../game/node'
 
 export function AppGraph() {
   return (
