@@ -176,6 +176,7 @@ export function step(game: Game) {
         if (!item && rng.next() < node.rate) {
           item = {
             id: `${game.nextItemId++}`,
+            nodeId: node.id,
             tick: 0,
             color: sample(ItemColor.options),
             purity: 0,
@@ -221,6 +222,7 @@ export function step(game: Game) {
       ) {
         output.itemId = item.id
         node.itemId = null
+        item.nodeId = output.id
         item.tick = 0
         item = null
       }
@@ -233,6 +235,7 @@ export function step(game: Game) {
     if (loop?.root === node) {
       if (loop.item) {
         node.itemId = loop.item.id
+        loop.item.nodeId = node.id
         loop.item.tick = 0
       }
       loop = null
