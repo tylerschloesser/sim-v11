@@ -3,9 +3,9 @@ import Prando from 'prando'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 import {
-  Node,
+  Item,
   ItemColor,
-  NodeItem,
+  Node,
   NodeRef,
   NodeType,
 } from './node'
@@ -32,13 +32,48 @@ const shuffle: <T>(arr: T) => T = SHUFFLE
 export const UpdateType = z.enum(['Tick'])
 export type UpdateType = z.infer<typeof UpdateType>
 
-export const Game = z.strictObject({
-  tick: z.number(),
-  updateType: UpdateType.nullable(),
-  nodes: z.record(z.string(), Node),
+export const Game = z
+  .strictObject({
+    tick: z.number(),
+    updateType: UpdateType.nullable(),
+    nodes: z.record(z.string(), Node),
+    items: z.record(z.string(), Item),
 
-  nextItemId: z.number(),
-})
+    nextItemId: z.number(),
+  })
+  .superRefine((game, context) => {
+    const seen = new Set<string>()
+    const extra = new Set(Object.keys(game.items))
+    for (const node of Object.values(game.nodes)) {
+      if (node.itemId === null) {
+        continue
+      }
+      extra.delete(node.itemId)
+      if (seen.has(node.itemId)) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Duplicate item [id=${node.itemId}][nodeId=${node.id}]`,
+        })
+      }
+      seen.add(node.itemId)
+
+      const item = game.items[node.itemId]
+      if (!item) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Missing item [id=${node.itemId}][nodeId=${node.id}]`,
+        })
+      }
+    }
+
+    for (const id of extra) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Extra item [id=${id}]`,
+      })
+    }
+  })
+
 export type Game = z.infer<typeof Game>
 
 export function initGame(): Game {
@@ -92,6 +127,7 @@ export function initGame(): Game {
     tick: 0,
     updateType: null,
     nodes,
+    items: {},
     nextItemId: 0,
   }
 }
@@ -107,44 +143,56 @@ export function step(game: Game) {
     return node
   }
 
+  function idToItem(id: string): Item {
+    const item = game.items[id]
+    invariant(item)
+    return item
+  }
+
   const seen = new Set<Node>()
   const path = new Set<Node>()
 
   let loop: {
     root: Node
-    item: NodeItem | null
+    item: Item | null
   } | null = null
 
   function visit(node: Node) {
     invariant(!seen.has(node))
     seen.add(node)
 
-    if (node.item) {
-      node.item.tick += 1
+    let item: Item | null = node.itemId
+      ? idToItem(node.itemId)
+      : null
+    if (item) {
+      item.tick += 1
     }
 
     switch (node.type) {
       case NodeType.enum.Consumer: {
-        if (node.item && node.item.tick > 0) {
-          node.item = null
+        if (item && item.tick > 0) {
+          delete game.items[item.id]
+          node.itemId = null
         }
         // consumers can't output
         return
       }
       case NodeType.enum.Producer: {
-        if (!node.item && rng.next() < node.rate) {
-          node.item = {
+        if (!item && rng.next() < node.rate) {
+          item = {
             id: `${game.nextItemId++}`,
             tick: 0,
             color: sample(ItemColor.options),
             purity: 0,
           }
+          node.itemId = item.id
+          game.items[item.id] = item
         }
         break
       }
       case NodeType.enum.Purifier: {
-        if (node.item && rng.next() < node.rate) {
-          node.item.purity += 1
+        if (item && rng.next() < node.rate) {
+          item.purity += 1
         }
         break
       }
@@ -159,8 +207,8 @@ export function step(game: Game) {
     for (const output of outputs) {
       if (path.has(output)) {
         invariant(loop === null)
-        loop = { root: output, item: node.item }
-        node.item = null
+        loop = { root: output, item }
+        node.itemId = null
         break
       }
 
@@ -172,13 +220,14 @@ export function step(game: Game) {
         node.type === NodeType.enum.Purifier ? 20 : 1
 
       if (
-        node.item &&
-        node.item.tick >= tickRequirement &&
-        output.item === null
+        item &&
+        item.tick >= tickRequirement &&
+        output.itemId === null
       ) {
-        output.item = node.item
-        output.item.tick = 0
-        node.item = null
+        output.itemId = item.id
+        node.itemId = null
+        item.tick = 0
+        item = null
       }
 
       if (loop) {
@@ -188,8 +237,8 @@ export function step(game: Game) {
 
     if (loop?.root === node) {
       if (loop.item) {
-        node.item = loop.item
-        node.item.tick = 0
+        node.itemId = loop.item.id
+        loop.item.tick = 0
       }
       loop = null
     }
@@ -203,5 +252,11 @@ export function step(game: Game) {
       invariant(path.size === 0)
       invariant(loop === null)
     }
+  }
+
+  try {
+    Game.parse(game)
+  } catch (e) {
+    debugger
   }
 }

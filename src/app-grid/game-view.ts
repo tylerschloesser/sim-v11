@@ -5,9 +5,9 @@ import { Game } from '../game'
 import {
   Node,
   ItemColor,
-  NodeItem,
   NodeRef,
   NodeType,
+  Item,
 } from '../game/node'
 import { TextureId } from '../textures'
 
@@ -80,22 +80,28 @@ export function gameToGameView(game: Game): GameView {
       view.nodes[node.id] = nodeView
     }
 
-    if (!node.item) {
+    if (!node.itemId) {
       continue
     }
 
+    const item = game.items[node.itemId]
+    if (!item) {
+      debugger
+    }
+    invariant(item)
+
     const itemView: ItemView = {
-      id: node.item.id,
+      id: item.id,
       p: new Vec2(node.p),
-      color: itemColor(node.item),
+      color: itemColor(item),
     }
 
-    view.items[node.item.id] = itemView
+    view.items[item.id] = itemView
   }
   return view
 }
 
-function itemColor(item: NodeItem): string {
+function itemColor(item: Item): string {
   const s = Math.min(item.purity * 10, 100)
   const l = 50
   const o = 1

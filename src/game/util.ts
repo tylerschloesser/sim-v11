@@ -36,7 +36,7 @@ export function addNode(
   const id = toNodeId(p)
 
   const outputs: Node['outputs'] = []
-  const item: Node['item'] = null
+  const itemId: Node['itemId'] = null
   let node: Node
 
   invariant(type !== NodeType.enum.FormRoot)
@@ -44,21 +44,21 @@ export function addNode(
 
   switch (type) {
     case NodeType.enum.Normal: {
-      node = { id, p, item, outputs, type }
+      node = { id, p, itemId, outputs, type }
       break
     }
     case NodeType.enum.Consumer: {
-      node = { id, p, item, outputs, type }
+      node = { id, p, itemId, outputs, type }
       break
     }
     case NodeType.enum.Producer: {
       const rate = DEFAULT_PRODUCER_RATE
-      node = { id, p, item, outputs, type, rate }
+      node = { id, p, itemId, outputs, type, rate }
       break
     }
     case NodeType.enum.Purifier: {
       const rate = DEFAULT_PURIFIER_RATE
-      node = { id, p, item, outputs, type, rate }
+      node = { id, p, itemId, outputs, type, rate }
       break
     }
   }
@@ -84,7 +84,7 @@ export function addFormNode(
       type: NodeType.enum.FormRoot,
       p: partial.p,
       id: toNodeId(partial.p),
-      item: null,
+      itemId: null,
       outputs: [],
     }
 
@@ -99,7 +99,7 @@ export function addFormNode(
           type: NodeType.enum.FormLeaf,
           p,
           id: toNodeId(p),
-          item: null,
+          itemId: null,
           outputs: [],
         }
       }

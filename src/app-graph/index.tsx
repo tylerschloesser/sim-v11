@@ -7,9 +7,9 @@ import { Vec2 } from '../common/vec2'
 import { ViewportProvider } from '../common/viewport-provider'
 import { initGame, step } from '../game'
 import {
+  Item,
   ItemColor,
   Node,
-  NodeItem,
   NodeType,
 } from '../game/node'
 
@@ -47,7 +47,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
 
   const [game, setGame] = useImmer(initGame)
 
-  const { nodes } = game
+  const { nodes, items } = game
 
   const [active, setActive] = useImmer<{
     value: boolean
@@ -133,31 +133,33 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
   const itemModels = useMemo(() => {
     return Object.values(nodes)
       .filter(
-        (node): node is Node & { item: NodeItem } =>
-          node.item !== null,
+        (node): node is Node & { itemId: string } =>
+          node.itemId !== null,
       )
-      .map(
-        (node) =>
-          ({
-            id: node.item.id,
-            p: new Vec2(node.p.x, node.p.y),
-            color: node.item.color,
-          }) satisfies ItemModel,
-      )
+      .map((node) => {
+        const item = items[node.itemId]
+        return {
+          id: item.id,
+          p: new Vec2(node.p.x, node.p.y),
+          color: item.color,
+        } satisfies ItemModel
+      })
       .sort((a, b) => a.id.localeCompare(b.id))
-  }, [nodes])
+  }, [nodes, items])
 
   const onClickNode = useCallback((id: string) => {
     setGame((draft) => {
       const node = draft.nodes[id]
       invariant(node)
-      if (node.item === null) {
-        node.item = {
+      if (node.itemId === null) {
+        const item: Item = {
           id: `${draft.nextItemId++}`,
           tick: 0,
           color: sample(ItemColor.options),
           purity: 0,
         }
+        node.itemId = item.id
+        draft.items[item.id] = item
       }
     })
   }, [])
