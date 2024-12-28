@@ -5,3 +5,4 @@ export const TICK_DURATION = 150
 export const DRAG_THRESHOLD_PX = 2
 
 export const DEFAULT_PRODUCER_RATE = 0.1
+export const DEFAULT_PURIFIER_RATE = 0.1

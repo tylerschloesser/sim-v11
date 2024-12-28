@@ -1,6 +1,10 @@
 import { curry } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { Game } from '.'
+import {
+  DEFAULT_PRODUCER_RATE,
+  DEFAULT_PURIFIER_RATE,
+} from '../app-grid/const'
 import { Vec2 } from '../common/vec2'
 import {
   FormLeafNode,
@@ -48,12 +52,12 @@ export function addNode(
       break
     }
     case NodeType.enum.Producer: {
-      const rate = 0.1
+      const rate = DEFAULT_PRODUCER_RATE
       node = { id, p, item, outputs, type, rate }
       break
     }
     case NodeType.enum.Purifier: {
-      const rate = 0.1
+      const rate = DEFAULT_PURIFIER_RATE
       node = { id, p, item, outputs, type, rate }
       break
     }
