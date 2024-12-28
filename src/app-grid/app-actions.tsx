@@ -90,6 +90,16 @@ function ChooseNodeType() {
     [],
   )
 
+  function isDisabled(nodeType: NodeType): boolean {
+    switch (nodeType) {
+      case NodeType.enum.FormRoot:
+      case NodeType.enum.FormLeaf:
+        return true
+      default:
+        return false
+    }
+  }
+
   return (
     <div role="radiogroup" className="flex flex-col">
       {options.map((option) => (
@@ -100,6 +110,7 @@ function ChooseNodeType() {
             value={option.value}
             checked={option.value === view.nodeType}
             onChange={onChange}
+            disabled={isDisabled(option.value)}
           />
           {option.label}
         </label>
