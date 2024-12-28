@@ -1,10 +1,14 @@
 import clsx from 'clsx'
-import React, { useContext, useMemo } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import { NodeType } from '../game/node'
 import { AppContext } from './app-context'
-import { CELL_SIZE, DEFAULT_PRODUCER_RATE } from './const'
+import { CELL_SIZE } from './const'
 
 export interface AppWidgetProps {
   p: Vec2
@@ -19,7 +23,8 @@ export const AppWidget = React.forwardRef<
     const { x: tx, y: ty } = p.mul(CELL_SIZE)
     return `${tx}px ${ty}px`
   }, [p])
-  const producerRate = useProducerRate()
+  // @ts-expect-error
+  const [producerRate, setProducerRate] = useProducerRate()
   return (
     <div
       ref={ref}
@@ -41,14 +46,17 @@ export const AppWidget = React.forwardRef<
   )
 })
 
-function useProducerRate(): number {
-  const { game } = useContext(AppContext)
-  return useMemo(() => {
+function useProducerRate(): [
+  number | null,
+  (value: number) => void,
+] {
+  const { game, setGame } = useContext(AppContext)
+  const rate = useMemo(() => {
     const nodes = Object.values(game.nodes).filter(
       (node) => node.type === NodeType.enum.Producer,
     )
     if (nodes.length === 0) {
-      return DEFAULT_PRODUCER_RATE
+      return null
     }
     const first = nodes.at(0)!
     invariant(
@@ -58,4 +66,21 @@ function useProducerRate(): number {
     )
     return first.rate
   }, [game.nodes])
+
+  const setRate = useCallback(
+    (value: number) => {
+      setGame((draft) => {
+        const nodes = Object.values(draft.nodes).filter(
+          (node) => node.type === NodeType.enum.Producer,
+        )
+        invariant(nodes.length > 0)
+        for (const node of nodes) {
+          node.rate = value
+        }
+      })
+    },
+    [setGame],
+  )
+
+  return [rate, setRate]
 }
