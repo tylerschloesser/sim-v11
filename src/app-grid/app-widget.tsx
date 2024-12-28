@@ -97,6 +97,7 @@ function useProducerRate(): [
   const setRate = useCallback(
     (value: number) => {
       setGame((draft) => {
+        draft.updateType = null
         const nodes = Object.values(draft.nodes).filter(
           (node) => node.type === NodeType.enum.Producer,
         )
@@ -136,6 +137,7 @@ function usePurifierRate(): [
   const setRate = useCallback(
     (value: number) => {
       setGame((draft) => {
+        draft.updateType = null
         const nodes = Object.values(draft.nodes).filter(
           (node) => node.type === NodeType.enum.Purifier,
         )
