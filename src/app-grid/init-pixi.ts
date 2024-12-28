@@ -41,6 +41,7 @@ import { PathContainer } from './path-container'
 import { Graphics, PixiState } from './pixi-state'
 import { Pointer, PointerType } from './pointer'
 import { PointerContainer } from './pointer-container'
+import { renderFrame } from './render-frame'
 
 const cache = new Map<string, Promise<PixiState>>()
 
@@ -525,31 +526,6 @@ function initGraphics(
   }
 
   return g
-}
-
-function renderFrame(
-  state: PixiState,
-  tickProgress: number,
-) {
-  if (!state.viewPrev) {
-    return
-  }
-  invariant(state.viewNext)
-
-  for (const item of Object.values(state.viewNext.items)) {
-    const prev = state.viewPrev.items[item.id]
-    if (!prev || item.p.equals(prev.p)) {
-      continue
-    }
-
-    const g = state.g.items.get(item.id)
-    invariant(g)
-
-    const d = item.p.sub(prev.p)
-    const p = prev.p.add(d.mul(tickProgress))
-
-    g.position.set(p.x * CELL_SIZE, p.y * CELL_SIZE)
-  }
 }
 
 export function destroyPixi(id: string) {
