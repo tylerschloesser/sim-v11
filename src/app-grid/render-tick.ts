@@ -8,17 +8,19 @@ export function renderTick(game: Game, state: PixiState) {
   state.viewPrev = state.viewNext
   state.viewNext = gameToGameView(game)
 
-  if (!state.viewPrev) {
-    return
-  }
+  // TODO remove prev and next
+  state.gameView = state.viewNext
 
-  for (const item of Object.values(state.viewPrev.items)) {
+  const extra = new Set(state.g.items.keys())
+
+  for (const item of Object.values(
+    state.gameView.itemsV2,
+  )) {
+    extra.delete(item.id)
+
     let container = state.g.items.get(item.id)
 
     if (!state.viewNext.items[item.id]) {
-      container?.destroy({ children: true })
-      state.g.items.delete(item.id)
-      continue
     }
 
     if (!container) {
@@ -28,5 +30,14 @@ export function renderTick(game: Game, state: PixiState) {
     } else {
       container.update(item)
     }
+  }
+
+  for (const itemId of extra) {
+    const container = state.g.items.get(itemId)
+    if (!container) {
+      continue
+    }
+    container.destroy({ children: true })
+    state.g.items.delete(itemId)
   }
 }
