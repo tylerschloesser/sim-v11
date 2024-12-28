@@ -105,11 +105,6 @@ export function gameToGameView(game: Game): GameView {
     view.items[item.id] = itemView
   }
 
-  for (const item of Object.values(game.items)) {
-    const node = game.nodes[item.nodeId]
-    invariant(node)
-  }
-
   return view
 }
 

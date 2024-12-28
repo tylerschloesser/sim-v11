@@ -177,6 +177,7 @@ export function step(game: Game) {
           item = {
             id: `${game.nextItemId++}`,
             nodeId: node.id,
+            prevNodeId: null,
             tick: 0,
             color: sample(ItemColor.options),
             purity: 0,

@@ -152,6 +152,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
         const item: Item = {
           id: `${draft.nextItemId++}`,
           nodeId: id,
+          prevNodeId: null,
           tick: 0,
           color: sample(ItemColor.options),
           purity: 0,
