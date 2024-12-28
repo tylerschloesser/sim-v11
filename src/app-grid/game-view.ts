@@ -21,9 +21,19 @@ export interface ItemView {
   color: string
 }
 
+export interface ItemViewV2 {
+  id: string
+  p: {
+    prev: Vec2
+    next: Vec2
+  }
+  color: string
+}
+
 export interface GameView {
   nodes: Record<string, NodeView>
   items: Record<string, ItemView>
+  itemsV2: Record<string, ItemViewV2>
 }
 
 export function gameToGameView(game: Game): GameView {
@@ -36,6 +46,7 @@ export function gameToGameView(game: Game): GameView {
   const view: GameView = {
     nodes: {},
     items: {},
+    itemsV2: {},
   }
 
   for (const node of Object.values(game.nodes)) {
@@ -93,6 +104,12 @@ export function gameToGameView(game: Game): GameView {
 
     view.items[item.id] = itemView
   }
+
+  for (const item of Object.values(game.items)) {
+    const node = game.nodes[item.nodeId]
+    invariant(node)
+  }
+
   return view
 }
 
