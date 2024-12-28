@@ -16,6 +16,7 @@ import { getNode, getNodeWithType } from '../game/util'
 import { AppContext } from './app-context'
 import { CELL_SIZE } from './const'
 import { WidgetProducer } from './widget-producer'
+import { WidgetPurifier } from './widget-purifier'
 
 export interface AppWidgetProps {
   p: Vec2
@@ -75,7 +76,6 @@ export const AppWidget = React.forwardRef<
 
   const [target, setTarget] = useTargetNode(id)
 
-  const [purifierRate, setPurifierRate] = usePurifierRate()
   return (
     <div
       ref={ref}
@@ -99,19 +99,8 @@ export const AppWidget = React.forwardRef<
       {target?.type === NodeType.enum.Producer && (
         <WidgetProducer node={target} />
       )}
-      <div>Purifier Rate: {purifierRate ?? '[none]'}</div>
-      {purifierRate !== null && (
-        <input
-          className="block"
-          type="range"
-          min={0}
-          max={1}
-          step=".1"
-          value={purifierRate}
-          onChange={(ev) => {
-            setPurifierRate(parseFloat(ev.target.value))
-          }}
-        />
+      {target?.type === NodeType.enum.Purifier && (
+        <WidgetPurifier node={target} />
       )}
     </div>
   )
@@ -155,46 +144,6 @@ function ChooseTarget({
       ))}
     </select>
   )
-}
-
-function usePurifierRate(): [
-  number | null,
-  (value: number) => void,
-] {
-  const { game, setGame } = useContext(AppContext)
-  const rate = useMemo(() => {
-    const nodes = Object.values(game.nodes).filter(
-      (node) => node.type === NodeType.enum.Purifier,
-    )
-    if (nodes.length === 0) {
-      return null
-    }
-    const first = nodes.at(0)!
-    invariant(
-      nodes
-        .slice(1)
-        .every((node) => node.rate === first.rate),
-    )
-    return first.rate
-  }, [game.nodes])
-
-  const setRate = useCallback(
-    (value: number) => {
-      setGame((draft) => {
-        draft.updateType = null
-        const nodes = Object.values(draft.nodes).filter(
-          (node) => node.type === NodeType.enum.Purifier,
-        )
-        invariant(nodes.length > 0)
-        for (const node of nodes) {
-          node.rate = value
-        }
-      })
-    },
-    [setGame],
-  )
-
-  return [rate, setRate]
 }
 
 function isEligibleTarget(
