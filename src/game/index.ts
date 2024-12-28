@@ -213,13 +213,10 @@ export function step(game: Game) {
         visit(output)
       }
 
-      const tickRequirement =
-        node.type === NodeType.enum.Purifier ? 20 : 1
-
       if (
         item &&
-        item.tick >= tickRequirement &&
-        output.itemId === null
+        output.itemId === null &&
+        isOutputEligible(node, item)
       ) {
         output.itemId = item.id
         node.itemId = null
@@ -259,5 +256,21 @@ export function step(game: Game) {
     Game.parse(game)
   } catch (e) {
     debugger
+  }
+}
+
+function isOutputEligible(node: Node, item: Item): boolean {
+  invariant(node.itemId === item.id)
+  invariant(item.nodeId === node.id)
+
+  switch (node.type) {
+    case NodeType.enum.Purifier: {
+      return item.tick >= 20
+    }
+    case NodeType.enum.Producer:
+    case NodeType.enum.Normal:
+      return item.tick >= 1
+    default:
+      invariant(false)
   }
 }
