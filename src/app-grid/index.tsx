@@ -20,29 +20,11 @@ import { AppContext } from './app-context'
 import { AppView, AppViewType } from './app-view'
 import { AppWidget } from './app-widget'
 import { TICK_DURATION } from './const'
-import { gameToGameView } from './game-view'
 import { initKeyboard } from './init-keyboard'
 import { destroyPixi, initPixi } from './init-pixi'
 import { PixiState } from './pixi-state'
-import { renderNode } from './render-node'
+import { renderGame } from './render-game'
 import { renderTick } from './render-tick'
-
-function renderGame(game: Game, state: PixiState) {
-  const view = gameToGameView(game)
-  const current = new Set(state.g.nodes.keys())
-  for (const node of Object.values(view.nodes)) {
-    current.delete(node.id)
-    renderNode(node, state)
-  }
-
-  for (const id of current) {
-    const container = state.g.nodes.get(id)
-    invariant(container)
-    container.destroy({ children: true })
-
-    state.g.nodes.delete(id)
-  }
-}
 
 function initialGame(): Game {
   const item = localStorage.getItem('game')
