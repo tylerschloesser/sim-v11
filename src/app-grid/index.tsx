@@ -70,6 +70,7 @@ export function AppGrid() {
     type: AppViewType.Home,
     nodeType: NodeType.enum.Normal,
     hover: null,
+    widgets: new Map(),
   })
   const state = useRef<PixiState | null>(null)
 

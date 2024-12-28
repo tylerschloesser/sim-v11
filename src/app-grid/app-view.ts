@@ -11,4 +11,9 @@ export interface AppView {
   type: AppViewType
   nodeType: NodeType
   hover: Hover | null
+  widgets: Map<string, Widget>
+}
+
+export interface Widget {
+  id: string
 }
