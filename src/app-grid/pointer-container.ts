@@ -8,20 +8,39 @@ export class PointerContainer extends PIXI.Container {
     visible: false,
   })
 
+  private viewType?: AppViewType
+
   constructor() {
     super()
-
-    this.g.rect(0, 0, CELL_SIZE, CELL_SIZE)
-    this.g.stroke({
-      color: 'white',
-      width: 2,
-    })
-
     this.addChild(this.g)
   }
 
-  // @ts-expect-error
   update(screen: Vec2, viewType: AppViewType): void {
+    if (this.viewType !== viewType) {
+      this.viewType = viewType
+      this.g.clear()
+      switch (viewType) {
+        case AppViewType.Home:
+        case AppViewType.AddNode: {
+          this.g.rect(0, 0, CELL_SIZE, CELL_SIZE)
+          this.g.stroke({
+            color: 'white',
+            width: 2,
+          })
+          break
+        }
+        case AppViewType.AddForm: {
+          this.g.rect(0, 0, CELL_SIZE * 4, CELL_SIZE * 6)
+          this.g.stroke({
+            color: 'white',
+            width: 2,
+          })
+          break
+        }
+      }
+      return
+    }
+
     this.g.visible = true
     this.g.position.set(screen.x, screen.y)
   }
