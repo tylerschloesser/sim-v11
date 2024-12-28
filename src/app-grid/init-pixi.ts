@@ -424,8 +424,6 @@ export function initPixi({
         frameHandle: -1,
         lastTickTime: null,
         gameView: null,
-        viewPrev: null,
-        viewNext: null,
         sub,
       }
 

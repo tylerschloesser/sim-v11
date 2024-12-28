@@ -37,8 +37,5 @@ export interface PixiState {
 
   gameView: GameView | null
 
-  viewPrev: GameView | null
-  viewNext: GameView | null
-
   sub: Subscription
 }

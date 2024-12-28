@@ -5,11 +5,7 @@ import { PixiState } from './pixi-state'
 
 export function renderTick(game: Game, state: PixiState) {
   state.lastTickTime = self.performance.now()
-  state.viewPrev = state.viewNext
-  state.viewNext = gameToGameView(game)
-
-  // TODO remove prev and next
-  state.gameView = state.viewNext
+  state.gameView = gameToGameView(game)
 
   const extra = new Set(state.g.items.keys())
 
@@ -19,10 +15,6 @@ export function renderTick(game: Game, state: PixiState) {
     extra.delete(item.id)
 
     let container = state.g.items.get(item.id)
-
-    if (!state.viewNext.items[item.id]) {
-    }
-
     if (!container) {
       container = new ItemContainer(item)
       state.g.world.addChild(container)
