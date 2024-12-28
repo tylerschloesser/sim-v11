@@ -23,7 +23,6 @@ export const AppWidget = React.forwardRef<
     const { x: tx, y: ty } = p.mul(CELL_SIZE)
     return `${tx}px ${ty}px`
   }, [p])
-  // @ts-expect-error
   const [producerRate, setProducerRate] = useProducerRate()
   return (
     <div
@@ -40,8 +39,22 @@ export const AppWidget = React.forwardRef<
         height: `${CELL_SIZE * 6}px`,
       }}
     >
-      ID: {id}
-      Producer Rate: {producerRate}
+      <div>ID: {id}</div>
+      <div></div>
+      Producer Rate: {producerRate ?? '[none]'}
+      {producerRate !== null && (
+        <input
+          className="block"
+          type="range"
+          min={0}
+          max={1}
+          step=".1"
+          value={producerRate}
+          onChange={(ev) => {
+            setProducerRate(parseFloat(ev.target.value))
+          }}
+        />
+      )}
     </div>
   )
 })
