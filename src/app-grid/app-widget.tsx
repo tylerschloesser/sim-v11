@@ -6,13 +6,56 @@ import React, {
 } from 'react'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
-import { NodeType } from '../game/node'
+import { Node, NodeType } from '../game/node'
+import { getNode, getNodeWithType } from '../game/util'
 import { AppContext } from './app-context'
 import { CELL_SIZE } from './const'
 
 export interface AppWidgetProps {
   p: Vec2
   id: string
+}
+
+function useTargetNode(
+  widgetNodeId: string,
+): [Node | null, (id: string | null) => void] {
+  const { game, setGame } = useContext(AppContext)
+  const widget = useMemo(
+    () =>
+      getNodeWithType(
+        game,
+        widgetNodeId,
+        NodeType.enum.FormRoot,
+      ),
+    [game],
+  )
+
+  const target = useMemo(
+    () =>
+      widget.targetNodeId
+        ? getNode(game, widget.targetNodeId)
+        : null,
+    [game, widget.targetNodeId],
+  )
+
+  const setTarget = useCallback(
+    (id: string | null) => {
+      setGame((draft) => {
+        if (id !== null) {
+          invariant(draft.nodes[id])
+        }
+        const node = getNodeWithType(
+          draft,
+          widgetNodeId,
+          NodeType.enum.FormRoot,
+        )
+        node.targetNodeId = id
+      })
+    },
+    [widgetNodeId],
+  )
+
+  return [target, setTarget]
 }
 
 export const AppWidget = React.forwardRef<
@@ -23,6 +66,10 @@ export const AppWidget = React.forwardRef<
     const { x: tx, y: ty } = p.mul(CELL_SIZE)
     return `${tx}px ${ty}px`
   }, [p])
+
+  // @ts-expect-error
+  const [target, setTarget] = useTargetNode(id)
+
   const [producerRate, setProducerRate] = useProducerRate()
   const [purifierRate, setPurifierRate] = usePurifierRate()
   return (

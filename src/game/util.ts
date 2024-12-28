@@ -141,3 +141,19 @@ export function toNodeId(p: Vec2): string {
   invariant(p.equals(p.floor()))
   return `${p.x}.${p.y}`
 }
+
+export function getNode(game: Game, nodeId: string): Node {
+  const node = game.nodes[nodeId]
+  invariant(node)
+  return node
+}
+
+export function getNodeWithType<T extends NodeType>(
+  game: Game,
+  id: string,
+  type: T,
+): Extract<Node, { type: T }> {
+  const node = getNode(game, id)
+  invariant(node.type === type)
+  return node as Extract<Node, { type: T }>
+}
