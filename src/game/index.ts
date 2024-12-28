@@ -167,6 +167,9 @@ export function step(game: Game) {
     switch (node.type) {
       case NodeType.enum.Consumer: {
         if (item && item.tick > 0) {
+          const statKey = `${item.color}-${item.purity}`
+          node.stats[statKey] =
+            (node.stats[statKey] ?? 0) + 1
           delete game.items[item.id]
           node.itemId = null
         }

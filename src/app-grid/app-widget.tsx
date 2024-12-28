@@ -7,6 +7,7 @@ import React, {
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import {
+  ConsumerNode,
   Node,
   NodeType,
   ProducerNode,
@@ -15,6 +16,7 @@ import {
 import { getNode, getNodeWithType } from '../game/util'
 import { AppContext } from './app-context'
 import { CELL_SIZE } from './const'
+import { WidgetConsumer } from './widget-consumer'
 import { WidgetProducer } from './widget-producer'
 import { WidgetPurifier } from './widget-purifier'
 
@@ -99,6 +101,9 @@ export const AppWidget = React.forwardRef<
       {target?.type === NodeType.enum.Producer && (
         <WidgetProducer node={target} />
       )}
+      {target?.type === NodeType.enum.Consumer && (
+        <WidgetConsumer node={target} />
+      )}
       {target?.type === NodeType.enum.Purifier && (
         <WidgetPurifier node={target} />
       )}
@@ -148,9 +153,10 @@ function ChooseTarget({
 
 function isEligibleTarget(
   node: Node,
-): node is ProducerNode | PurifierNode {
+): node is ProducerNode | ConsumerNode | PurifierNode {
   switch (node.type) {
     case NodeType.enum.Producer:
+    case NodeType.enum.Consumer:
     case NodeType.enum.Purifier:
       return true
     default:
