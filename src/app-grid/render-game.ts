@@ -6,13 +6,13 @@ import { renderNode } from './render-node'
 
 export function renderGame(game: Game, state: PixiState) {
   const view = gameToGameView(game)
-  const current = new Set(state.g.nodes.keys())
+  const extra = new Set(state.g.nodes.keys())
   for (const node of Object.values(view.nodes)) {
-    current.delete(node.id)
+    extra.delete(node.id)
     renderNode(node, state)
   }
 
-  for (const id of current) {
+  for (const id of extra) {
     const container = state.g.nodes.get(id)
     invariant(container)
     container.destroy({ children: true })
