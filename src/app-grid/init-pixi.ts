@@ -255,13 +255,16 @@ export function initPixi({
           .pipe(
             map(([camera, hover]) =>
               hover
-                ? hover.p
-                    .sub(camera)
-                    .mul(cellSize)
-                    .add(viewport.div(2))
+                ? {
+                    ...hover,
+                    p: hover.p
+                      .sub(camera)
+                      .mul(cellSize)
+                      .add(viewport.div(2)),
+                  }
                 : null,
             ),
-            distinctUntilChanged<Vec2 | null>(isEqual),
+            distinctUntilChanged<Hover | null>(isEqual),
           )
           .subscribe((screen) => {
             if (screen) {

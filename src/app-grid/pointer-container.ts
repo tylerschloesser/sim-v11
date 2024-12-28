@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
-import { Vec2 } from '../common/vec2'
 import { CELL_SIZE } from './const'
+import { Hover } from './hover'
 
 export class PointerContainer extends PIXI.Container {
   private readonly g: PIXI.Graphics = new PIXI.Graphics({
@@ -19,9 +19,9 @@ export class PointerContainer extends PIXI.Container {
     this.addChild(this.g)
   }
 
-  update(p: Vec2): void {
+  update(hover: Hover): void {
     this.g.visible = true
-    this.g.position.set(p.x, p.y)
+    this.g.position.set(hover.p.x, hover.p.y)
   }
 
   hide(): void {
