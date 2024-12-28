@@ -150,7 +150,7 @@ export function AppGrid() {
 
   return (
     <AppContext.Provider value={context}>
-      <div className="w-dvw h-dvh relative">
+      <div className="w-dvw h-dvh relative overflow-hidden">
         <Canvas
           state={state}
           gameRef={gameRef}

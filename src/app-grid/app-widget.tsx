@@ -11,7 +11,6 @@ export interface AppWidgetProps {
 export const AppWidget = React.forwardRef<
   HTMLDivElement,
   AppWidgetProps
-  // @ts-expect-error
 >(({ id, p }, ref) => {
   const { x: tx, y: ty } = useMemo(
     () => p.mul(CELL_SIZE),
@@ -23,6 +22,7 @@ export const AppWidget = React.forwardRef<
       className={clsx(
         'pointer-events-auto',
         'absolute',
+        'bg-slate-400',
         'border',
       )}
       style={{
@@ -31,7 +31,7 @@ export const AppWidget = React.forwardRef<
         height: `${CELL_SIZE * 6}px`,
       }}
     >
-      TODO
+      ID: {id}
     </div>
   )
 })
