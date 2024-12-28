@@ -117,6 +117,7 @@ function handleClick(
       break
     }
     case AppViewType.AddForm: {
+      draft.updateType = null
       addFormNode(draft.nodes, {
         p: hover.p,
         size: new Vec2(4, 6),

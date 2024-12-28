@@ -2,7 +2,12 @@ import { curry } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { Game } from '.'
 import { Vec2 } from '../common/vec2'
-import { Node, NodeType } from './node'
+import {
+  FormLeafNode,
+  FormRootNode,
+  Node,
+  NodeType,
+} from './node'
 
 export const shuffle = curry(function <T>(
   rng: () => number,
@@ -65,7 +70,41 @@ export function addFormNode(
     size: Vec2
   },
 ): void {
-  console.log('TODO', nodes, partial)
+  invariant(partial.size.x > 0)
+  invariant(partial.size.y > 0)
+
+  function* iterateFormNodes(): Generator<
+    FormRootNode | FormLeafNode
+  > {
+    yield {
+      type: NodeType.enum.FormRoot,
+      p: partial.p,
+      id: toNodeId(partial.p),
+      item: null,
+      outputs: [],
+    }
+
+    for (let x = 0; x < partial.size.x; x++) {
+      for (let y = 0; y < partial.size.y; y++) {
+        if (x === 0 && y === 0) {
+          continue
+        }
+
+        const p = partial.p.add(new Vec2(x, y))
+        yield {
+          type: NodeType.enum.FormLeaf,
+          p,
+          id: toNodeId(p),
+          item: null,
+          outputs: [],
+        }
+      }
+    }
+  }
+
+  for (const node of iterateFormNodes()) {
+    nodes[node.id] = node
+  }
 }
 
 export function connect(
