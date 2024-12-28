@@ -265,7 +265,7 @@ function isOutputEligible(node: Node, item: Item): boolean {
 
   switch (node.type) {
     case NodeType.enum.Purifier: {
-      return item.tick >= 20
+      return item.purity >= 10
     }
     case NodeType.enum.Producer:
     case NodeType.enum.Normal:
