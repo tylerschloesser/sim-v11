@@ -2,6 +2,7 @@ import { identity, sample } from 'lodash-es'
 import Prando from 'prando'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
+import { MAX_PURITY } from '../app-grid/const'
 import { Item, ItemColor } from './item'
 import { Node, NodeRef, NodeType } from './node'
 import {
@@ -189,7 +190,10 @@ export function step(game: Game) {
       }
       case NodeType.enum.Purifier: {
         if (item && rng.next() < node.rate) {
-          item.purity += 1
+          item.purity = Math.min(
+            item.purity + 1,
+            MAX_PURITY,
+          )
         }
         break
       }

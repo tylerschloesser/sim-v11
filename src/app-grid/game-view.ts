@@ -5,6 +5,7 @@ import { Game } from '../game'
 import { Item, ItemColor } from '../game/item'
 import { Node, NodeRef, NodeType } from '../game/node'
 import { TextureId } from '../textures'
+import { MAX_PURITY } from './const'
 
 type Direction = 'n' | 's' | 'e' | 'w'
 
@@ -128,7 +129,7 @@ export function gameToGameView(game: Game): GameView {
 }
 
 function itemColor(item: Item): string {
-  const s = Math.min(item.purity * 10, 100)
+  const s = Math.min(item.purity * MAX_PURITY, 100)
   const l = 50
   const o = 1
   switch (item.color) {
