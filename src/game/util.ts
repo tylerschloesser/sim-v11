@@ -86,6 +86,7 @@ export function addFormNode(
       id: toNodeId(partial.p),
       itemId: null,
       outputs: [],
+      targetNodeId: null,
     }
 
     for (let x = 0; x < partial.size.x; x++) {

@@ -48,6 +48,7 @@ export type PurifierNode = z.infer<typeof PurifierNode>
 
 export const FormRootNode = BaseNode.extend({
   type: z.literal(NodeType.enum.FormRoot),
+  targetNodeId: z.string().nullable(),
 })
 export type FormRootNode = z.infer<typeof FormRootNode>
 
