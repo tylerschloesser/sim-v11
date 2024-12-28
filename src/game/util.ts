@@ -48,7 +48,7 @@ export function addNode(
       break
     }
     case NodeType.enum.Consumer: {
-      node = { id, p, itemId, outputs, type }
+      node = { id, p, itemId, outputs, type, stats: {} }
       break
     }
     case NodeType.enum.Producer: {

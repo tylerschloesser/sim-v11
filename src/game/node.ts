@@ -31,6 +31,7 @@ export type NormalNode = z.infer<typeof NormalNode>
 
 export const ConsumerNode = BaseNode.extend({
   type: z.literal(NodeType.enum.Consumer),
+  stats: z.record(z.string(), z.number()),
 })
 export type ConsumerNode = z.infer<typeof ConsumerNode>
 
