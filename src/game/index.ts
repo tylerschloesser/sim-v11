@@ -223,6 +223,7 @@ export function step(game: Game) {
       ) {
         output.itemId = item.id
         node.itemId = null
+        item.prevNodeId = item.nodeId
         item.nodeId = output.id
         item.tick = 0
         item = null
@@ -236,6 +237,7 @@ export function step(game: Game) {
     if (loop?.root === node) {
       if (loop.item) {
         node.itemId = loop.item.id
+        loop.item.prevNodeId = loop.item.nodeId
         loop.item.nodeId = node.id
         loop.item.tick = 0
       }

@@ -34,6 +34,9 @@ export interface PixiState {
   frameHandle: number
 
   lastTickTime: number | null
+
+  gameView: GameView | null
+
   viewPrev: GameView | null
   viewNext: GameView | null
 

@@ -24,7 +24,7 @@ export interface ItemView {
 export interface ItemViewV2 {
   id: string
   p: {
-    prev: Vec2
+    prev: Vec2 | null
     next: Vec2
   }
   color: string
@@ -103,6 +103,25 @@ export function gameToGameView(game: Game): GameView {
     }
 
     view.items[item.id] = itemView
+  }
+
+  for (const item of Object.values(game.items)) {
+    const node = game.nodes[item.nodeId]
+    invariant(node)
+    let prev: Node | null = null
+    if (item.prevNodeId) {
+      prev = game.nodes[item.prevNodeId]!
+      invariant(prev)
+    }
+
+    view.itemsV2[item.id] = {
+      id: item.id,
+      p: {
+        prev: prev ? new Vec2(prev.p) : null,
+        next: new Vec2(node.p),
+      },
+      color: itemColor(item),
+    }
   }
 
   return view
