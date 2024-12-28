@@ -25,6 +25,7 @@ import {
   DRAG_THRESHOLD_PX,
   TICK_DURATION,
 } from './const'
+import { Hover } from './hover'
 import { initInput } from './init-input'
 import {
   buildPath,
@@ -88,7 +89,7 @@ function handlePath(draft: Game, path: Path): void {
 
 function handleClick(
   draft: Game,
-  hover: Vec2,
+  hover: Hover,
   view: AppView,
 ): void {
   if (view.type !== AppViewType.AddNode) {
@@ -96,7 +97,7 @@ function handleClick(
   }
 
   const node = Object.values(draft.nodes).find((node) =>
-    new Vec2(node.p).equals(hover),
+    new Vec2(node.p).equals(hover.p),
   )
 
   draft.updateType = null
@@ -104,7 +105,7 @@ function handleClick(
     deleteNode(draft, node)
   } else {
     addNode(draft.nodes, {
-      p: hover,
+      p: hover.p,
       type: view.nodeType,
     })
   }
@@ -234,9 +235,10 @@ export function initPixi({
           if (pointer === null) {
             return null
           }
-          return screenToWorld(pointer.p).floor()
+          const p = screenToWorld(pointer.p).floor()
+          return { p, type: pointer.type }
         }),
-        distinctUntilChanged<Vec2 | null>(isEqual),
+        distinctUntilChanged<Hover | null>(isEqual),
         shareReplay(1),
       )
 
@@ -253,7 +255,7 @@ export function initPixi({
           .pipe(
             map(([camera, hover]) =>
               hover
-                ? hover
+                ? hover.p
                     .sub(camera)
                     .mul(cellSize)
                     .add(viewport.div(2))

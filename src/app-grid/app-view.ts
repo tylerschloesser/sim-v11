@@ -1,5 +1,5 @@
-import { Vec2 } from '../common/vec2'
 import { NodeType } from '../game/node'
+import { Hover } from './hover'
 
 export enum AppViewType {
   Home = 'home',
@@ -10,5 +10,5 @@ export enum AppViewType {
 export interface AppView {
   type: AppViewType
   nodeType: NodeType
-  hover: Vec2 | null
+  hover: Hover | null
 }

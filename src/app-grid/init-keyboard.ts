@@ -49,7 +49,7 @@ export function initKeyboard({
 
         const cell = Object.values(draft.nodes).find(
           (node) =>
-            new Vec2(node.p).equals(view$.value.hover!),
+            new Vec2(node.p).equals(view$.value.hover?.p!),
         )
 
         if (!cell) {

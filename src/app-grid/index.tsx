@@ -154,7 +154,7 @@ export function AppGrid() {
 function AppHover() {
   const { view, game } = useContext(AppContext)
   const id = useMemo(
-    () => (view.hover ? toNodeId(view.hover) : null),
+    () => (view.hover ? toNodeId(view.hover.p) : null),
     [view.hover],
   )
   const node = id ? game.nodes[id] : null
