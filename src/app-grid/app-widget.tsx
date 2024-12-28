@@ -12,10 +12,10 @@ export const AppWidget = React.forwardRef<
   HTMLDivElement,
   AppWidgetProps
 >(({ id, p }, ref) => {
-  const { x: tx, y: ty } = useMemo(
-    () => p.mul(CELL_SIZE),
-    [p],
-  )
+  const translate = useMemo(() => {
+    const { x: tx, y: ty } = p.mul(CELL_SIZE)
+    return `${tx}px ${ty}px`
+  }, [p])
   return (
     <div
       ref={ref}
@@ -26,7 +26,7 @@ export const AppWidget = React.forwardRef<
         'border',
       )}
       style={{
-        translate: `${tx}px ${ty}px`,
+        translate,
         width: `${CELL_SIZE * 4}px`,
         height: `${CELL_SIZE * 6}px`,
       }}
