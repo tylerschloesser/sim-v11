@@ -26,7 +26,7 @@ export const AppWidget = React.forwardRef<
         'border',
       )}
       style={{
-        translate: `${tx}px, ${ty}px`,
+        translate: `${tx}px ${ty}px`,
         width: `${CELL_SIZE * 4}px`,
         height: `${CELL_SIZE * 6}px`,
       }}
