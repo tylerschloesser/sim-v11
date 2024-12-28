@@ -129,7 +129,8 @@ export function gameToGameView(game: Game): GameView {
 }
 
 function itemColor(item: Item): string {
-  const s = Math.min(item.purity * MAX_PURITY, 100)
+  const s = item.purity * (100 / MAX_PURITY)
+  invariant(s >= 0 && s <= 100)
   const l = 50
   const o = 1
   switch (item.color) {
