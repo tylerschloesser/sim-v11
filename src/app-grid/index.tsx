@@ -17,6 +17,7 @@ import { Texture } from '../textures/texture'
 import { AppActions } from './app-actions'
 import { AppContext } from './app-context'
 import { AppView, AppViewType } from './app-view'
+import { AppWidget } from './app-widget'
 import { TICK_DURATION } from './const'
 import { gameToGameView } from './game-view'
 import { initKeyboard } from './init-keyboard'
@@ -119,6 +120,18 @@ export function AppGrid() {
     }
   }, [setGame])
 
+  useEffect(() => {
+    setView((draft) => {
+      draft.widgets.clear()
+
+      for (const node of Object.values(game.nodes).filter(
+        (node) => node.type === NodeType.enum.FormRoot,
+      )) {
+        draft.widgets.set(node.id, { id: node.id })
+      }
+    })
+  }, [game.nodes])
+
   const context = useMemo(
     () => ({
       game,
@@ -137,6 +150,13 @@ export function AppGrid() {
           gameRef={gameRef}
           view$={view$.current}
         />
+        <div className="absolute inset-0 pointer-events-none">
+          {Array.from(view.widgets.values()).map(
+            ({ id }) => (
+              <AppWidget key={id} id={id} />
+            ),
+          )}
+        </div>
         <div
           className={clsx(
             'absolute top-0 left-0 p-1 pointer-events-none',
