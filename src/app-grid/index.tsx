@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
 import React, {
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -75,6 +76,8 @@ export function AppGrid() {
   })
   const state = useRef<PixiState | null>(null)
 
+  const widgetRefs = useRef<Record<string, HTMLElement>>({})
+
   useEffect(() => {
     const interval = setInterval(() => {
       setGame(step)
@@ -142,6 +145,17 @@ export function AppGrid() {
     [game, setGame, view, setView],
   )
 
+  const widgetRef = useCallback(
+    (id: string, ref: HTMLElement | null) => {
+      if (ref) {
+        widgetRefs.current[id] = ref
+      } else {
+        delete widgetRefs.current[id]
+      }
+    },
+    [],
+  )
+
   return (
     <AppContext.Provider value={context}>
       <div className="w-dvw h-dvh relative">
@@ -153,7 +167,11 @@ export function AppGrid() {
         <div className="absolute inset-0 pointer-events-none">
           {Array.from(view.widgets.values()).map(
             ({ id }) => (
-              <AppWidget key={id} id={id} />
+              <AppWidget
+                ref={(ref) => widgetRef(id, ref)}
+                key={id}
+                id={id}
+              />
             ),
           )}
         </div>
