@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import { uniqueId } from 'lodash-es'
 import React, {
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -10,6 +9,7 @@ import React, {
 import { BehaviorSubject } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
+import { Vec2 } from '../common/vec2'
 import { Game, initGame, step, UpdateType } from '../game'
 import { NodeType } from '../game/node'
 import { toNodeId } from '../game/util'
@@ -76,7 +76,7 @@ export function AppGrid() {
   })
   const state = useRef<PixiState | null>(null)
 
-  const widgetRefs = useRef<Record<string, HTMLElement>>({})
+  const widgetContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -130,7 +130,10 @@ export function AppGrid() {
       for (const node of Object.values(game.nodes).filter(
         (node) => node.type === NodeType.enum.FormRoot,
       )) {
-        draft.widgets.set(node.id, { id: node.id })
+        draft.widgets.set(node.id, {
+          id: node.id,
+          p: new Vec2(node.p),
+        })
       }
     })
   }, [game.nodes])
@@ -145,17 +148,6 @@ export function AppGrid() {
     [game, setGame, view, setView],
   )
 
-  const widgetRef = useCallback(
-    (id: string, ref: HTMLElement | null) => {
-      if (ref) {
-        widgetRefs.current[id] = ref
-      } else {
-        delete widgetRefs.current[id]
-      }
-    },
-    [],
-  )
-
   return (
     <AppContext.Provider value={context}>
       <div className="w-dvw h-dvh relative">
@@ -164,14 +156,13 @@ export function AppGrid() {
           gameRef={gameRef}
           view$={view$.current}
         />
-        <div className="absolute inset-0 pointer-events-none">
+        <div
+          ref={widgetContainerRef}
+          className="absolute inset-0 pointer-events-none"
+        >
           {Array.from(view.widgets.values()).map(
-            ({ id }) => (
-              <AppWidget
-                ref={(ref) => widgetRef(id, ref)}
-                key={id}
-                id={id}
-              />
+            (widget) => (
+              <AppWidget key={widget.id} {...widget} />
             ),
           )}
         </div>

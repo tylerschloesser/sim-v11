@@ -1,3 +1,4 @@
+import { Vec2 } from '../common/vec2'
 import { NodeType } from '../game/node'
 import { Hover } from './hover'
 
@@ -15,5 +16,6 @@ export interface AppView {
 }
 
 export interface Widget {
+  p: Vec2
   id: string
 }
