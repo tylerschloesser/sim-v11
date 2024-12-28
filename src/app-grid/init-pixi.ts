@@ -133,6 +133,7 @@ interface InitPixiArgs {
   setView: Updater<AppView>
   setGame: Updater<Game>
   view$: BehaviorSubject<AppView>
+  widgetContainer: HTMLElement
 }
 
 export function initPixi({

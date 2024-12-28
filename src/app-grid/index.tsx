@@ -76,7 +76,7 @@ export function AppGrid() {
   })
   const state = useRef<PixiState | null>(null)
 
-  const widgetContainerRef = useRef<HTMLDivElement>(null)
+  const widgetContainer = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -155,9 +155,10 @@ export function AppGrid() {
           state={state}
           gameRef={gameRef}
           view$={view$.current}
+          widgetContainer={widgetContainer}
         />
         <div
-          ref={widgetContainerRef}
+          ref={widgetContainer}
           className="absolute inset-0 pointer-events-none"
         >
           {Array.from(view.widgets.values()).map(
@@ -195,12 +196,14 @@ interface CanvasProps {
   state: React.MutableRefObject<PixiState | null>
   gameRef: React.MutableRefObject<Game>
   view$: BehaviorSubject<AppView>
+  widgetContainer: React.RefObject<HTMLElement>
 }
 
 export function Canvas({
   state,
   gameRef,
   view$,
+  widgetContainer,
 }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
 
@@ -208,6 +211,7 @@ export function Canvas({
 
   useEffect(() => {
     invariant(container.current)
+    invariant(widgetContainer.current)
     const id = uniqueId()
     initPixi({
       id,
@@ -215,6 +219,7 @@ export function Canvas({
       setView,
       setGame,
       view$,
+      widgetContainer: widgetContainer.current,
     }).then((_state) => {
       state.current = _state
       renderGame(gameRef.current, _state)
