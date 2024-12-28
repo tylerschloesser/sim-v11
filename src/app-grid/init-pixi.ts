@@ -443,7 +443,7 @@ export function initPixi({
               (time - state.lastTickTime) / TICK_DURATION
           }
           invariant(tickProgress >= 0)
-          // invariant(tickProgress < 1.1)
+          invariant(tickProgress < 2)
           renderFrame(state, tickProgress)
           state.frameHandle = self.requestAnimationFrame(
             frameRequestCallback,

@@ -5,7 +5,7 @@ import { ItemViewV2 } from './game-view'
 
 export class ItemContainer extends PIXI.Container {
   private color: string
-  private p: Vec2 | null
+  private p: Vec2
   private readonly g: PIXI.Graphics = new PIXI.Graphics()
 
   constructor(view: ItemViewV2) {
@@ -41,14 +41,10 @@ export class ItemContainer extends PIXI.Container {
   }
 
   private onUpdatePosition() {
-    if (this.p === null) {
-      this.g.visible = false
-    } else {
-      this.g.visible = true
-      this.position.set(
-        this.p.x * CELL_SIZE,
-        this.p.y * CELL_SIZE,
-      )
-    }
+    this.g.visible = true
+    this.position.set(
+      this.p.x * CELL_SIZE,
+      this.p.y * CELL_SIZE,
+    )
   }
 }

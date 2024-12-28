@@ -171,7 +171,16 @@ function AppHover() {
     [view.hover],
   )
   const node = id ? game.nodes[id] : null
-  return node && <div>{node.type}</div>
+  return (
+    node && (
+      <div>
+        <div>{node.type}</div>
+        <div>
+          {node.outputs.map(({ id }) => id).join(',')}
+        </div>
+      </div>
+    )
+  )
 }
 
 interface CanvasProps {
