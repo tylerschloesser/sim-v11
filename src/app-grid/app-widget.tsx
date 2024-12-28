@@ -24,6 +24,7 @@ export const AppWidget = React.forwardRef<
     return `${tx}px ${ty}px`
   }, [p])
   const [producerRate, setProducerRate] = useProducerRate()
+  const [purifierRate, setPurifierRate] = usePurifierRate()
   return (
     <div
       ref={ref}
@@ -40,8 +41,7 @@ export const AppWidget = React.forwardRef<
       }}
     >
       <div>ID: {id}</div>
-      <div></div>
-      Producer Rate: {producerRate ?? '[none]'}
+      <div>Producer Rate: {producerRate ?? '[none]'}</div>
       {producerRate !== null && (
         <input
           className="block"
@@ -52,6 +52,20 @@ export const AppWidget = React.forwardRef<
           value={producerRate}
           onChange={(ev) => {
             setProducerRate(parseFloat(ev.target.value))
+          }}
+        />
+      )}
+      <div>Purifier Rate: {purifierRate ?? '[none]'}</div>
+      {purifierRate !== null && (
+        <input
+          className="block"
+          type="range"
+          min={0}
+          max={1}
+          step=".1"
+          value={purifierRate}
+          onChange={(ev) => {
+            setPurifierRate(parseFloat(ev.target.value))
           }}
         />
       )}
@@ -85,6 +99,45 @@ function useProducerRate(): [
       setGame((draft) => {
         const nodes = Object.values(draft.nodes).filter(
           (node) => node.type === NodeType.enum.Producer,
+        )
+        invariant(nodes.length > 0)
+        for (const node of nodes) {
+          node.rate = value
+        }
+      })
+    },
+    [setGame],
+  )
+
+  return [rate, setRate]
+}
+
+function usePurifierRate(): [
+  number | null,
+  (value: number) => void,
+] {
+  const { game, setGame } = useContext(AppContext)
+  const rate = useMemo(() => {
+    const nodes = Object.values(game.nodes).filter(
+      (node) => node.type === NodeType.enum.Purifier,
+    )
+    if (nodes.length === 0) {
+      return null
+    }
+    const first = nodes.at(0)!
+    invariant(
+      nodes
+        .slice(1)
+        .every((node) => node.rate === first.rate),
+    )
+    return first.rate
+  }, [game.nodes])
+
+  const setRate = useCallback(
+    (value: number) => {
+      setGame((draft) => {
+        const nodes = Object.values(draft.nodes).filter(
+          (node) => node.type === NodeType.enum.Purifier,
         )
         invariant(nodes.length > 0)
         for (const node of nodes) {
