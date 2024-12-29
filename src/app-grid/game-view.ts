@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game/game'
 import { Item, ItemColor } from '../game/item'
-import { Node, NodeRef, NodeType } from '../game/node'
+import { Node, NodeType } from '../game/node'
 import { TextureId } from '../textures'
 import { MAX_PURITY } from './const'
 
@@ -38,7 +38,7 @@ export interface GameView {
 }
 
 export function gameToGameView(game: Game): GameView {
-  function refToNode({ id }: NodeRef) {
+  function idToNode(id: string) {
     const node = game.nodes[id]
     invariant(node)
     return node
@@ -71,8 +71,8 @@ export function gameToGameView(game: Game): GameView {
       throw new Error('Invalid output direction')
     }
 
-    const outputs = node.outputs
-      .map(refToNode)
+    const outputs = Object.keys(node.outputs)
+      .map(idToNode)
       .map(outputToDirection)
     outputs.sort()
 

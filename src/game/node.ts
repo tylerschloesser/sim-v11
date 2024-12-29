@@ -1,11 +1,6 @@
 import { z } from 'zod'
 import { ZVec2 } from '../common/vec2'
 
-export const NodeRef = z.strictObject({
-  id: z.string(),
-})
-export type NodeRef = z.infer<typeof NodeRef>
-
 export const NodeType = z.enum([
   'Normal',
   'Consumer',
@@ -21,7 +16,7 @@ const BaseNode = z.strictObject({
   type: NodeType,
   p: ZVec2,
   itemId: z.string().nullable(),
-  outputs: NodeRef.array(),
+  outputs: z.record(z.string(), z.literal(true)),
 })
 
 export const NormalNode = BaseNode.extend({

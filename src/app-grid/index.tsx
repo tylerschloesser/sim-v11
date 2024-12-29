@@ -177,9 +177,7 @@ function AppHover() {
     node && (
       <div>
         <div>{node.type}</div>
-        <div>
-          {node.outputs.map(({ id }) => id).join(',')}
-        </div>
+        <div>{Object.keys(node.outputs).join(',')}</div>
       </div>
     )
   )

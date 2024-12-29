@@ -67,13 +67,10 @@ export function initKeyboard({
           return
         }
 
-        const outputIndex = cell.outputs.findIndex(
-          (node) => node.id === output.id,
-        )
-        if (outputIndex === -1) {
-          cell.outputs.push({ id: output.id })
+        if (cell.outputs[output.id]) {
+          delete cell.outputs[output.id]
         } else {
-          cell.outputs.splice(outputIndex, 1)
+          cell.outputs[output.id] = true
         }
       })
     },

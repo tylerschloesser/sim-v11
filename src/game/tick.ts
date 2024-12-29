@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant'
 import { MAX_PURITY } from '../app-grid/const'
 import { Game, UpdateType } from './game'
 import { Item, ItemColor } from './item'
-import { Node, NodeRef, NodeType } from './node'
+import { Node, NodeType } from './node'
 import { rng, shuffle } from './rng'
 
 export function tick(game: Game) {
@@ -12,7 +12,7 @@ export function tick(game: Game) {
   game.updateType = UpdateType.enum.Tick
   const { nodes } = game
 
-  function refToNode({ id }: NodeRef) {
+  function idToNode(id: string) {
     const node = nodes[id]
     invariant(node)
     return node
@@ -85,7 +85,9 @@ export function tick(game: Game) {
     path.add(node)
 
     // randomize output order
-    const outputs = shuffle(node.outputs.map(refToNode))
+    const outputs = shuffle(
+      Object.keys(node.outputs).map(idToNode),
+    )
 
     for (const output of outputs) {
       if (path.has(output)) {

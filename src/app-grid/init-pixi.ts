@@ -49,15 +49,9 @@ function deleteNode(draft: Game, nodeId: string): void {
   const node = draft.nodes[nodeId]
   invariant(node)
   for (const input of Object.values(draft.nodes)) {
-    const index = input.outputs.findIndex(
-      ({ id }) => id === node.id,
-    )
-    if (index === -1) {
-      continue
+    if (input.outputs[nodeId]) {
+      delete input.outputs[nodeId]
     }
-
-    invariant(input.id !== node.id)
-    input.outputs.splice(index, 1)
   }
 
   delete draft.nodes[node.id]
@@ -93,10 +87,8 @@ function handlePath(draft: Game, path: Path): void {
     const delta = next.sub(p)
     invariant(delta.length() === 1)
 
-    if (
-      node.outputs.every((value) => value.id !== nextId)
-    ) {
-      node.outputs.push({ id: nextId })
+    if (!node.outputs[nextId]) {
+      node.outputs[nextId] = true
     }
   }
 }

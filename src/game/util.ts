@@ -35,7 +35,7 @@ export function addNode(
   const { p, type = NodeType.enum.Normal } = partial
   const id = toNodeId(p)
 
-  const outputs: Node['outputs'] = []
+  const outputs: Node['outputs'] = {}
   const itemId: Node['itemId'] = null
   let node: Node
 
@@ -93,7 +93,7 @@ export function addFormNode(
       p: partial.p,
       id: toNodeId(partial.p),
       itemId: null,
-      outputs: [],
+      outputs: {},
       targetNodeId: null,
     }
 
@@ -109,7 +109,7 @@ export function addFormNode(
           p,
           id: toNodeId(p),
           itemId: null,
-          outputs: [],
+          outputs: {},
         }
       }
     }
@@ -131,9 +131,8 @@ export function connect(
 
   invariant(nodes[outputId])
 
-  invariant(input.outputs.every(({ id }) => id !== inputId))
-
-  input.outputs.push({ id: outputId })
+  invariant(!input.outputs[inputId])
+  input.outputs[outputId] = true
 }
 
 export function parseNodeId(id: string): Vec2 {

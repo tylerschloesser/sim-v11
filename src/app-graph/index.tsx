@@ -93,7 +93,7 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
   }, [active])
 
   const nodeModels = useMemo(() => {
-    function refToNode({ id }: { id: string }) {
+    function idToNode(id: string) {
       const node = nodes[id]
       invariant(node)
       return node
@@ -104,8 +104,8 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
           id: node.id,
           type: node.type,
           p: new Vec2(node.p.x, node.p.y),
-          arrows: node.outputs
-            .map(refToNode)
+          arrows: Object.keys(node.outputs)
+            .map(idToNode)
             .map((output) => {
               const dx = output.p.x - node.p.x
               const dy = output.p.y - node.p.y
