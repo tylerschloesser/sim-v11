@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { Vec2 } from '../common/vec2'
-import { Game, initGame, step, UpdateType } from '../game'
+import { Game, initGame, tick, UpdateType } from '../game'
 import { NodeType } from '../game/node'
 import { toNodeId } from '../game/util'
 import { TextureId } from '../textures'
@@ -62,7 +62,7 @@ export function AppGrid() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setGame(step)
+      setGame(tick)
     }, TICK_DURATION)
     return () => {
       clearInterval(interval)

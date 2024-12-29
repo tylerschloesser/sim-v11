@@ -5,7 +5,7 @@ import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { Vec2 } from '../common/vec2'
 import { ViewportProvider } from '../common/viewport-provider'
-import { initGame, step } from '../game'
+import { initGame, tick } from '../game'
 import { Item, ItemColor } from '../game/item'
 import { Node, NodeType } from '../game/node'
 
@@ -76,12 +76,12 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
   useEffect(() => {
     if (!active.value) {
       if (!active.once) {
-        setGame(step)
+        setGame(tick)
       }
       return
     }
     const interval = self.setInterval(() => {
-      setGame(step)
+      setGame(tick)
       setActive((draft) => {
         draft.once = true
       })

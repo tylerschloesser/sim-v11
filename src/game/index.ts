@@ -129,7 +129,7 @@ export function initGame(): Game {
   }
 }
 
-export function step(game: Game) {
+export function tick(game: Game) {
   game.tick += 1
   game.updateType = UpdateType.enum.Tick
   const { nodes } = game
