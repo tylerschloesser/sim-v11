@@ -18,6 +18,7 @@ import { getNode, getNodeWithType } from '../game/util'
 import { AppContext } from './app-context'
 import { CELL_SIZE } from './const'
 import { WidgetConsumer } from './widget-consumer'
+import { WidgetEnergizer } from './widget-energizer'
 import { WidgetProducer } from './widget-producer'
 import { WidgetPurifier } from './widget-purifier'
 
@@ -107,6 +108,9 @@ export const AppWidget = React.forwardRef<
       )}
       {target?.type === NodeType.enum.Purifier && (
         <WidgetPurifier node={target} />
+      )}
+      {target?.type === NodeType.enum.Energizer && (
+        <WidgetEnergizer node={target} />
       )}
     </div>
   )

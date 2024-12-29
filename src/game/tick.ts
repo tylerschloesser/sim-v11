@@ -79,6 +79,9 @@ export function tick(game: Game) {
         }
         break
       }
+      case NodeType.enum.Energizer: {
+        break
+      }
     }
 
     invariant(!path.has(node))

@@ -7,5 +7,5 @@ export interface WidgetEnergizerProps {
 export function WidgetEnergizer({
   node,
 }: WidgetEnergizerProps) {
-  return <div>TODO {node.id}</div>
+  return <div>Power: {node.power}</div>
 }
