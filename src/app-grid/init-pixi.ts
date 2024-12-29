@@ -77,7 +77,10 @@ function handlePath(draft: Game, path: Path): void {
   for (let i = 0; i < path.length - 1; i++) {
     const inputId = toNodeId(path.at(i)!)
     const outputId = toNodeId(path.at(i + 1)!)
-    connect(draft.nodes, inputId, outputId)
+    const result = connect(draft.nodes, inputId, outputId)
+    if (!result.success) {
+      console.error(result.errors)
+    }
   }
 }
 

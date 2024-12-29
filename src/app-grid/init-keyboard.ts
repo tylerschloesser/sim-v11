@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs'
 import { Updater } from 'use-immer'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game/game'
+import { connect, toNodeId } from '../game/util'
 import { AppView } from './app-view'
 
 interface InitKeyboardArgs {
@@ -47,30 +48,29 @@ export function initKeyboard({
           return
         }
 
-        const cell = Object.values(draft.nodes).find(
-          (node) =>
-            new Vec2(node.p).equals(view$.value.hover?.p!),
-        )
-
-        if (!cell) {
-          return cell
+        const inputId = toNodeId(view$.value.hover.p)
+        const input = draft.nodes[inputId]
+        if (!input) {
+          return
         }
 
-        const output = Object.values(draft.nodes).find(
-          (node) =>
-            new Vec2(node.p).equals(
-              new Vec2(cell.p).add(d),
-            ),
-        )
-
+        const outputId = toNodeId(new Vec2(input.p).add(d))
+        const output = draft.nodes[outputId]
         if (!output) {
           return
         }
 
-        if (cell.outputs[output.id]) {
-          delete cell.outputs[output.id]
+        if (input.outputs[outputId]) {
+          delete input.outputs[outputId]
         } else {
-          cell.outputs[output.id] = true
+          const result = connect(
+            draft.nodes,
+            inputId,
+            outputId,
+          )
+          if (!result.success) {
+            console.error(result.errors)
+          }
         }
       })
     },

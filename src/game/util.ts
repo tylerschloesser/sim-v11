@@ -124,26 +124,47 @@ export function addFormNode(
   }
 }
 
+type ConnectResult =
+  | { success: true }
+  | { success: false; errors: string[] }
+
 export function connect(
   nodes: Game['nodes'],
   inputId: string,
   outputId: string,
-): void {
+): ConnectResult {
   invariant(inputId !== outputId)
+
+  const errors: string[] = []
 
   const input = nodes[inputId]
   invariant(input)
-  invariant(isValidInput(input))
+
+  if (!isValidInput(input)) {
+    errors.push(`Invalid input [${inputId}]`)
+  }
 
   const output = nodes[outputId]
   invariant(output)
-  invariant(isValidOutput(output))
+
+  if (!isValidOutput(output)) {
+    errors.push(`Invalid output [${outputId}]`)
+  }
 
   const delta = new Vec2(output.p).sub(new Vec2(input.p))
-  invariant(delta.length() === 1)
+
+  if (delta.length() !== 1) {
+    errors.push(`Invalid distance between nodes`)
+  }
 
   invariant(!input.outputs[inputId])
-  input.outputs[outputId] = true
+
+  if (errors.length === 0) {
+    input.outputs[outputId] = true
+    return { success: true }
+  } else {
+    return { success: false, errors }
+  }
 }
 
 function isValidInput(

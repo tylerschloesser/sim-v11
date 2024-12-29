@@ -1,3 +1,4 @@
+import invariant from 'tiny-invariant'
 import { Game } from './game'
 import { NodeType } from './node'
 import { addNode, connect, parseNodeId } from './util'
@@ -45,7 +46,7 @@ export function initGame(): Game {
 
   for (const { id: inputId, outputs } of config) {
     for (const outputId of outputs) {
-      connect(nodes, inputId, outputId)
+      invariant(connect(nodes, inputId, outputId).success)
     }
   }
 
