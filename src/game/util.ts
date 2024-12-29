@@ -53,7 +53,15 @@ export function addNode(
     }
     case NodeType.enum.Producer: {
       const rate = DEFAULT_PRODUCER_RATE
-      node = { id, p, itemId, outputs, type, rate }
+      node = {
+        id,
+        p,
+        itemId,
+        outputs,
+        type,
+        rate,
+        power: 0,
+      }
       break
     }
     case NodeType.enum.Purifier: {
