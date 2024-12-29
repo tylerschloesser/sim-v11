@@ -8,6 +8,7 @@ import { Vec2 } from '../common/vec2'
 import { Game } from './game'
 import {
   ConsumerNode,
+  EnergizerNode,
   FormLeafNode,
   FormRootNode,
   Node,
@@ -173,21 +174,31 @@ export function connect(
 
 function isValidInput(
   node: Node,
-): node is NormalNode | ProducerNode | PurifierNode {
+): node is
+  | NormalNode
+  | ProducerNode
+  | PurifierNode
+  | EnergizerNode {
   return (
     node.type === NodeType.enum.Normal ||
     node.type === NodeType.enum.Producer ||
-    node.type === NodeType.enum.Purifier
+    node.type === NodeType.enum.Purifier ||
+    node.type === NodeType.enum.Energizer
   )
 }
 
 function isValidOutput(
   node: Node,
-): node is NormalNode | ConsumerNode | PurifierNode {
+): node is
+  | NormalNode
+  | ConsumerNode
+  | PurifierNode
+  | EnergizerNode {
   return (
     node.type === NodeType.enum.Normal ||
     node.type === NodeType.enum.Consumer ||
-    node.type === NodeType.enum.Purifier
+    node.type === NodeType.enum.Purifier ||
+    node.type === NodeType.enum.Energizer
   )
 }
 

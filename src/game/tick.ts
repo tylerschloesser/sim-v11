@@ -162,8 +162,9 @@ function isOutputEligible(
     case NodeType.enum.Purifier: {
       return item.purity >= 10
     }
-    case NodeType.enum.Producer:
     case NodeType.enum.Normal:
+    case NodeType.enum.Producer:
+    case NodeType.enum.Energizer:
       return item.tick >= 1
     default:
       invariant(false)
