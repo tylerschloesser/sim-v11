@@ -61,7 +61,7 @@ export function tick(game: Game) {
             id: `${game.nextItemId++}`,
             nodeId: node.id,
             prevNodeId: null,
-            tick: 0,
+            tick: 1,
             color: sample(ItemColor.options),
             purity: 0,
           }
@@ -80,6 +80,17 @@ export function tick(game: Game) {
         break
       }
       case NodeType.enum.Energizer: {
+        if (
+          item &&
+          item.tick > 0 &&
+          item.color === ItemColor.enum.Green &&
+          item.purity > 0
+        ) {
+          node.power += item.purity
+          delete game.items[item.id]
+          node.itemId = null
+          item = null
+        }
         break
       }
     }
