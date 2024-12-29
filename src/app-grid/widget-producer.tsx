@@ -13,6 +13,7 @@ export function WidgetProducer({
   const [rate, setRate] = useRate(node)
   return (
     <div>
+      <div>Power: {node.power}</div>
       <div>Rate: {rate ?? '[none]'}</div>
       {rate !== null && (
         <input
