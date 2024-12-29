@@ -1,3 +1,4 @@
+import { current, original } from 'immer'
 import { identity, sample } from 'lodash-es'
 import Prando from 'prando'
 import invariant from 'tiny-invariant'
@@ -258,6 +259,9 @@ export function step(game: Game) {
   try {
     Game.parse(game)
   } catch (e) {
+    // @ts-expect-error
+    const prev = original(game),
+      next = current(game)
     debugger
   }
 }
