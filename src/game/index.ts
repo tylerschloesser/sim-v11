@@ -220,11 +220,7 @@ export function step(game: Game) {
         visit(output)
       }
 
-      if (
-        item &&
-        output.itemId === null &&
-        isOutputEligible(node, item)
-      ) {
+      if (item && isOutputEligible(node, item, output)) {
         output.itemId = item.id
         node.itemId = null
         item.prevNodeId = item.nodeId
@@ -266,9 +262,17 @@ export function step(game: Game) {
   }
 }
 
-function isOutputEligible(node: Node, item: Item): boolean {
+function isOutputEligible(
+  node: Node,
+  item: Item,
+  output: Node,
+): boolean {
   invariant(node.itemId === item.id)
   invariant(item.nodeId === node.id)
+
+  if (output.itemId) {
+    return false
+  }
 
   switch (node.type) {
     case NodeType.enum.Purifier: {
