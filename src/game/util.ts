@@ -7,10 +7,14 @@ import {
 import { Vec2 } from '../common/vec2'
 import { Game } from './game'
 import {
+  ConsumerNode,
   FormLeafNode,
   FormRootNode,
   Node,
   NodeType,
+  NormalNode,
+  ProducerNode,
+  PurifierNode,
 } from './node'
 
 export const shuffle = curry(function <T>(
@@ -126,13 +130,40 @@ export function connect(
   outputId: string,
 ): void {
   invariant(inputId !== outputId)
+
   const input = nodes[inputId]
   invariant(input)
+  invariant(isValidInput(input))
 
-  invariant(nodes[outputId])
+  const output = nodes[outputId]
+  invariant(output)
+  invariant(isValidOutput(output))
+
+  const delta = new Vec2(output.p).sub(new Vec2(input.p))
+  invariant(delta.length() === 1)
 
   invariant(!input.outputs[inputId])
   input.outputs[outputId] = true
+}
+
+function isValidInput(
+  node: Node,
+): node is NormalNode | ProducerNode | PurifierNode {
+  return (
+    node.type === NodeType.enum.Normal ||
+    node.type === NodeType.enum.Producer ||
+    node.type === NodeType.enum.Purifier
+  )
+}
+
+function isValidOutput(
+  node: Node,
+): node is NormalNode | ConsumerNode | PurifierNode {
+  return (
+    node.type === NodeType.enum.Normal ||
+    node.type === NodeType.enum.Consumer ||
+    node.type === NodeType.enum.Purifier
+  )
 }
 
 export function parseNodeId(id: string): Vec2 {

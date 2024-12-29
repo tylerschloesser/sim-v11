@@ -20,6 +20,7 @@ import { Item } from '../game/item'
 import {
   addFormNode,
   addNode,
+  connect,
   toNodeId,
 } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
@@ -74,22 +75,9 @@ function handlePath(draft: Game, path: Path): void {
     addNode(draft.nodes, { p })
   }
   for (let i = 0; i < path.length - 1; i++) {
-    const p = path.at(i)
-    invariant(p)
-    const id = toNodeId(p)
-    const node = draft.nodes[id]
-    invariant(node)
-
-    const next = path.at(i + 1)
-    invariant(next)
-    const nextId = toNodeId(next)
-
-    const delta = next.sub(p)
-    invariant(delta.length() === 1)
-
-    if (!node.outputs[nextId]) {
-      node.outputs[nextId] = true
-    }
+    const inputId = toNodeId(path.at(i)!)
+    const outputId = toNodeId(path.at(i + 1)!)
+    connect(draft.nodes, inputId, outputId)
   }
 }
 
