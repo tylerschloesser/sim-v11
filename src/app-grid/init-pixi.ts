@@ -15,7 +15,7 @@ import invariant from 'tiny-invariant'
 import { Updater } from 'use-immer'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
-import { Game } from '../game'
+import { Game } from '../game/game'
 import { Item } from '../game/item'
 import {
   addFormNode,

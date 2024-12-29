@@ -1,7 +1,7 @@
 import { isEqual } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
-import { Game } from '../game'
+import { Game } from '../game/game'
 import { Item, ItemColor } from '../game/item'
 import { Node, NodeRef, NodeType } from '../game/node'
 import { TextureId } from '../textures'

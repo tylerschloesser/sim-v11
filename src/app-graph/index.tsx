@@ -5,9 +5,10 @@ import invariant from 'tiny-invariant'
 import { useImmer } from 'use-immer'
 import { Vec2 } from '../common/vec2'
 import { ViewportProvider } from '../common/viewport-provider'
-import { initGame, tick } from '../game'
+import { initGame } from '../game'
 import { Item, ItemColor } from '../game/item'
 import { Node, NodeType } from '../game/node'
+import { tick } from '../game/tick'
 
 export function AppGraph() {
   return (

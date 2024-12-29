@@ -1,4 +1,4 @@
-import { Game } from '../game'
+import { Game } from '../game/game'
 import { gameToGameView } from './game-view'
 import { ItemContainer } from './item-container'
 import { PixiState } from './pixi-state'

@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs'
 import { Updater } from 'use-immer'
 import { Vec2 } from '../common/vec2'
-import { Game } from '../game'
+import { Game } from '../game/game'
 import { AppView } from './app-view'
 
 interface InitKeyboardArgs {

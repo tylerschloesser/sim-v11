@@ -1,11 +1,11 @@
 import { curry } from 'lodash-es'
 import invariant from 'tiny-invariant'
-import { Game } from '.'
 import {
   DEFAULT_PRODUCER_RATE,
   DEFAULT_PURIFIER_RATE,
 } from '../app-grid/const'
 import { Vec2 } from '../common/vec2'
+import { Game } from './game'
 import {
   FormLeafNode,
   FormRootNode,
