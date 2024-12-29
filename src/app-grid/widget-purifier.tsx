@@ -1,4 +1,6 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
+import invariant from 'tiny-invariant'
+import { Item } from '../game/item'
 import { NodeType, PurifierNode } from '../game/node'
 import { getNodeWithType } from '../game/util'
 import { AppContext } from './app-context'
@@ -11,8 +13,12 @@ export function WidgetPurifier({
   node,
 }: WidgetPurifierProps) {
   const [rate, setRate] = useRate(node)
+  const item = useItem(node)
   return (
     <div>
+      <div>
+        Item Purity: {item ? item.purity : '[none]'}
+      </div>
       <div>Rate: {rate ?? '[none]'}</div>
       {rate !== null && (
         <input
@@ -54,4 +60,16 @@ function useSetRate(
     },
     [nodeId],
   )
+}
+
+function useItem(node: PurifierNode): Item | null {
+  const { game } = useContext(AppContext)
+  return useMemo(() => {
+    if (!node.itemId) {
+      return null
+    }
+    const item = game.items[node.itemId]
+    invariant(item)
+    return item
+  }, [game.items, node.itemId])
 }
