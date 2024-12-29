@@ -46,6 +46,7 @@ export type PurifierNode = z.infer<typeof PurifierNode>
 
 export const EnergizerNode = BaseNode.extend({
   type: z.literal(NodeType.enum.Energizer),
+  power: z.number().int().nonnegative(),
 })
 export type EnergizerNode = z.infer<typeof EnergizerNode>
 

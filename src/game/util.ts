@@ -75,7 +75,7 @@ export function addNode(
       break
     }
     case NodeType.enum.Energizer: {
-      node = { id, p, itemId, outputs, type }
+      node = { id, p, itemId, outputs, type, power: 0 }
       break
     }
   }
