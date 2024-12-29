@@ -8,6 +8,7 @@ import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import {
   ConsumerNode,
+  EnergizerNode,
   Node,
   NodeType,
   ProducerNode,
@@ -153,11 +154,16 @@ function ChooseTarget({
 
 function isEligibleTarget(
   node: Node,
-): node is ProducerNode | ConsumerNode | PurifierNode {
+): node is
+  | ProducerNode
+  | ConsumerNode
+  | PurifierNode
+  | EnergizerNode {
   switch (node.type) {
     case NodeType.enum.Producer:
     case NodeType.enum.Consumer:
     case NodeType.enum.Purifier:
+    case NodeType.enum.Energizer:
       return true
     default:
       return false
