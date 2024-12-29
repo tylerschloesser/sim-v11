@@ -6,6 +6,7 @@ export const NodeType = z.enum([
   'Consumer',
   'Producer',
   'Purifier',
+  'Energizer',
   'FormRoot',
   'FormLeaf',
 ])
@@ -43,6 +44,11 @@ export const PurifierNode = BaseNode.extend({
 })
 export type PurifierNode = z.infer<typeof PurifierNode>
 
+export const EnergizerNode = BaseNode.extend({
+  type: z.literal(NodeType.enum.Energizer),
+})
+export type EnergizerNode = z.infer<typeof EnergizerNode>
+
 export const FormRootNode = BaseNode.extend({
   type: z.literal(NodeType.enum.FormRoot),
   targetNodeId: z.string().nullable(),
@@ -59,6 +65,7 @@ export const Node = z.union([
   ConsumerNode,
   ProducerNode,
   PurifierNode,
+  EnergizerNode,
   FormRootNode,
   FormLeafNode,
 ])

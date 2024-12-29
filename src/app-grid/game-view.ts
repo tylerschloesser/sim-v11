@@ -153,6 +153,8 @@ function nodeTextureId(node: Node): TextureId {
       return TextureId.enum.NodeProducer
     case NodeType.enum.Purifier:
       return TextureId.enum.NodePurifier
+    case NodeType.enum.Energizer:
+      return TextureId.enum.NodeEnergizer
     case NodeType.enum.FormRoot:
       return TextureId.enum.NodeFormRoot
     case NodeType.enum.FormLeaf:

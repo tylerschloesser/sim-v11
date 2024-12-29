@@ -73,6 +73,10 @@ export function addNode(
       node = { id, p, itemId, outputs, type, rate }
       break
     }
+    case NodeType.enum.Energizer: {
+      node = { id, p, itemId, outputs, type }
+      break
+    }
   }
 
   invariant(!nodes[id])

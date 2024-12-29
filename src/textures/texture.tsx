@@ -65,6 +65,14 @@ export const Texture = forwardRef<
           textureId={id}
         />
       )
+    case TextureId.enum.NodeEnergizer:
+      return (
+        <PlainTextureSvg
+          ref={ref}
+          color="hsl(20, 80%, 60%)"
+          textureId={id}
+        />
+      )
     case TextureId.enum.NodeFormRoot:
       return (
         <PlainTextureSvg

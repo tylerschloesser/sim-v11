@@ -6,6 +6,7 @@ export const TextureId = z.enum([
   'NodeConsumer',
   'NodeProducer',
   'NodePurifier',
+  'NodeEnergizer',
   'NodeFormRoot',
   'NodeFormLeaf',
   'NodeArrow',
