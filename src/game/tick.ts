@@ -51,9 +51,25 @@ function tickConstructJob(
   )
 
   if (job.robotId !== null) {
+    const robot = game.robots[job.robotId]
+    invariant(robot?.id === job.robotId)
+
     node.state = NodeState.enum.Active
     delete game.jobs[job.id]
+    robot.jobId = null
+
+    return
   }
+
+  const first = Object.values(game.robots).find(
+    (robot) => robot.jobId === null,
+  )
+  if (!first) {
+    return
+  }
+
+  first.jobId = job.id
+  job.robotId = first.id
 }
 
 function tickNodes(game: Game): void {
