@@ -59,6 +59,7 @@ function tickConstructJob(
       robot.p = node.p
       robot.d = new Vec2(node.p).sub(new Vec2(robot.p))
     } else {
+      robot.d = null
       node.state = NodeState.enum.Active
       delete game.jobs[job.id]
       robot.jobId = null
