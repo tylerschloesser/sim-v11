@@ -16,6 +16,7 @@ import {
   NodeState,
   NodeType,
   NormalNode,
+  OutputDirection,
   ProducerNode,
   PurifierNode,
 } from './node'
@@ -198,6 +199,7 @@ export function connect(
 
   const input = nodes[inputId]
   invariant(input)
+  invariant(!input.outputs[inputId])
 
   if (!isValidInput(input)) {
     errors.push(`Invalid input [${inputId}]`)
@@ -216,10 +218,21 @@ export function connect(
     errors.push(`Invalid distance between nodes`)
   }
 
-  invariant(!input.outputs[inputId])
+  let direction: OutputDirection | null = null
+  if (delta.x === 0 && delta.y === -1) {
+    direction = OutputDirection.enum.North
+  } else if (delta.x === 0 && delta.y === 1) {
+    direction = OutputDirection.enum.South
+  } else if (delta.x === 1 && delta.y === 0) {
+    direction = OutputDirection.enum.East
+  } else if (delta.x === -1 && delta.y === 0) {
+    direction = OutputDirection.enum.West
+  }
+
+  invariant(direction)
 
   if (errors.length === 0) {
-    input.outputs[outputId] = true
+    input.outputs[outputId] = direction
     return { success: true }
   } else {
     return { success: false, errors }

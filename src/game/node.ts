@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { ZVec2 } from '../common/vec2'
 
+const NodeId = z.string()
+
 export const NodeType = z.enum([
   'Normal',
   'Consumer',
@@ -20,12 +22,22 @@ export const NodeState = z.enum([
 ])
 export type NodeState = z.infer<typeof NodeState>
 
+export const OutputDirection = z.enum([
+  'North',
+  'South',
+  'East',
+  'West',
+])
+export type OutputDirection = z.infer<
+  typeof OutputDirection
+>
+
 const BaseNode = z.strictObject({
-  id: z.string(),
+  id: NodeId,
   state: NodeState,
   p: ZVec2,
   itemId: z.string().nullable(),
-  outputs: z.record(z.string(), z.literal(true)),
+  outputs: z.record(NodeId, OutputDirection),
 })
 
 export const NormalNode = BaseNode.extend({

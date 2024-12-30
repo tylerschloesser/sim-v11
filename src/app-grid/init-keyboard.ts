@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs'
 import { Updater } from 'use-immer'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game/game'
+import { OutputDirection } from '../game/node'
 import { connect, toNodeId } from '../game/util'
 import { AppView } from './app-view'
 
@@ -19,27 +20,43 @@ export function initKeyboard({
   window.addEventListener(
     'keyup',
     (ev) => {
-      let d: Vec2 | null = null
+      let direction: OutputDirection | null = null
       switch (ev.key) {
         case 'w':
         case 'ArrowUp':
-          d = new Vec2(0, -1)
+          direction = OutputDirection.enum.North
           break
         case 'a':
         case 'ArrowLeft':
-          d = new Vec2(-1, 0)
+          direction = OutputDirection.enum.West
           break
         case 's':
         case 'ArrowDown':
-          d = new Vec2(0, 1)
+          direction = OutputDirection.enum.South
           break
         case 'd':
         case 'ArrowRight':
-          d = new Vec2(1, 0)
+          direction = OutputDirection.enum.East
           break
       }
-      if (!d) {
+      if (!direction) {
         return
+      }
+
+      let d: Vec2
+      switch (direction) {
+        case OutputDirection.enum.North:
+          d = new Vec2(0, -1)
+          break
+        case OutputDirection.enum.South:
+          d = new Vec2(0, 1)
+          break
+        case OutputDirection.enum.East:
+          d = new Vec2(1, 0)
+          break
+        case OutputDirection.enum.West:
+          d = new Vec2(-1, 0)
+          break
       }
 
       setGame((draft) => {
