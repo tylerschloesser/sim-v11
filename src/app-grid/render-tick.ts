@@ -3,8 +3,6 @@ import { ItemContainer } from './item-container'
 import { PixiState } from './pixi-state'
 
 export function renderTick(game: Game, state: PixiState) {
-  state.lastTickTime = self.performance.now()
-
   const extra = new Set(state.g.items.keys())
 
   for (const item of Object.values(game.items)) {

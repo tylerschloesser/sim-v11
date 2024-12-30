@@ -74,6 +74,7 @@ export function AppGrid() {
   useEffect(() => {
     if (state.current) {
       if (game.updateType === UpdateType.enum.Tick) {
+        state.current.lastTickTime = self.performance.now()
         renderTick(game, state.current)
       } else {
         renderGame(game, state.current)
