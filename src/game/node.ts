@@ -22,7 +22,6 @@ export type NodeState = z.infer<typeof NodeState>
 
 const BaseNode = z.strictObject({
   id: z.string(),
-  type: NodeType,
   state: NodeState,
   p: ZVec2,
   itemId: z.string().nullable(),

@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant'
 import { MAX_PURITY } from '../app-grid/const'
 import { Game, UpdateType } from './game'
 import { Item, ItemColor } from './item'
-import { JobType } from './job'
+import { ConstructJob, JobType } from './job'
 import { Node, NodeState, NodeType } from './node'
 import { rng, shuffle } from './rng'
 
@@ -35,6 +35,18 @@ function tickJobs(game: Game): void {
         invariant(false)
       }
     }
+  }
+}
+
+// @ts-expect-error
+function tickConstructJob(
+  game: Game,
+  job: ConstructJob,
+): void {
+  const node = game.nodes[job.nodeId]
+  invariant(node)
+  if (node.state === NodeState.enum.PendingConstruction) {
+    node.state = NodeState.enum.Active
   }
 }
 
