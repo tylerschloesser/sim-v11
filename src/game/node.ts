@@ -72,6 +72,7 @@ export type FormLeafNode = z.infer<typeof FormLeafNode>
 
 export const RobotTerminalNode = BaseNode.extend({
   type: z.literal(NodeType.enum.RobotTerminal),
+  robotId: z.string(),
 })
 export type RobotTerminalNode = z.infer<
   typeof RobotTerminalNode

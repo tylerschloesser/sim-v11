@@ -4,7 +4,15 @@ import { NodeType } from './node'
 import { addNode, connect, parseNodeId } from './util'
 
 export function initGame(): Game {
-  const nodes: Game['nodes'] = {}
+  const game: Game = {
+    tick: 0,
+    updateType: null,
+    nodes: {},
+    items: {},
+    nextItemId: 0,
+    robots: {},
+    nextRobotId: 0,
+  }
 
   const config = [
     {
@@ -46,21 +54,16 @@ export function initGame(): Game {
 
   for (const { id, type } of config) {
     const p = parseNodeId(id)
-    addNode(nodes, { p, type })
+    addNode(game, { p, type })
   }
 
   for (const { id: inputId, outputs } of config) {
     for (const outputId of outputs) {
-      invariant(connect(nodes, inputId, outputId).success)
+      invariant(
+        connect(game.nodes, inputId, outputId).success,
+      )
     }
   }
 
-  return {
-    tick: 0,
-    updateType: null,
-    nodes,
-    items: {},
-    nextItemId: 0,
-    robots: {},
-  }
+  return game
 }

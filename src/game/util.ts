@@ -18,6 +18,7 @@ import {
   ProducerNode,
   PurifierNode,
 } from './node'
+import { Robot } from './robot'
 
 export const shuffle = curry(function <T>(
   rng: () => number,
@@ -32,7 +33,7 @@ export const shuffle = curry(function <T>(
 })
 
 export function addNode(
-  nodes: Game['nodes'],
+  game: Game,
   partial: {
     p: Vec2
     type?: NodeType
@@ -102,13 +103,25 @@ export function addNode(
       break
     }
     case NodeType.enum.RobotTerminal: {
-      node = { id, p, itemId, outputs, state, type }
+      const robot: Robot = {
+        id: `${game.nextRobotId++}`,
+      }
+      game.robots[robot.id] = robot
+      node = {
+        id,
+        p,
+        itemId,
+        outputs,
+        state,
+        type,
+        robotId: robot.id,
+      }
       break
     }
   }
 
-  invariant(!nodes[id])
-  nodes[id] = node
+  invariant(!game.nodes[id])
+  game.nodes[id] = node
 }
 
 export function addFormNode(

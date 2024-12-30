@@ -11,10 +11,12 @@ export const Game = z
     tick: z.number(),
     updateType: UpdateType.nullable(),
     nodes: z.record(z.string(), Node),
-    items: z.record(z.string(), Item),
-    robots: z.record(z.string(), Robot),
 
+    items: z.record(z.string(), Item),
     nextItemId: z.number(),
+
+    robots: z.record(z.string(), Robot),
+    nextRobotId: z.number(),
   })
   .superRefine((game, context) => {
     const seen = new Set<string>()

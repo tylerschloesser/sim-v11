@@ -73,7 +73,7 @@ function handlePath(draft: Game, path: Path): void {
     if (draft.nodes[id]) {
       continue
     }
-    addNode(draft.nodes, {
+    addNode(draft, {
       p,
       state: NodeState.enum.PendingConstruction,
     })
@@ -103,7 +103,7 @@ function handleClick(
       if (draft.nodes[nodeId]) {
         deleteNode(draft, nodeId)
       } else {
-        addNode(draft.nodes, {
+        addNode(draft, {
           p: hover.p,
           type: view.nodeType,
           state: NodeState.enum.PendingConstruction,
