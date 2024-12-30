@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { Item } from './item'
 import { Node } from './node'
+import { Robot } from './robot'
 
 export const UpdateType = z.enum(['Tick'])
 export type UpdateType = z.infer<typeof UpdateType>
@@ -11,6 +12,7 @@ export const Game = z
     updateType: UpdateType.nullable(),
     nodes: z.record(z.string(), Node),
     items: z.record(z.string(), Item),
+    robots: z.record(z.string(), Robot),
 
     nextItemId: z.number(),
   })

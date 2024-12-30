@@ -61,5 +61,6 @@ export function initGame(): Game {
     nodes,
     items: {},
     nextItemId: 0,
+    robots: {},
   }
 }
