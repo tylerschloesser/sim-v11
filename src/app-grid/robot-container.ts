@@ -18,6 +18,8 @@ export class RobotContainer extends PIXI.Container {
     this.g.fill({ color: 'pink' })
 
     this.addChild(this.g)
+
+    this.update(robot, true)
   }
 
   update(robot: Robot, initial: boolean = false): void {
