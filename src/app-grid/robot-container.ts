@@ -31,4 +31,7 @@ export class RobotContainer extends PIXI.Container {
     }
     this.robot = robot
   }
+
+  // @ts-expect-error
+  animate(tickProgress: number): void {}
 }

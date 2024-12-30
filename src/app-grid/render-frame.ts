@@ -7,4 +7,7 @@ export function renderFrame(
   for (const container of state.g.items.values()) {
     container.animate(tickProgress)
   }
+  for (const container of state.g.robots.values()) {
+    container.animate(tickProgress)
+  }
 }
