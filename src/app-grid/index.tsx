@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react'
 import { BehaviorSubject } from 'rxjs'
 import invariant from 'tiny-invariant'
@@ -58,12 +59,15 @@ export function AppGrid() {
     widgets: new Map(),
   })
   const state = useRef<PixiState | null>(null)
+  const [tickTime, setTickTime] = useState<number | null>(
+    null,
+  )
 
   const widgetContainer = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setGame(tick)
+      setTickTime(measure(() => setGame(tick)))
     }, TICK_DURATION)
     return () => {
       clearInterval(interval)
@@ -155,7 +159,11 @@ export function AppGrid() {
             'text-gray-400 leading-none',
           )}
         >
-          <div>Tick: {game.tick}</div>
+          <div className="font-mono">
+            Tick: {game.tick}
+            {tickTime !== null &&
+              ` (${tickTime.toFixed(2)}ms)`}
+          </div>
           <AppHover />
         </div>
         <AppActions />
@@ -211,4 +219,11 @@ export function Canvas({
       </div>
     </div>
   )
+}
+
+function measure(fn: () => void) {
+  const start = self.performance.now()
+  fn()
+  const end = self.performance.now()
+  return end - start
 }

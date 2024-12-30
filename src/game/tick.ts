@@ -1,4 +1,5 @@
 import { current, original } from 'immer'
+import { DEBUG } from '../app-grid/const'
 import { Game, UpdateType } from './game'
 import { tickJobs } from './tick-jobs'
 import { tickNodes } from './tick-nodes'
@@ -12,12 +13,14 @@ export function tick(game: Game) {
   tickJobs(game)
   tickRobots(game)
 
-  try {
-    Game.parse(game)
-  } catch (e) {
-    // @ts-expect-error
-    const prev = original(game),
-      next = current(game)
-    debugger
+  if (DEBUG) {
+    try {
+      Game.parse(game)
+    } catch (e) {
+      // @ts-expect-error
+      const prev = original(game),
+        next = current(game)
+      debugger
+    }
   }
 }

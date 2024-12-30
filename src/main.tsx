@@ -7,8 +7,13 @@ import { Assets } from 'pixi.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import invariant from 'tiny-invariant'
+import { DEBUG } from './app-grid/const'
 import './index.css'
 import { routeTree } from './routeTree.gen'
+
+if (DEBUG) {
+  console.warn('DEBUG is enabled')
+}
 
 const router = createRouter({ routeTree })
 declare module '@tanstack/react-router' {
