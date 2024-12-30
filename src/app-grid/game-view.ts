@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game/game'
 import { Item, ItemColor } from '../game/item'
-import { Node, NodeType } from '../game/node'
+import { Node, NodeState, NodeType } from '../game/node'
 import { TextureId } from '../textures'
 import { MAX_PURITY } from './const'
 
@@ -14,6 +14,7 @@ export interface NodeView {
   p: Vec2
   textureId: TextureId
   outputs: Direction[]
+  state: NodeState
 }
 
 export interface ItemView {
@@ -81,6 +82,7 @@ export function gameToGameView(game: Game): GameView {
       p: new Vec2(node.p),
       outputs,
       textureId,
+      state: node.state,
     }
 
     if (!isEqual(view.nodes[node.id], nodeView)) {

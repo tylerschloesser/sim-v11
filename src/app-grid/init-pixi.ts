@@ -73,7 +73,10 @@ function handlePath(draft: Game, path: Path): void {
     if (draft.nodes[id]) {
       continue
     }
-    addNode(draft.nodes, { p })
+    addNode(draft.nodes, {
+      p,
+      state: NodeState.enum.PendingConstruction,
+    })
   }
   for (let i = 0; i < path.length - 1; i++) {
     const inputId = toNodeId(path.at(i)!)

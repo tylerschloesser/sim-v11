@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import { NodeState } from '../game/node'
 import { TextureId } from '../textures'
 import { CELL_SIZE } from './const'
 import { NodeView } from './game-view'
@@ -15,6 +16,10 @@ export function renderNode(
   container?.destroy({ children: true })
 
   container = new NodeContainer(node)
+  if (node.state === NodeState.enum.PendingConstruction) {
+    container.alpha = 0.5
+  }
+
   container.position.set(
     node.p.x * CELL_SIZE,
     node.p.y * CELL_SIZE,

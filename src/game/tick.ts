@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant'
 import { MAX_PURITY } from '../app-grid/const'
 import { Game, UpdateType } from './game'
 import { Item, ItemColor } from './item'
-import { Node, NodeType } from './node'
+import { Node, NodeState, NodeType } from './node'
 import { rng, shuffle } from './rng'
 
 export function tick(game: Game) {
@@ -100,7 +100,9 @@ export function tick(game: Game) {
 
     // randomize output order
     const outputs = shuffle(
-      Object.keys(node.outputs).map(idToNode),
+      Object.keys(node.outputs)
+        .map(idToNode)
+        .filter(isNotPendingConstruction),
     )
 
     for (const output of outputs) {
@@ -183,4 +185,12 @@ function isOutputEligible(
     default:
       invariant(false)
   }
+}
+
+function isPendingConstruction(node: Node): boolean {
+  return node.state === NodeState.enum.PendingConstruction
+}
+
+function isNotPendingConstruction(node: Node): boolean {
+  return !isPendingConstruction(node)
 }
