@@ -1,9 +1,8 @@
-import { isEqual } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game/game'
 import { Item, ItemColor } from '../game/item'
-import { Node, NodeState, NodeType } from '../game/node'
+import { Node, NodeState } from '../game/node'
 import { TextureId } from '../textures'
 import { MAX_PURITY } from './const'
 
@@ -27,59 +26,12 @@ export interface ItemView {
 }
 
 export interface GameView {
-  nodes: Record<string, NodeView>
   items: Record<string, ItemView>
 }
 
 export function gameToGameView(game: Game): GameView {
-  function idToNode(id: string) {
-    const node = game.nodes[id]
-    invariant(node)
-    return node
-  }
-
   const view: GameView = {
-    nodes: {},
     items: {},
-  }
-
-  for (const node of Object.values(game.nodes)) {
-    const textureId = nodeTextureId(node)
-
-    function outputToDirection(output: Node): Direction {
-      const dx = output.p.x - node.p.x
-      const dy = output.p.y - node.p.y
-      if (dx === 0 && dy === -1) {
-        return 'n'
-      }
-      if (dx === 0 && dy === 1) {
-        return 's'
-      }
-      if (dx === 1 && dy === 0) {
-        return 'e'
-      }
-      if (dx === -1 && dy === 0) {
-        return 'w'
-      }
-      throw new Error('Invalid output direction')
-    }
-
-    const outputs = Object.keys(node.outputs)
-      .map(idToNode)
-      .map(outputToDirection)
-    outputs.sort()
-
-    const nodeView: NodeView = {
-      id: node.id,
-      p: new Vec2(node.p),
-      outputs,
-      textureId,
-      state: node.state,
-    }
-
-    if (!isEqual(view.nodes[node.id], nodeView)) {
-      view.nodes[node.id] = nodeView
-    }
   }
 
   for (const item of Object.values(game.items)) {
@@ -116,26 +68,5 @@ function itemColor(item: Item): string {
       return `hsla(0, ${s}%, ${l}%, ${o.toFixed(2)})`
     case ItemColor.enum.Blue:
       return `hsla(240, ${s}%, ${l}%, ${o.toFixed(2)})`
-  }
-}
-
-function nodeTextureId(node: Node): TextureId {
-  switch (node.type) {
-    case NodeType.enum.Normal:
-      return TextureId.enum.NodeNormal
-    case NodeType.enum.Consumer:
-      return TextureId.enum.NodeConsumer
-    case NodeType.enum.Producer:
-      return TextureId.enum.NodeProducer
-    case NodeType.enum.Purifier:
-      return TextureId.enum.NodePurifier
-    case NodeType.enum.Energizer:
-      return TextureId.enum.NodeEnergizer
-    case NodeType.enum.FormRoot:
-      return TextureId.enum.NodeFormRoot
-    case NodeType.enum.RobotTerminal:
-      return TextureId.enum.NodeRobotTerminal
-    case NodeType.enum.FormLeaf:
-      return TextureId.enum.NodeFormLeaf
   }
 }
