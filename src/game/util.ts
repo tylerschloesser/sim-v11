@@ -6,6 +6,7 @@ import {
 } from '../app-grid/const'
 import { Vec2 } from '../common/vec2'
 import { Game } from './game'
+import { Item } from './item'
 import { Job, JobType } from './job'
 import {
   ConsumerNode,
@@ -139,15 +140,21 @@ export function addNode(
   }
 }
 
+type AddFormNodeResult =
+  | { success: true }
+  | { success: false; errors: string[] }
+
 export function addFormNode(
   nodes: Game['nodes'],
   partial: {
     p: Vec2
     size: Vec2
   },
-): void {
+): AddFormNodeResult {
   invariant(partial.size.x > 0)
   invariant(partial.size.y > 0)
+
+  const errors: string[] = []
 
   function* iterateFormNodes(): Generator<
     FormRootNode | FormLeafNode
@@ -181,9 +188,24 @@ export function addFormNode(
     }
   }
 
-  for (const node of iterateFormNodes()) {
+  const formNodes = Array.from(iterateFormNodes())
+
+  for (const node of formNodes) {
+    if (nodes[node.id]) {
+      errors.push(`Node [${node.id}] already exists`)
+    }
+  }
+
+  if (errors.length > 0) {
+    return { success: false, errors }
+  }
+
+  for (const node of formNodes) {
+    invariant(!nodes[node.id])
     nodes[node.id] = node
   }
+
+  return { success: true }
 }
 
 type ConnectResult =
@@ -312,4 +334,35 @@ export function getNodeWithType<T extends NodeType>(
   const node = getNode(game, id)
   invariant(node.type === type)
   return node as Extract<Node, { type: T }>
+}
+
+export function deleteNode(
+  draft: Game,
+  nodeId: string,
+): void {
+  const node = draft.nodes[nodeId]
+  invariant(node)
+  for (const input of Object.values(draft.nodes)) {
+    if (input.outputs[nodeId]) {
+      delete input.outputs[nodeId]
+    }
+  }
+
+  delete draft.nodes[node.id]
+
+  let item: Item | null = null
+  if (node.itemId) {
+    item = draft.items[node.itemId]!
+    invariant(item)
+    delete draft.items[item.id]
+  }
+
+  const jobs = Object.values(draft.jobs).filter(
+    (job) => job.nodeId === nodeId,
+  )
+  invariant(jobs.length <= 1)
+  const job = jobs.at(0)
+  if (job) {
+    delete draft.jobs[job.id]
+  }
 }

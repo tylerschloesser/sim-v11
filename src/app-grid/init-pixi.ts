@@ -16,12 +16,12 @@ import { Updater } from 'use-immer'
 import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game/game'
-import { Item } from '../game/item'
 import { NodeState } from '../game/node'
 import {
   addFormNode,
   addNode,
   connect,
+  deleteNode,
   toNodeId,
 } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
@@ -46,34 +46,6 @@ import { PointerContainer } from './pointer-container'
 import { renderFrame } from './render-frame'
 
 const cache = new Map<string, Promise<PixiState>>()
-
-function deleteNode(draft: Game, nodeId: string): void {
-  const node = draft.nodes[nodeId]
-  invariant(node)
-  for (const input of Object.values(draft.nodes)) {
-    if (input.outputs[nodeId]) {
-      delete input.outputs[nodeId]
-    }
-  }
-
-  delete draft.nodes[node.id]
-
-  let item: Item | null = null
-  if (node.itemId) {
-    item = draft.items[node.itemId]!
-    invariant(item)
-    delete draft.items[item.id]
-  }
-
-  const jobs = Object.values(draft.jobs).filter(
-    (job) => job.nodeId === nodeId,
-  )
-  invariant(jobs.length <= 1)
-  const job = jobs.at(0)
-  if (job) {
-    delete draft.jobs[job.id]
-  }
-}
 
 function handlePath(draft: Game, path: Path): void {
   draft.updateType = null
@@ -122,10 +94,13 @@ function handleClick(
     }
     case AppViewType.AddForm: {
       draft.updateType = null
-      addFormNode(draft.nodes, {
+      const result = addFormNode(draft.nodes, {
         p: hover.p,
         size: new Vec2(4, 6),
       })
+      if (!result.success) {
+        console.error(result.errors)
+      }
       break
     }
   }
