@@ -34,7 +34,6 @@ export interface ItemViewV2 {
 
 export interface GameView {
   nodes: Record<string, NodeView>
-  items: Record<string, ItemView>
   itemsV2: Record<string, ItemViewV2>
 }
 
@@ -47,7 +46,6 @@ export function gameToGameView(game: Game): GameView {
 
   const view: GameView = {
     nodes: {},
-    items: {},
     itemsV2: {},
   }
 
@@ -88,24 +86,6 @@ export function gameToGameView(game: Game): GameView {
     if (!isEqual(view.nodes[node.id], nodeView)) {
       view.nodes[node.id] = nodeView
     }
-
-    if (!node.itemId) {
-      continue
-    }
-
-    const item = game.items[node.itemId]
-    if (!item) {
-      debugger
-    }
-    invariant(item)
-
-    const itemView: ItemView = {
-      id: item.id,
-      p: new Vec2(node.p),
-      color: itemColor(item),
-    }
-
-    view.items[item.id] = itemView
   }
 
   for (const item of Object.values(game.items)) {
