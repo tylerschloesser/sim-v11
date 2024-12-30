@@ -212,24 +212,7 @@ export function connect(
     errors.push(`Invalid output [${outputId}]`)
   }
 
-  const delta = new Vec2(output.p).sub(new Vec2(input.p))
-
-  if (delta.length() !== 1) {
-    errors.push(`Invalid distance between nodes`)
-  }
-
-  let direction: OutputDirection | null = null
-  if (delta.x === 0 && delta.y === -1) {
-    direction = OutputDirection.enum.North
-  } else if (delta.x === 0 && delta.y === 1) {
-    direction = OutputDirection.enum.South
-  } else if (delta.x === 1 && delta.y === 0) {
-    direction = OutputDirection.enum.East
-  } else if (delta.x === -1 && delta.y === 0) {
-    direction = OutputDirection.enum.West
-  }
-
-  invariant(direction)
+  const direction = getOutputDirection(input, output)
 
   if (errors.length === 0) {
     input.outputs[outputId] = direction
@@ -237,6 +220,36 @@ export function connect(
   } else {
     return { success: false, errors }
   }
+}
+
+export function getOutputDelta(
+  input: Node,
+  output: Node,
+): Vec2 {
+  const delta = new Vec2(output.p).sub(new Vec2(input.p))
+  if (delta.length() !== 1) {
+    debugger
+    throw Error(`Invalid input/output pair`)
+  }
+  return delta
+}
+
+function getOutputDirection(
+  input: Node,
+  output: Node,
+): OutputDirection {
+  const delta = getOutputDelta(input, output)
+  if (delta.x === 0 && delta.y === -1) {
+    return OutputDirection.enum.North
+  } else if (delta.x === 0 && delta.y === 1) {
+    return OutputDirection.enum.South
+  } else if (delta.x === 1 && delta.y === 0) {
+    return OutputDirection.enum.East
+  } else if (delta.x === -1 && delta.y === 0) {
+    return OutputDirection.enum.West
+  }
+  debugger
+  throw Error(`Invalid input/output pair`)
 }
 
 function isValidInput(

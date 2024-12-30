@@ -7,6 +7,7 @@ import { Item, ItemColor } from './item'
 import { ConstructJob, JobType } from './job'
 import { Node, NodeState, NodeType } from './node'
 import { rng, shuffle } from './rng'
+import { getOutputDelta } from './util'
 
 export function tick(game: Game) {
   game.tick += 1
@@ -82,14 +83,21 @@ function tickNodes(game: Game): void {
       item.tick += 1
     }
 
+    function deleteItem(node: Node) {
+      invariant(item)
+      invariant(node.itemId === item.id)
+      node.itemId = null
+      delete game.items[item.id]
+      item = null
+    }
+
     switch (node.type) {
       case NodeType.enum.Consumer: {
         if (item && item.tick > 0) {
           const statKey = `${item.color}-${item.purity}`
           node.stats[statKey] =
             (node.stats[statKey] ?? 0) + 1
-          delete game.items[item.id]
-          node.itemId = null
+          deleteItem(node)
         }
         // consumers can't output
         return
@@ -100,6 +108,8 @@ function tickNodes(game: Game): void {
             id: `${game.nextItemId++}`,
             nodeId: node.id,
             prevNodeId: null,
+            p: node.p,
+            d: null,
             tick: 1,
             color: sample(ItemColor.options),
             purity: 0,
@@ -126,9 +136,7 @@ function tickNodes(game: Game): void {
           item.purity > 0
         ) {
           node.power += item.purity
-          delete game.items[item.id]
-          node.itemId = null
-          item = null
+          deleteItem(node)
         }
         break
       }
@@ -161,6 +169,8 @@ function tickNodes(game: Game): void {
         node.itemId = null
         item.prevNodeId = item.nodeId
         item.nodeId = output.id
+        item.p = node.p
+        item.d = getOutputDelta(node, output)
         item.tick = 0
         item = null
       }
@@ -175,6 +185,9 @@ function tickNodes(game: Game): void {
         node.itemId = loop.item.id
         loop.item.prevNodeId = loop.item.nodeId
         loop.item.nodeId = node.id
+        loop.item.p = node.p
+        const input = idToNode(loop.item.prevNodeId)
+        loop.item.d = getOutputDelta(input, node)
         loop.item.tick = 0
       }
       loop = null

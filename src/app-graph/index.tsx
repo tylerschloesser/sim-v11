@@ -154,6 +154,8 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
           id: `${draft.nextItemId++}`,
           nodeId: id,
           prevNodeId: null,
+          p: node.p,
+          d: null,
           tick: 0,
           color: sample(ItemColor.options),
           purity: 0,
