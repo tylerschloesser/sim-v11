@@ -438,8 +438,9 @@ export function initPixi({
             tickProgress =
               (time - state.lastTickTime) / TICK_DURATION
           }
+          tickProgress = Math.min(tickProgress, 1)
           invariant(tickProgress >= 0)
-          invariant(tickProgress < 2)
+          invariant(tickProgress <= 1)
           renderFrame(state, tickProgress)
           state.frameHandle = self.requestAnimationFrame(
             frameRequestCallback,

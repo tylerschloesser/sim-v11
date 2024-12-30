@@ -81,6 +81,9 @@ function tickNodes(game: Game): void {
       : null
     if (item) {
       item.tick += 1
+      if (item.d) {
+        item.d = null
+      }
     }
 
     function deleteItem(node: Node) {
@@ -169,7 +172,7 @@ function tickNodes(game: Game): void {
         node.itemId = null
         item.prevNodeId = item.nodeId
         item.nodeId = output.id
-        item.p = node.p
+        item.p = output.p
         item.d = getOutputDelta(node, output)
         item.tick = 0
         item = null

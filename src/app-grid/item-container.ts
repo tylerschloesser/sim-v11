@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import invariant from 'tiny-invariant'
+import { Vec2 } from '../common/vec2'
 import { Item, ItemColor } from '../game/item'
 import { CELL_SIZE, MAX_PURITY } from './const'
 
@@ -12,6 +13,13 @@ export class ItemContainer extends PIXI.Container {
     this.item = item
     this.addChild(this.g)
     this.update(item, true)
+
+    let p = new Vec2(item.p)
+    if (item.d) {
+      // this does not handle animations during initial render
+      p = p.sub(new Vec2(item.d))
+    }
+    this.position.set(p.x * CELL_SIZE, p.y * CELL_SIZE)
   }
 
   public update(
@@ -25,13 +33,19 @@ export class ItemContainer extends PIXI.Container {
     ) {
       this.updateColor(item)
     }
-    if (initial || this.item.p !== item.p) {
-      this.updatePosition(item)
-    }
+    this.item = item
   }
 
-  // @ts-expect-error
-  public animate(tickProgress: number): void {}
+  public animate(tickProgress: number): void {
+    if (!this.item.d) {
+      return
+    }
+    const d = new Vec2(this.item.d)
+    const p = new Vec2(this.item.p)
+      .sub(d)
+      .add(d.mul(tickProgress))
+    this.position.set(p.x * CELL_SIZE, p.y * CELL_SIZE)
+  }
 
   private updateColor(item: Item) {
     this.g.clear()
@@ -42,13 +56,6 @@ export class ItemContainer extends PIXI.Container {
       CELL_SIZE * 0.6,
     )
     this.g.fill({ color: resolveColor(item) })
-  }
-
-  private updatePosition(item: Item) {
-    this.position.set(
-      item.p.x * CELL_SIZE,
-      item.p.y * CELL_SIZE,
-    )
   }
 }
 
