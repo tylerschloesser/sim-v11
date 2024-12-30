@@ -64,6 +64,15 @@ function deleteNode(draft: Game, nodeId: string): void {
     invariant(item)
     delete draft.items[item.id]
   }
+
+  const jobs = Object.values(draft.jobs).filter(
+    (job) => job.nodeId === nodeId,
+  )
+  invariant(jobs.length <= 1)
+  const job = jobs.at(0)
+  if (job) {
+    delete draft.jobs[job.id]
+  }
 }
 
 function handlePath(draft: Game, path: Path): void {
