@@ -10,10 +10,9 @@ import { rng, shuffle } from './rng'
 export function tick(game: Game) {
   game.tick += 1
   game.updateType = UpdateType.enum.Tick
-  const { nodes } = game
 
   function idToNode(id: string) {
-    const node = nodes[id]
+    const node = game.nodes[id]
     invariant(node)
     return node
   }
@@ -144,7 +143,7 @@ export function tick(game: Game) {
     path.delete(node)
   }
 
-  for (const root of shuffle(Object.values(nodes))) {
+  for (const root of shuffle(Object.values(game.nodes))) {
     if (!seen.has(root)) {
       visit(root)
       invariant(path.size === 0)
