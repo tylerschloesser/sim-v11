@@ -8,6 +8,11 @@ export function initGame(): Game {
 
   const config = [
     {
+      id: '0.-2',
+      type: NodeType.enum.RobotTerminal,
+      outputs: [],
+    },
+    {
       id: '0.0',
       outputs: ['0.1'],
     },
