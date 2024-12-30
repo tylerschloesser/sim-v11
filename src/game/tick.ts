@@ -11,6 +11,19 @@ export function tick(game: Game) {
   game.tick += 1
   game.updateType = UpdateType.enum.Tick
 
+  tickNodes(game)
+
+  try {
+    Game.parse(game)
+  } catch (e) {
+    // @ts-expect-error
+    const prev = original(game),
+      next = current(game)
+    debugger
+  }
+}
+
+function tickNodes(game: Game): void {
   function idToNode(id: string) {
     const node = game.nodes[id]
     invariant(node)
@@ -149,15 +162,6 @@ export function tick(game: Game) {
       invariant(path.size === 0)
       invariant(loop === null)
     }
-  }
-
-  try {
-    Game.parse(game)
-  } catch (e) {
-    // @ts-expect-error
-    const prev = original(game),
-      next = current(game)
-    debugger
   }
 }
 
