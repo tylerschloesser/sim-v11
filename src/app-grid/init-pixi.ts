@@ -49,9 +49,25 @@ const cache = new Map<string, Promise<PixiState>>()
 
 function handlePath(draft: Game, path: Path): void {
   draft.updateType = null
-  for (const p of path) {
-    const id = toNodeId(p)
-    if (draft.nodes[id]) {
+
+  function withNodeId(p: Vec2) {
+    return { p, nodeId: toNodeId(p) }
+  }
+
+  if (
+    path
+      .map(withNodeId)
+      .every(({ nodeId }) => !!draft.nodes[nodeId])
+  ) {
+    // if every cell on the path is a node, destroy
+    for (const { nodeId } of path.map(withNodeId)) {
+      destroyNode(draft, nodeId)
+    }
+    return
+  }
+
+  for (const { nodeId, p } of path.map(withNodeId)) {
+    if (draft.nodes[nodeId]) {
       continue
     }
     addNode(draft, {
