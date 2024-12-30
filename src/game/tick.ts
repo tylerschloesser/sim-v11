@@ -29,6 +29,7 @@ function tickJobs(game: Game): void {
   for (const job of Object.values(game.jobs)) {
     switch (job.type) {
       case JobType.enum.Construct: {
+        tickConstructJob(game, job)
         break
       }
       default: {
@@ -38,7 +39,6 @@ function tickJobs(game: Game): void {
   }
 }
 
-// @ts-expect-error
 function tickConstructJob(
   game: Game,
   job: ConstructJob,
