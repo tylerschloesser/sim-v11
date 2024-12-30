@@ -19,12 +19,6 @@ export interface NodeView {
 
 export interface ItemView {
   id: string
-  p: Vec2
-  color: string
-}
-
-export interface ItemViewV2 {
-  id: string
   p: {
     prev: Vec2
     next: Vec2
@@ -34,7 +28,7 @@ export interface ItemViewV2 {
 
 export interface GameView {
   nodes: Record<string, NodeView>
-  items: Record<string, ItemViewV2>
+  items: Record<string, ItemView>
 }
 
 export function gameToGameView(game: Game): GameView {

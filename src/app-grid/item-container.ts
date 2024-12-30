@@ -1,14 +1,14 @@
 import * as PIXI from 'pixi.js'
 import { Vec2 } from '../common/vec2'
 import { CELL_SIZE } from './const'
-import { ItemViewV2 } from './game-view'
+import { ItemView } from './game-view'
 
 export class ItemContainer extends PIXI.Container {
   private color: string
   private p: Vec2
   private readonly g: PIXI.Graphics = new PIXI.Graphics()
 
-  constructor(view: ItemViewV2) {
+  constructor(view: ItemView) {
     super()
     this.color = view.color
     this.p = view.p.prev
@@ -18,7 +18,7 @@ export class ItemContainer extends PIXI.Container {
     this.onUpdatePosition()
   }
 
-  public update(view: ItemViewV2): void {
+  public update(view: ItemView): void {
     if (this.color !== view.color) {
       this.color = view.color
       this.onUpdateColor()
