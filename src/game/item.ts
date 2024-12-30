@@ -10,7 +10,6 @@ export type ItemColor = z.infer<typeof ItemColor>
 export const Item = z.strictObject({
   id: z.string(),
   nodeId: z.string(),
-  prevNodeId: z.string().nullable(),
   p: ZVec2,
   d: ZVec2.nullable(),
   tick: z.number(),

@@ -110,7 +110,6 @@ function tickNodes(game: Game): void {
           item = {
             id: `${game.nextItemId++}`,
             nodeId: node.id,
-            prevNodeId: null,
             p: node.p,
             d: null,
             tick: 1,
@@ -170,7 +169,6 @@ function tickNodes(game: Game): void {
       if (item && isOutputEligible(node, item, output)) {
         output.itemId = item.id
         node.itemId = null
-        item.prevNodeId = item.nodeId
         item.nodeId = output.id
         item.p = output.p
         item.d = getOutputDelta(node, output)
@@ -185,11 +183,10 @@ function tickNodes(game: Game): void {
 
     if (loop?.root === node) {
       if (loop.item) {
+        const input = idToNode(loop.item.nodeId)
         node.itemId = loop.item.id
-        loop.item.prevNodeId = loop.item.nodeId
         loop.item.nodeId = node.id
         loop.item.p = node.p
-        const input = idToNode(loop.item.prevNodeId)
         loop.item.d = getOutputDelta(input, node)
         loop.item.tick = 0
       }

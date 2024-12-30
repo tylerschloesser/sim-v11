@@ -153,7 +153,6 @@ function Canvas({ viewport }: { viewport: Vec2 }) {
         const item: Item = {
           id: `${draft.nextItemId++}`,
           nodeId: id,
-          prevNodeId: null,
           p: node.p,
           d: null,
           tick: 0,
