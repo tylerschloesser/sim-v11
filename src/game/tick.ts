@@ -54,6 +54,8 @@ function tickConstructJob(
     const robot = game.robots[job.robotId]
     invariant(robot?.id === job.robotId)
 
+    robot.p = node.p
+
     node.state = NodeState.enum.Active
     delete game.jobs[job.id]
     robot.jobId = null

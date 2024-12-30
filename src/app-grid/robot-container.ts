@@ -23,13 +23,12 @@ export class RobotContainer extends PIXI.Container {
   }
 
   update(robot: Robot, initial: boolean = false): void {
-    this.robot = robot
-
     if (initial || this.robot.p !== robot.p) {
       this.position.set(
         robot.p.x * CELL_SIZE,
         robot.p.y * CELL_SIZE,
       )
     }
+    this.robot = robot
   }
 }
