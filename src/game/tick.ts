@@ -2,6 +2,7 @@ import { current, original } from 'immer'
 import { Game, UpdateType } from './game'
 import { tickJobs } from './tick-jobs'
 import { tickNodes } from './tick-nodes'
+import { tickRobots } from './tick-robots'
 
 export function tick(game: Game) {
   game.tick += 1
@@ -9,6 +10,7 @@ export function tick(game: Game) {
 
   tickNodes(game)
   tickJobs(game)
+  tickRobots(game)
 
   try {
     Game.parse(game)
