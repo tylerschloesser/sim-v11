@@ -46,9 +46,12 @@ function tickConstructJob(
 ): void {
   const node = game.nodes[job.nodeId]
   invariant(node)
-  if (node.state === NodeState.enum.PendingConstruction) {
-    node.state = NodeState.enum.Active
-  }
+  invariant(
+    node.state === NodeState.enum.PendingConstruction,
+  )
+
+  node.state = NodeState.enum.Active
+  delete game.jobs[job.id]
 }
 
 function tickNodes(game: Game): void {
