@@ -157,6 +157,8 @@ function nodeTextureId(node: Node): TextureId {
       return TextureId.enum.NodeEnergizer
     case NodeType.enum.FormRoot:
       return TextureId.enum.NodeFormRoot
+    case NodeType.enum.RobotTerminal:
+      return TextureId.enum.NodeRobotTerminal
     case NodeType.enum.FormLeaf:
       return TextureId.enum.NodeFormLeaf
   }

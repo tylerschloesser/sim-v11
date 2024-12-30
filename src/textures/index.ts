@@ -9,6 +9,7 @@ export const TextureId = z.enum([
   'NodeEnergizer',
   'NodeFormRoot',
   'NodeFormLeaf',
+  'NodeRobotTerminal',
   'NodeArrow',
 ])
 export type TextureId = z.infer<typeof TextureId>

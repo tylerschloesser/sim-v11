@@ -89,6 +89,14 @@ export const Texture = forwardRef<
           textureId={id}
         />
       )
+    case TextureId.enum.NodeRobotTerminal:
+      return (
+        <PlainTextureSvg
+          ref={ref}
+          color="hsl(160, 30%, 50%)"
+          textureId={id}
+        />
+      )
     case TextureId.enum.NodeArrow:
       return (
         <svg

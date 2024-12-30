@@ -9,6 +9,7 @@ export const NodeType = z.enum([
   'Energizer',
   'FormRoot',
   'FormLeaf',
+  'RobotTerminal',
 ])
 export type NodeType = z.infer<typeof NodeType>
 
@@ -61,6 +62,13 @@ export const FormLeafNode = BaseNode.extend({
 })
 export type FormLeafNode = z.infer<typeof FormLeafNode>
 
+export const RobotTerminalNode = BaseNode.extend({
+  type: z.literal(NodeType.enum.RobotTerminal),
+})
+export type RobotTerminalNode = z.infer<
+  typeof RobotTerminalNode
+>
+
 export const Node = z.union([
   NormalNode,
   ConsumerNode,
@@ -69,5 +77,6 @@ export const Node = z.union([
   EnergizerNode,
   FormRootNode,
   FormLeafNode,
+  RobotTerminalNode,
 ])
 export type Node = z.infer<typeof Node>

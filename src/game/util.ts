@@ -78,6 +78,10 @@ export function addNode(
       node = { id, p, itemId, outputs, type, power: 0 }
       break
     }
+    case NodeType.enum.RobotTerminal: {
+      node = { id, p, itemId, outputs, type }
+      break
+    }
   }
 
   invariant(!nodes[id])
