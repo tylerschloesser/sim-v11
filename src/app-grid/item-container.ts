@@ -30,6 +30,9 @@ export class ItemContainer extends PIXI.Container {
     }
   }
 
+  // @ts-expect-error
+  public animate(tickProgress: number): void {}
+
   private updateColor(item: Item) {
     this.g.clear()
     this.g.rect(
