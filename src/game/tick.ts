@@ -1,7 +1,8 @@
 import { current, original } from 'immer'
-import { sample } from 'lodash-es'
+import { isEqual, sample } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { MAX_PURITY } from '../app-grid/const'
+import { Vec2 } from '../common/vec2'
 import { Game, UpdateType } from './game'
 import { Item, ItemColor } from './item'
 import { ConstructJob, JobType } from './job'
@@ -54,12 +55,14 @@ function tickConstructJob(
     const robot = game.robots[job.robotId]
     invariant(robot?.id === job.robotId)
 
-    robot.p = node.p
-
-    node.state = NodeState.enum.Active
-    delete game.jobs[job.id]
-    robot.jobId = null
-
+    if (!isEqual(robot.p, node.p)) {
+      robot.p = node.p
+      robot.d = new Vec2(node.p).sub(new Vec2(robot.p))
+    } else {
+      node.state = NodeState.enum.Active
+      delete game.jobs[job.id]
+      robot.jobId = null
+    }
     return
   }
 
