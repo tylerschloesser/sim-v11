@@ -1,18 +1,11 @@
 import * as PIXI from 'pixi.js'
 import { Subscription } from 'rxjs'
 import { TextureId } from '../textures'
-import { GameView, NodeView } from './game-view'
+import { GameView } from './game-view'
 import { ItemContainer } from './item-container'
+import { NodeContainer } from './node-container'
 import { PathContainer } from './path-container'
 import { PointerContainer } from './pointer-container'
-
-export class NodeContainer extends PIXI.Container {
-  ref: NodeView
-  constructor(ref: NodeView) {
-    super()
-    this.ref = ref
-  }
-}
 
 export interface Graphics {
   pointer: PointerContainer

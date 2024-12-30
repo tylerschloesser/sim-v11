@@ -1,15 +1,22 @@
 import invariant from 'tiny-invariant'
 import { Game } from '../game/game'
-import { gameToGameView } from './game-view'
+import { NodeContainer } from './node-container'
 import { PixiState } from './pixi-state'
-import { renderNode } from './render-node'
 
 export function renderGame(game: Game, state: PixiState) {
-  const view = gameToGameView(game)
   const extra = new Set(state.g.nodes.keys())
-  for (const node of Object.values(view.nodes)) {
+  for (const node of Object.values(game.nodes)) {
+    let container = state.g.nodes.get(node.id)
+    if (container) {
+      container.update(node)
+    } else {
+      container = new NodeContainer(node, state)
+      state.g.nodes.set(node.id, container)
+
+      // add to the beginning, so they're always behind items
+      state.g.world.addChildAt(container, 0)
+    }
     extra.delete(node.id)
-    renderNode(node, state)
   }
 
   for (const id of extra) {
