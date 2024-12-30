@@ -26,7 +26,6 @@ import { initKeyboard } from './init-keyboard'
 import { destroyPixi, initPixi } from './init-pixi'
 import { PixiState } from './pixi-state'
 import { renderGame } from './render-game'
-import { renderTick } from './render-tick'
 
 function initialGame(): Game {
   const item = localStorage.getItem('game')
@@ -75,10 +74,8 @@ export function AppGrid() {
     if (state.current) {
       if (game.updateType === UpdateType.enum.Tick) {
         state.current.lastTickTime = self.performance.now()
-        renderTick(game, state.current)
-      } else {
-        renderGame(game, state.current)
       }
+      renderGame(game, state.current)
     }
   }, [game])
 
