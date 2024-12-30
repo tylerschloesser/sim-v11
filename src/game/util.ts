@@ -108,6 +108,7 @@ export function addNode(
       const robot: Robot = {
         id: `${game.nextRobotId++}`,
         p,
+        jobId: null,
       }
       game.robots[robot.id] = robot
       node = {
