@@ -420,7 +420,6 @@ export function initPixi({
         textures,
         frameHandle: -1,
         lastTickTime: null,
-        gameView: null,
         sub,
       }
 

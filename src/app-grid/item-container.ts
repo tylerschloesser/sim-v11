@@ -1,35 +1,36 @@
 import * as PIXI from 'pixi.js'
-import { Vec2 } from '../common/vec2'
-import { CELL_SIZE } from './const'
-import { ItemView } from './game-view'
+import invariant from 'tiny-invariant'
+import { Item, ItemColor } from '../game/item'
+import { CELL_SIZE, MAX_PURITY } from './const'
 
 export class ItemContainer extends PIXI.Container {
-  private color: string
-  private p: Vec2
+  private item: Item
   private readonly g: PIXI.Graphics = new PIXI.Graphics()
 
-  constructor(view: ItemView) {
+  constructor(item: Item) {
     super()
-    this.color = view.color
-    this.p = view.p.prev
+    this.item = item
     this.addChild(this.g)
-
-    this.onUpdateColor()
-    this.onUpdatePosition()
+    this.update(item, true)
   }
 
-  public update(view: ItemView): void {
-    if (this.color !== view.color) {
-      this.color = view.color
-      this.onUpdateColor()
+  public update(
+    item: Item,
+    initial: boolean = false,
+  ): void {
+    if (
+      initial ||
+      this.item.color !== item.color ||
+      this.item.purity !== item.purity
+    ) {
+      this.updateColor(item)
     }
-    if (view.p.prev && !this.p?.equals(view.p.prev)) {
-      this.p = view.p.prev
-      this.onUpdatePosition()
+    if (initial || this.item.p !== item.p) {
+      this.updatePosition(item)
     }
   }
 
-  private onUpdateColor() {
+  private updateColor(item: Item) {
     this.g.clear()
     this.g.rect(
       CELL_SIZE * 0.2,
@@ -37,14 +38,28 @@ export class ItemContainer extends PIXI.Container {
       CELL_SIZE * 0.6,
       CELL_SIZE * 0.6,
     )
-    this.g.fill({ color: this.color })
+    this.g.fill({ color: resolveColor(item) })
   }
 
-  private onUpdatePosition() {
-    this.g.visible = true
+  private updatePosition(item: Item) {
     this.position.set(
-      this.p.x * CELL_SIZE,
-      this.p.y * CELL_SIZE,
+      item.p.x * CELL_SIZE,
+      item.p.y * CELL_SIZE,
     )
+  }
+}
+
+function resolveColor(item: Item): string {
+  const s = item.purity * (100 / MAX_PURITY)
+  invariant(s >= 0 && s <= 100)
+  const l = 50
+  const o = 1
+  switch (item.color) {
+    case ItemColor.enum.Green:
+      return `hsla(120, ${s}%, ${l}%, ${o.toFixed(2)})`
+    case ItemColor.enum.Red:
+      return `hsla(0, ${s}%, ${l}%, ${o.toFixed(2)})`
+    case ItemColor.enum.Blue:
+      return `hsla(240, ${s}%, ${l}%, ${o.toFixed(2)})`
   }
 }

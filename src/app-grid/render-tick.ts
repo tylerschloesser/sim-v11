@@ -1,15 +1,13 @@
 import { Game } from '../game/game'
-import { gameToGameView } from './game-view'
 import { ItemContainer } from './item-container'
 import { PixiState } from './pixi-state'
 
 export function renderTick(game: Game, state: PixiState) {
   state.lastTickTime = self.performance.now()
-  state.gameView = gameToGameView(game)
 
   const extra = new Set(state.g.items.keys())
 
-  for (const item of Object.values(state.gameView.items)) {
+  for (const item of Object.values(game.items)) {
     extra.delete(item.id)
 
     let container = state.g.items.get(item.id)

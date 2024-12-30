@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { Subscription } from 'rxjs'
 import { TextureId } from '../textures'
-import { GameView } from './game-view'
 import { ItemContainer } from './item-container'
 import { NodeContainer } from './node-container'
 import { PathContainer } from './path-container'
@@ -27,8 +26,6 @@ export interface PixiState {
   frameHandle: number
 
   lastTickTime: number | null
-
-  gameView: GameView | null
 
   sub: Subscription
 }
