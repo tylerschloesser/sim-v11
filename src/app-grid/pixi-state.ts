@@ -5,6 +5,7 @@ import { ItemContainer } from './item-container'
 import { NodeContainer } from './node-container'
 import { PathContainer } from './path-container'
 import { PointerContainer } from './pointer-container'
+import { RobotContainer } from './robot-container'
 
 export interface Graphics {
   pointer: PointerContainer
@@ -12,6 +13,7 @@ export interface Graphics {
   world: PIXI.Container
   nodes: Map<string, NodeContainer>
   items: Map<string, ItemContainer>
+  robots: Map<string, RobotContainer>
   path: PathContainer
 }
 

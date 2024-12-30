@@ -486,6 +486,7 @@ function initGraphics(
     world: new PIXI.Container(),
     nodes: new Map(),
     items: new Map(),
+    robots: new Map(),
     path: new PathContainer(),
   }
 

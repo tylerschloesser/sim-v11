@@ -3,10 +3,12 @@ import { Game } from '../game/game'
 import { ItemContainer } from './item-container'
 import { NodeContainer } from './node-container'
 import { PixiState } from './pixi-state'
+import { RobotContainer } from './robot-container'
 
 export function renderGame(game: Game, state: PixiState) {
   renderNodes(game, state)
   renderItems(game, state)
+  renderRobots(game, state)
 }
 
 function renderNodes(game: Game, state: PixiState) {
@@ -57,5 +59,31 @@ function renderItems(game: Game, state: PixiState) {
     }
     container.destroy({ children: true })
     state.g.items.delete(itemId)
+  }
+}
+
+function renderRobots(game: Game, state: PixiState): void {
+  const extra = new Set(state.g.robots.keys())
+
+  for (const robot of Object.values(game.robots)) {
+    extra.delete(robot.id)
+
+    let container = state.g.robots.get(robot.id)
+    if (!container) {
+      container = new RobotContainer(robot)
+      state.g.world.addChild(container)
+      state.g.robots.set(robot.id, container)
+    } else {
+      container.update(robot)
+    }
+  }
+
+  for (const robotId of extra) {
+    const container = state.g.robots.get(robotId)
+    if (!container) {
+      continue
+    }
+    container.destroy({ children: true })
+    state.g.robots.delete(robotId)
   }
 }
