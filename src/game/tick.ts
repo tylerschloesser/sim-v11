@@ -4,6 +4,7 @@ import invariant from 'tiny-invariant'
 import { MAX_PURITY } from '../app-grid/const'
 import { Game, UpdateType } from './game'
 import { Item, ItemColor } from './item'
+import { JobType } from './job'
 import { Node, NodeState, NodeType } from './node'
 import { rng, shuffle } from './rng'
 
@@ -12,6 +13,7 @@ export function tick(game: Game) {
   game.updateType = UpdateType.enum.Tick
 
   tickNodes(game)
+  tickJobs(game)
 
   try {
     Game.parse(game)
@@ -20,6 +22,19 @@ export function tick(game: Game) {
     const prev = original(game),
       next = current(game)
     debugger
+  }
+}
+
+function tickJobs(game: Game): void {
+  for (const job of Object.values(game.jobs)) {
+    switch (job.type) {
+      case JobType.enum.Construct: {
+        break
+      }
+      default: {
+        invariant(false)
+      }
+    }
   }
 }
 
