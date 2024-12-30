@@ -13,9 +13,17 @@ export const NodeType = z.enum([
 ])
 export type NodeType = z.infer<typeof NodeType>
 
+export const NodeState = z.enum([
+  'PendingConstruction',
+  'Active',
+  'PendingDestruction',
+])
+export type NodeState = z.infer<typeof NodeState>
+
 const BaseNode = z.strictObject({
   id: z.string(),
   type: NodeType,
+  state: NodeState,
   p: ZVec2,
   itemId: z.string().nullable(),
   outputs: z.record(z.string(), z.literal(true)),

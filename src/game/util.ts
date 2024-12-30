@@ -12,6 +12,7 @@ import {
   FormLeafNode,
   FormRootNode,
   Node,
+  NodeState,
   NodeType,
   NormalNode,
   ProducerNode,
@@ -40,6 +41,7 @@ export function addNode(
   const { p, type = NodeType.enum.Normal } = partial
   const id = toNodeId(p)
 
+  const state: Node['state'] = NodeState.enum.Active
   const outputs: Node['outputs'] = {}
   const itemId: Node['itemId'] = null
   let node: Node
@@ -49,11 +51,19 @@ export function addNode(
 
   switch (type) {
     case NodeType.enum.Normal: {
-      node = { id, p, itemId, outputs, type }
+      node = { id, p, itemId, outputs, type, state }
       break
     }
     case NodeType.enum.Consumer: {
-      node = { id, p, itemId, outputs, type, stats: {} }
+      node = {
+        id,
+        p,
+        itemId,
+        outputs,
+        type,
+        state,
+        stats: {},
+      }
       break
     }
     case NodeType.enum.Producer: {
@@ -64,6 +74,7 @@ export function addNode(
         itemId,
         outputs,
         type,
+        state,
         rate,
         power: 0,
       }
@@ -71,15 +82,23 @@ export function addNode(
     }
     case NodeType.enum.Purifier: {
       const rate = DEFAULT_PURIFIER_RATE
-      node = { id, p, itemId, outputs, type, rate }
+      node = { id, p, itemId, outputs, type, state, rate }
       break
     }
     case NodeType.enum.Energizer: {
-      node = { id, p, itemId, outputs, type, power: 0 }
+      node = {
+        id,
+        p,
+        itemId,
+        outputs,
+        type,
+        state,
+        power: 0,
+      }
       break
     }
     case NodeType.enum.RobotTerminal: {
-      node = { id, p, itemId, outputs, type }
+      node = { id, p, itemId, outputs, state, type }
       break
     }
   }
@@ -108,6 +127,7 @@ export function addFormNode(
       itemId: null,
       outputs: {},
       targetNodeId: null,
+      state: NodeState.enum.Active,
     }
 
     for (let x = 0; x < partial.size.x; x++) {
@@ -123,6 +143,7 @@ export function addFormNode(
           id: toNodeId(p),
           itemId: null,
           outputs: {},
+          state: NodeState.enum.Active,
         }
       }
     }
