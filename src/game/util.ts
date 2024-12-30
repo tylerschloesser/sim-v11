@@ -105,6 +105,7 @@ export function addNode(
     case NodeType.enum.RobotTerminal: {
       const robot: Robot = {
         id: `${game.nextRobotId++}`,
+        p,
       }
       game.robots[robot.id] = robot
       node = {
