@@ -14,11 +14,11 @@ import { initGame } from '../game'
 import { Game, UpdateType } from '../game/game'
 import { NodeType } from '../game/node'
 import { tick } from '../game/tick'
-import { toNodeId } from '../game/util'
 import { TextureId } from '../textures'
 import { Texture } from '../textures/texture'
 import { AppActions } from './app-actions'
 import { AppContext } from './app-context'
+import { AppHover } from './app-hover'
 import { AppView, AppViewType } from './app-view'
 import { AppWidget } from './app-widget'
 import { TICK_DURATION } from './const'
@@ -163,23 +163,6 @@ export function AppGrid() {
         <AppActions />
       </div>
     </AppContext.Provider>
-  )
-}
-
-function AppHover() {
-  const { view, game } = useContext(AppContext)
-  const id = useMemo(
-    () => (view.hover ? toNodeId(view.hover.p) : null),
-    [view.hover],
-  )
-  const node = id ? game.nodes[id] : null
-  return (
-    node && (
-      <div>
-        <div>{node.type}</div>
-        <div>{Object.keys(node.outputs).join(',')}</div>
-      </div>
-    )
   )
 }
 

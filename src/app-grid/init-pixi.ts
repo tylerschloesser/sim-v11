@@ -17,6 +17,7 @@ import { mod } from '../common/math'
 import { Vec2 } from '../common/vec2'
 import { Game } from '../game/game'
 import { Item } from '../game/item'
+import { NodeState } from '../game/node'
 import {
   addFormNode,
   addNode,
@@ -102,6 +103,7 @@ function handleClick(
         addNode(draft.nodes, {
           p: hover.p,
           type: view.nodeType,
+          state: NodeState.enum.PendingConstruction,
         })
       }
       break
