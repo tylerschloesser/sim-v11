@@ -5,10 +5,10 @@ import { MAX_PURITY } from '../app-grid/const'
 import { Vec2 } from '../common/vec2'
 import { Game, UpdateType } from './game'
 import { Item, ItemColor } from './item'
-import { ConstructJob, JobType } from './job'
+import { ConstructJob, DestroyJob, JobType } from './job'
 import { Node, NodeState, NodeType } from './node'
 import { rng, shuffle } from './rng'
-import { getOutputDelta } from './util'
+import { deleteNode, getOutputDelta } from './util'
 
 export function tick(game: Game) {
   game.tick += 1
@@ -32,6 +32,10 @@ function tickJobs(game: Game): void {
     switch (job.type) {
       case JobType.enum.Construct: {
         tickConstructJob(game, job)
+        break
+      }
+      case JobType.enum.Destroy: {
+        tickDestroyJob(game, job)
         break
       }
       default: {
@@ -61,6 +65,40 @@ function tickConstructJob(
     } else {
       robot.d = null
       node.state = NodeState.enum.Active
+      delete game.jobs[job.id]
+      robot.jobId = null
+    }
+    return
+  }
+
+  const first = Object.values(game.robots).find(
+    (robot) => robot.jobId === null,
+  )
+  if (!first) {
+    return
+  }
+
+  first.jobId = job.id
+  job.robotId = first.id
+}
+
+function tickDestroyJob(game: Game, job: DestroyJob): void {
+  const node = game.nodes[job.nodeId]
+  invariant(node)
+  invariant(
+    node.state === NodeState.enum.PendingDestruction,
+  )
+
+  if (job.robotId !== null) {
+    const robot = game.robots[job.robotId]
+    invariant(robot?.id === job.robotId)
+
+    if (!isEqual(robot.p, node.p)) {
+      robot.d = new Vec2(node.p).sub(new Vec2(robot.p))
+      robot.p = node.p
+    } else {
+      robot.d = null
+      deleteNode(game, node.id)
       delete game.jobs[job.id]
       robot.jobId = null
     }

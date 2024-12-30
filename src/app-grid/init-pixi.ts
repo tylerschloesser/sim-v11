@@ -21,7 +21,7 @@ import {
   addFormNode,
   addNode,
   connect,
-  deleteNode,
+  destroyNode,
   toNodeId,
 } from '../game/util'
 import { renderSvgToImage, TextureId } from '../textures'
@@ -82,7 +82,7 @@ function handleClick(
       draft.updateType = null
       const nodeId = toNodeId(hover.p)
       if (draft.nodes[nodeId]) {
-        deleteNode(draft, nodeId)
+        destroyNode(draft, nodeId)
       } else {
         addNode(draft, {
           p: hover.p,

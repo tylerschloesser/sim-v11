@@ -336,6 +336,43 @@ export function getNodeWithType<T extends NodeType>(
   return node as Extract<Node, { type: T }>
 }
 
+export function destroyNode(
+  draft: Game,
+  nodeId: string,
+): void {
+  const node = draft.nodes[nodeId]
+  invariant(node)
+
+  if (node.state === NodeState.enum.PendingConstruction) {
+    const jobs = Object.values(draft.jobs).filter(
+      (job) => job.nodeId === nodeId,
+    )
+    invariant(jobs.length === 1)
+    const job = jobs.at(0)!
+    if (job.robotId) {
+      const robot = draft.robots[job.robotId]
+      invariant(robot)
+      robot.jobId = null
+    }
+    delete draft.jobs[job.id]
+
+    deleteNode(draft, nodeId)
+    return
+  }
+
+  if (node.state !== NodeState.enum.PendingDestruction) {
+    node.state = NodeState.enum.PendingDestruction
+
+    const job: Job = {
+      id: `${draft.nextJobId++}`,
+      type: JobType.enum.Destroy,
+      nodeId: node.id,
+      robotId: null,
+    }
+    draft.jobs[job.id] = job
+  }
+}
+
 export function deleteNode(
   draft: Game,
   nodeId: string,
@@ -355,14 +392,5 @@ export function deleteNode(
     item = draft.items[node.itemId]!
     invariant(item)
     delete draft.items[item.id]
-  }
-
-  const jobs = Object.values(draft.jobs).filter(
-    (job) => job.nodeId === nodeId,
-  )
-  invariant(jobs.length <= 1)
-  const job = jobs.at(0)
-  if (job) {
-    delete draft.jobs[job.id]
   }
 }
