@@ -36,12 +36,16 @@ export function addNode(
   partial: {
     p: Vec2
     type?: NodeType
+    state?: NodeState
   },
 ): void {
-  const { p, type = NodeType.enum.Normal } = partial
+  const {
+    p,
+    type = NodeType.enum.Normal,
+    state = NodeState.enum.Active,
+  } = partial
   const id = toNodeId(p)
 
-  const state: Node['state'] = NodeState.enum.Active
   const outputs: Node['outputs'] = {}
   const itemId: Node['itemId'] = null
   let node: Node
