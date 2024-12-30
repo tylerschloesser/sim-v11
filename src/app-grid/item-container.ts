@@ -5,6 +5,7 @@ import { Item, ItemColor } from '../game/item'
 import { CELL_SIZE, MAX_PURITY } from './const'
 
 export class ItemContainer extends PIXI.Container {
+  private animating: boolean = false
   private item: Item
   private readonly g: PIXI.Graphics = new PIXI.Graphics()
 
@@ -38,8 +39,16 @@ export class ItemContainer extends PIXI.Container {
 
   public animate(tickProgress: number): void {
     if (!this.item.d) {
+      if (this.animating) {
+        this.position.set(
+          this.item.p.x * CELL_SIZE,
+          this.item.p.y * CELL_SIZE,
+        )
+        this.animating = false
+      }
       return
     }
+    this.animating = true
     const d = new Vec2(this.item.d)
     const p = new Vec2(this.item.p)
       .sub(d)

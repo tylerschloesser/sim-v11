@@ -56,8 +56,8 @@ function tickConstructJob(
     invariant(robot?.id === job.robotId)
 
     if (!isEqual(robot.p, node.p)) {
-      robot.p = node.p
       robot.d = new Vec2(node.p).sub(new Vec2(robot.p))
+      robot.p = node.p
     } else {
       robot.d = null
       node.state = NodeState.enum.Active
