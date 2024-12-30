@@ -50,8 +50,10 @@ function tickConstructJob(
     node.state === NodeState.enum.PendingConstruction,
   )
 
-  node.state = NodeState.enum.Active
-  delete game.jobs[job.id]
+  if (job.robotId !== null) {
+    node.state = NodeState.enum.Active
+    delete game.jobs[job.id]
+  }
 }
 
 function tickNodes(game: Game): void {
