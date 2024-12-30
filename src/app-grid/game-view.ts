@@ -34,7 +34,7 @@ export interface ItemViewV2 {
 
 export interface GameView {
   nodes: Record<string, NodeView>
-  itemsV2: Record<string, ItemViewV2>
+  items: Record<string, ItemViewV2>
 }
 
 export function gameToGameView(game: Game): GameView {
@@ -46,7 +46,7 @@ export function gameToGameView(game: Game): GameView {
 
   const view: GameView = {
     nodes: {},
-    itemsV2: {},
+    items: {},
   }
 
   for (const node of Object.values(game.nodes)) {
@@ -97,7 +97,7 @@ export function gameToGameView(game: Game): GameView {
       invariant(prev)
     }
 
-    view.itemsV2[item.id] = {
+    view.items[item.id] = {
       id: item.id,
       p: {
         prev: prev ? new Vec2(prev.p) : new Vec2(node.p),

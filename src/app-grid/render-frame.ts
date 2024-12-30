@@ -9,9 +9,7 @@ export function renderFrame(
   if (!state.gameView) {
     return
   }
-  for (const item of Object.values(
-    state.gameView.itemsV2,
-  )) {
+  for (const item of Object.values(state.gameView.items)) {
     const g = state.g.items.get(item.id)
     invariant(g)
 

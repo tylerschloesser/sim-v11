@@ -9,9 +9,7 @@ export function renderTick(game: Game, state: PixiState) {
 
   const extra = new Set(state.g.items.keys())
 
-  for (const item of Object.values(
-    state.gameView.itemsV2,
-  )) {
+  for (const item of Object.values(state.gameView.items)) {
     extra.delete(item.id)
 
     let container = state.g.items.get(item.id)
