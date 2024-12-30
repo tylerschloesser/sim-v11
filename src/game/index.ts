@@ -12,6 +12,8 @@ export function initGame(): Game {
     nextItemId: 0,
     robots: {},
     nextRobotId: 0,
+    jobs: {},
+    nextJobId: 0,
   }
 
   const config = [

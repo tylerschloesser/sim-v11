@@ -6,6 +6,7 @@ import {
 } from '../app-grid/const'
 import { Vec2 } from '../common/vec2'
 import { Game } from './game'
+import { Job, JobType } from './job'
 import {
   ConsumerNode,
   EnergizerNode,
@@ -123,6 +124,16 @@ export function addNode(
 
   invariant(!game.nodes[id])
   game.nodes[id] = node
+
+  if (node.state === NodeState.enum.PendingConstruction) {
+    const job: Job = {
+      id: `${game.nextJobId++}`,
+      type: JobType.enum.Construct,
+      nodeId: node.id,
+      robotId: null,
+    }
+    game.jobs[job.id] = job
+  }
 }
 
 export function addFormNode(

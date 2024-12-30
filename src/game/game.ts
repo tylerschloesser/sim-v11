@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { Item } from './item'
+import { Job } from './job'
 import { Node } from './node'
 import { Robot } from './robot'
 
@@ -17,6 +18,9 @@ export const Game = z
 
     robots: z.record(z.string(), Robot),
     nextRobotId: z.number(),
+
+    jobs: z.record(z.string(), Job),
+    nextJobId: z.number(),
   })
   .superRefine((game, context) => {
     const seen = new Set<string>()
