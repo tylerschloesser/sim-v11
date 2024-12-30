@@ -4,18 +4,20 @@ import { Vec2 } from '../common/vec2'
 import { Game } from '../game/game'
 import { OutputDirection } from '../game/node'
 import { connect, toNodeId } from '../game/util'
-import { AppView } from './app-view'
+import { AppView, AppViewType } from './app-view'
 
 interface InitKeyboardArgs {
   signal: AbortSignal
   setGame: Updater<Game>
   view$: BehaviorSubject<AppView>
+  setView: Updater<AppView>
 }
 
 export function initKeyboard({
   signal,
   setGame,
   view$,
+  setView,
 }: InitKeyboardArgs) {
   window.addEventListener(
     'keyup',
@@ -53,6 +55,13 @@ export function initKeyboard({
             OutputDirection.enum.East,
           )
           break
+        case 'q':
+        case 'Escape': {
+          setView((draft) => {
+            draft.type = AppViewType.Home
+          })
+          break
+        }
       }
     },
     { signal },

@@ -103,11 +103,16 @@ export function AppGrid() {
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    initKeyboard({ signal, setGame, view$: view$.current })
+    initKeyboard({
+      signal,
+      setGame,
+      view$: view$.current,
+      setView,
+    })
     return () => {
       controller.abort()
     }
-  }, [setGame])
+  }, [setGame, setView])
 
   useEffect(() => {
     setView((draft) => {
