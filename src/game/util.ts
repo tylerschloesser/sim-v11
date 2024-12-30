@@ -337,12 +337,27 @@ export function getNodeWithType<T extends NodeType>(
   return node as Extract<Node, { type: T }>
 }
 
+type DestroyNodeResult =
+  | { success: true }
+  | { success: false; errors: string[] }
+
 export function destroyNode(
   draft: Game,
   nodeId: string,
-): void {
+): DestroyNodeResult {
   const node = draft.nodes[nodeId]
   invariant(node)
+
+  if (
+    node.type === NodeType.enum.FormRoot ||
+    node.type === NodeType.enum.FormLeaf ||
+    node.type === NodeType.enum.RobotTerminal
+  ) {
+    return {
+      success: false,
+      errors: [`Cannot destroy node [${nodeId}]`],
+    }
+  }
 
   if (node.state === NodeState.enum.PendingConstruction) {
     const jobs = Object.values(draft.jobs).filter(
@@ -358,10 +373,9 @@ export function destroyNode(
     delete draft.jobs[job.id]
 
     deleteNode(draft, nodeId)
-    return
-  }
-
-  if (node.state !== NodeState.enum.PendingDestruction) {
+  } else if (
+    node.state !== NodeState.enum.PendingDestruction
+  ) {
     node.state = NodeState.enum.PendingDestruction
 
     const job: Job = {
@@ -372,6 +386,8 @@ export function destroyNode(
     }
     draft.jobs[job.id] = job
   }
+
+  return { success: true }
 }
 
 export function deleteNode(

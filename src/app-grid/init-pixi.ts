@@ -61,7 +61,10 @@ function handlePath(draft: Game, path: Path): void {
   ) {
     // if every cell on the path is a node, destroy
     for (const { nodeId } of path.map(withNodeId)) {
-      destroyNode(draft, nodeId)
+      const result = destroyNode(draft, nodeId)
+      if (!result.success) {
+        console.error(result.errors)
+      }
     }
     return
   }
@@ -98,7 +101,10 @@ function handleClick(
       draft.updateType = null
       const nodeId = toNodeId(hover.p)
       if (draft.nodes[nodeId]) {
-        destroyNode(draft, nodeId)
+        const result = destroyNode(draft, nodeId)
+        if (!result.success) {
+          console.error(result.errors)
+        }
       } else {
         addNode(draft, {
           p: hover.p,
