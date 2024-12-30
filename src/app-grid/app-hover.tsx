@@ -12,8 +12,11 @@ export function AppHover() {
   return (
     node && (
       <div>
-        <div>{node.type}</div>
-        <div>{Object.keys(node.outputs).join(',')}</div>
+        <div>Type: {node.type}</div>
+        <div>
+          Outputs: {Object.keys(node.outputs).join(',')}
+        </div>
+        <div>State: {node.state}</div>
       </div>
     )
   )
