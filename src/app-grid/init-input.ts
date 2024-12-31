@@ -50,6 +50,13 @@ export function initInput({
           })
           break
         }
+        case PointerType.Select: {
+          pointer$.next({
+            ...pointer$.value,
+            p,
+          })
+          break
+        }
         default: {
           pointer$.next({
             type: PointerType.Free,
@@ -78,6 +85,15 @@ export function initInput({
         if (view$.value.type === AppViewType.AddNode) {
           pointer$.next({
             type: PointerType.Path,
+            p,
+            down: {
+              t: self.performance.now(),
+              p,
+            },
+          })
+        } else {
+          pointer$.next({
+            type: PointerType.Select,
             p,
             down: {
               t: self.performance.now(),

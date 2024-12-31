@@ -6,6 +6,7 @@ import { NodeContainer } from './node-container'
 import { PathContainer } from './path-container'
 import { PointerContainer } from './pointer-container'
 import { RobotContainer } from './robot-container'
+import { SelectContainer } from './select-container'
 
 export interface Graphics {
   pointer: PointerContainer
@@ -15,6 +16,7 @@ export interface Graphics {
   items: Map<string, ItemContainer>
   robots: Map<string, RobotContainer>
   path: PathContainer
+  select: SelectContainer
 }
 
 export interface PixiState {

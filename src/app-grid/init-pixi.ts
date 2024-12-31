@@ -44,6 +44,8 @@ import { Graphics, PixiState } from './pixi-state'
 import { Pointer, PointerType } from './pointer'
 import { PointerContainer } from './pointer-container'
 import { renderFrame } from './render-frame'
+import { SelectState } from './select'
+import { SelectContainer } from './select-container'
 
 const cache = new Map<string, Promise<PixiState>>()
 
@@ -356,6 +358,37 @@ export function initPixi({
         }),
       )
 
+      const select$ = combineLatest([
+        screenToWorld$,
+        pointer$,
+      ]).pipe(
+        map(([screenToWorld, pointer]) => {
+          if (pointer?.type !== PointerType.Select) {
+            return null
+          }
+
+          const p1 = screenToWorld(pointer.down.p)
+          const p2 = screenToWorld(pointer.p)
+
+          const x1 = Math.min(p1.x, p2.x)
+          const x2 = Math.max(p1.x, p2.x)
+          const y1 = Math.min(p1.y, p2.y)
+          const y2 = Math.max(p1.y, p2.y)
+
+          const tl = new Vec2(x1, y1).floor()
+          const br = new Vec2(x2, y2).ceil()
+
+          return { tl, br }
+        }),
+        distinctUntilChanged<SelectState | null>(isEqual),
+      )
+
+      sub.add(
+        select$.subscribe((select) => {
+          g.select.update(select)
+        }),
+      )
+
       sub.add(
         pointerup$
           .pipe(
@@ -485,6 +518,7 @@ function initGraphics(
     items: new Map(),
     robots: new Map(),
     path: new PathContainer(),
+    select: new SelectContainer(),
   }
 
   {
@@ -513,6 +547,7 @@ function initGraphics(
 
   {
     g.world.addChild(g.path)
+    g.world.addChild(g.select)
   }
 
   {
