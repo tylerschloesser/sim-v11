@@ -49,11 +49,22 @@ function HomeView() {
     })
   }, [setView])
 
+  const buttons = useMemo(
+    () => [
+      { label: 'Add Node', onClick: onClickAddNode },
+      { label: 'Add Form', onClick: onClickAddForm },
+      { label: 'Reset', onClick: onClickReset },
+    ],
+    [onClickAddNode, onClickAddForm, onClickReset],
+  )
+
   return (
     <div>
-      <Button onClick={onClickAddNode}>Add Node</Button>
-      <Button onClick={onClickAddForm}>Add Form</Button>
-      <Button onClick={onClickReset}>Reset</Button>
+      {buttons.map(({ label, onClick }) => (
+        <Button key={label} onClick={onClick}>
+          {label}
+        </Button>
+      ))}
     </div>
   )
 }

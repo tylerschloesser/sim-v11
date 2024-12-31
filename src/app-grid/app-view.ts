@@ -6,6 +6,7 @@ export enum AppViewType {
   Home = 'home',
   AddNode = 'add-node',
   AddForm = 'add-form',
+  Select = 'select',
 }
 
 export interface AppView {
