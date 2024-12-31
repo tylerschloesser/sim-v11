@@ -19,6 +19,7 @@ export function AppActions() {
   }, [setView])
   return (
     <div className="absolute bottom-0 right-0 p-1 flex gap-2">
+      {view.type === AppViewType.Select && <SelectView />}
       {view.type === AppViewType.AddNode && <AddNodeView />}
       {view.type === AppViewType.AddForm && <AddFormView />}
       {view.type === AppViewType.Home && <HomeView />}
@@ -49,13 +50,25 @@ function HomeView() {
     })
   }, [setView])
 
+  const onClickSelect = useCallback(() => {
+    setView((draft) => {
+      draft.type = AppViewType.Select
+    })
+  }, [setView])
+
   const buttons = useMemo(
     () => [
+      { label: 'Select', onClick: onClickSelect },
       { label: 'Add Node', onClick: onClickAddNode },
       { label: 'Add Form', onClick: onClickAddForm },
       { label: 'Reset', onClick: onClickReset },
     ],
-    [onClickAddNode, onClickAddForm, onClickReset],
+    [
+      onClickSelect,
+      onClickAddNode,
+      onClickAddForm,
+      onClickReset,
+    ],
   )
 
   return (
@@ -67,6 +80,10 @@ function HomeView() {
       ))}
     </div>
   )
+}
+
+function SelectView() {
+  return <>TODO</>
 }
 
 function AddNodeView() {
