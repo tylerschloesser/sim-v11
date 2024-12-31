@@ -26,6 +26,7 @@ import { TICK_DURATION } from './const'
 import { initKeyboard } from './init-keyboard'
 import { destroyPixi, initPixi } from './init-pixi'
 import { PixiState } from './pixi-state'
+import { Pointer } from './pointer'
 import { renderGame } from './render-game'
 
 function initialGame(): Game {
@@ -100,6 +101,10 @@ export function AppGrid() {
     view$.current.next(view)
   }, [view])
 
+  const pointer$ = useRef(
+    new BehaviorSubject<Pointer | null>(null),
+  )
+
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
@@ -108,6 +113,7 @@ export function AppGrid() {
       setGame,
       view$: view$.current,
       setView,
+      pointer$: pointer$.current,
     })
     return () => {
       controller.abort()
@@ -146,6 +152,7 @@ export function AppGrid() {
           state={state}
           gameRef={gameRef}
           view$={view$.current}
+          pointer$={pointer$.current}
           widgetContainer={widgetContainer}
         />
         <div
@@ -181,6 +188,7 @@ interface CanvasProps {
   state: React.MutableRefObject<PixiState | null>
   gameRef: React.MutableRefObject<Game>
   view$: BehaviorSubject<AppView>
+  pointer$: BehaviorSubject<Pointer | null>
   widgetContainer: React.RefObject<HTMLElement>
 }
 
@@ -188,6 +196,7 @@ export function Canvas({
   state,
   gameRef,
   view$,
+  pointer$,
   widgetContainer,
 }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null)
@@ -204,6 +213,7 @@ export function Canvas({
       setView,
       setGame,
       view$,
+      pointer$,
       widgetContainer: widgetContainer.current,
     }).then((_state) => {
       state.current = _state

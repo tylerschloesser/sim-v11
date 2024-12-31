@@ -134,6 +134,7 @@ interface InitPixiArgs {
   setView: Updater<AppView>
   setGame: Updater<Game>
   view$: BehaviorSubject<AppView>
+  pointer$: BehaviorSubject<Pointer | null>
   widgetContainer: HTMLElement
 }
 
@@ -143,6 +144,7 @@ export function initPixi({
   setView,
   setGame,
   view$,
+  pointer$,
   widgetContainer,
 }: InitPixiArgs): Promise<PixiState> {
   const promise: Promise<PixiState> = new Promise(
@@ -198,9 +200,6 @@ export function initPixi({
 
       const pointerup$ = new Subject<Vec2>()
       const camera$ = new BehaviorSubject<Vec2>(Vec2.ZERO)
-      const pointer$ = new BehaviorSubject<Pointer | null>(
-        null,
-      )
 
       const sub = new Subscription()
 

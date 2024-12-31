@@ -5,12 +5,14 @@ import { Game } from '../game/game'
 import { OutputDirection } from '../game/node'
 import { connect, toNodeId } from '../game/util'
 import { AppView, AppViewType } from './app-view'
+import { Pointer, PointerType } from './pointer'
 
 interface InitKeyboardArgs {
   signal: AbortSignal
   setGame: Updater<Game>
   view$: BehaviorSubject<AppView>
   setView: Updater<AppView>
+  pointer$: BehaviorSubject<Pointer | null>
 }
 
 export function initKeyboard({
@@ -18,6 +20,7 @@ export function initKeyboard({
   setGame,
   view$,
   setView,
+  pointer$,
 }: InitKeyboardArgs) {
   window.addEventListener(
     'keyup',
@@ -62,6 +65,22 @@ export function initKeyboard({
           })
           break
         }
+      }
+    },
+    { signal },
+  )
+
+  window.addEventListener(
+    'keyup',
+    (ev) => {
+      if (
+        ev.key === 'Shift' &&
+        pointer$.value?.type === PointerType.Path
+      ) {
+        pointer$.next({
+          type: PointerType.Free,
+          p: pointer$.value.p,
+        })
       }
     },
     { signal },
