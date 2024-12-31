@@ -4,6 +4,7 @@ export enum PointerType {
   Free = 'free',
   Drag = 'drag',
   Path = 'path',
+  Select = 'select',
 }
 
 export interface FreePointer {
@@ -24,7 +25,14 @@ export interface PathPointer {
   down: { t: number; p: Vec2 }
 }
 
+export interface SelectPointer {
+  type: PointerType.Select
+  p: Vec2
+  down: { t: number; p: Vec2 }
+}
+
 export type Pointer =
   | FreePointer
   | DragPointer
   | PathPointer
+  | SelectPointer

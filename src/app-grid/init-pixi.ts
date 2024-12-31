@@ -424,6 +424,7 @@ export function initPixi({
         signal,
         pointer$,
         pointerup$,
+        view$,
       })
 
       const frameRequestCallback: FrameRequestCallback =

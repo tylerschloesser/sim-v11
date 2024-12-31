@@ -1,5 +1,6 @@
 import { BehaviorSubject, Subject } from 'rxjs'
 import { Vec2 } from '../common/vec2'
+import { AppView, AppViewType } from './app-view'
 import { Pointer, PointerType } from './pointer'
 
 interface InitInputArgs {
@@ -7,6 +8,7 @@ interface InitInputArgs {
   signal: AbortSignal
   pointer$: BehaviorSubject<Pointer | null>
   pointerup$: Subject<Vec2>
+  view$: BehaviorSubject<AppView>
 }
 
 export function initInput({
@@ -14,6 +16,7 @@ export function initInput({
   signal,
   pointer$,
   pointerup$,
+  view$,
 }: InitInputArgs): void {
   container.addEventListener(
     'pointerenter',
@@ -72,14 +75,16 @@ export function initInput({
     (ev) => {
       const p = new Vec2(ev.offsetX, ev.offsetY)
       if (ev.shiftKey) {
-        pointer$.next({
-          type: PointerType.Path,
-          p,
-          down: {
-            t: self.performance.now(),
+        if (view$.value.type === AppViewType.AddNode) {
+          pointer$.next({
+            type: PointerType.Path,
             p,
-          },
-        })
+            down: {
+              t: self.performance.now(),
+              p,
+            },
+          })
+        }
       } else {
         pointer$.next({
           type: PointerType.Drag,
